@@ -23,6 +23,7 @@ public class MainViewAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return arrayFragment.size();
     }
+
     public void addFragment(Fragment fragment, String title){
         arrayFragment.add(fragment);
         arrayTitle.add(title);
