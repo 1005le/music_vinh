@@ -1,4 +1,4 @@
-package com.example.music_vinh;
+package com.example.music_vinh.view.impl;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
