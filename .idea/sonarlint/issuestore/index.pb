@@ -60,3 +60,13 @@ t
 Dapp/src/main/java/com/example/music_vinh/view/impl/SongFragment.java,b\5\b5b3eaa91fcab7e2e2e2f5a580f7f382cafe47bb
 t
 Dapp/src/main/java/com/example/music_vinh/view/impl/MainActivity.java,3\1\31765e10c2fa19a10f79434331f741831ab0071b
+S
+#.idea/sonarlint/issuestore/index.pb,9\f\9fe84ebb15faf917b7def6236dba604453cc61e0
+u
+Eapp/src/main/java/com/example/music_vinh/presenter/MainPresenter.java,e\e\ee0dadbeee0cf15590c40713285fe13636db61b0
+w
+Gapp/src/main/java/com/example/music_vinh/interactor/MainInteractor.java,7\9\791f58ffc1d5c259f6afc8a377b4cfcd602a072a
+€
+Papp/src/main/java/com/example/music_vinh/interactor/impl/MainInteractorImpl.java,e\b\eb1e99b313801688dc10935f4b9be8878bba3c22
+q
+Aapp/src/main/java/com/example/music_vinh/adapter/SongAdapter.java,3\5\35fa7cb80e02b50e1744ff67277b2e0750f64be9

@@ -1,5 +1,7 @@
 package com.example.music_vinh.model;
 
+import java.io.Serializable;
+
 public class Song {
     private String id;
     private String name;
@@ -11,6 +13,7 @@ public class Song {
         this.name = name;
         this.nameArtist = nameArtist;
     }
+
     public Song(String id, String name, String nameArtist, String nameAlbum, String path) {
         this.id = id;
         this.name = name;

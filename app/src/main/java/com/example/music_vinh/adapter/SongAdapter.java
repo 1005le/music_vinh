@@ -21,16 +21,12 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     Context context;
-    List<Song> songList;
+    ArrayList<Song> songList;
+       //List<Song> songList;
+
     private AdapterView.OnItemClickListener itemClickListener;
 
-    public SongAdapter(Context context, List<Song> songList, AdapterView.OnItemClickListener itemClickListener) {
-        this.context = context;
-        this.songList = songList;
-        this.itemClickListener = itemClickListener;
-    }
-
-    public SongAdapter(Context context, List<Song> songList) {
+    public SongAdapter(Context context, ArrayList<Song> songList) {
         this.context = context;
         this.songList = songList;
     }
@@ -48,9 +44,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
         Song song = songList.get(i);
-      //  Log.d("hello3",songList.get(3).getName());
-//        viewHolder.tvNameSong.setText(song.getName());
-//        viewHolder.tvNameArtist.setText(song.getNameArtist());
+        //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
+        viewHolder.tvNameSong.setText(song.getName());
+        viewHolder.tvNameArtist.setText(song.getNameArtist());
+
     }
 
     @Override
@@ -66,7 +63,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvNameSong = itemView.findViewById(R.id.tvNameSong);
+            tvNameSong = itemView.findViewById(R.id.tvName);
             tvNameArtist = itemView.findViewById(R.id.tvNameArtist);
 
             imgSong = itemView.findViewById(R.id.imgSong);

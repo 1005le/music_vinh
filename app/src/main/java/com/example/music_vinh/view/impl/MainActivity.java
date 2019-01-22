@@ -1,17 +1,21 @@
 package com.example.music_vinh.view.impl;
 
+
+import android.content.ContentResolver;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.widget.TableLayout;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.MainViewAdapter;
 
 public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
+
     ViewPager viewPager;
     DrawerLayout drawerLayout;
     Toolbar toolbarMainActivity;
@@ -28,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private void act() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle("Beauty Music");
-        //  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
     //khai baso cac Tab
     private void initTab() {
@@ -42,9 +46,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(mainViewAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-//        tabLayout.getTabAt(0);
-//        tabLayout.getTabAt(1);
-//        tabLayout.getTabAt(2);
     }
 
     private void init() {
@@ -53,6 +54,4 @@ public class MainActivity extends AppCompatActivity {
         toolbarMainActivity = findViewById(R.id.toolBarMainActivity);
         viewPager = findViewById(R.id.myViewPager);
     }
-
-
 }

@@ -5,6 +5,7 @@ import com.example.music_vinh.interactor.impl.MainInteractorImpl;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.MainView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,16 +17,19 @@ public class MainPresenter implements MainInteractor {
     private MainInteractorImpl mainInteractorImpl;
     private MainView mainView;
 
+
     public MainPresenter(MainView mainView) {
         this.mainView = mainView;
         mainInteractorImpl = new MainInteractorImpl(this);
     }
 
-    public void loadData(){
-        mainInteractorImpl.createData();
-    }
+//    public void loadData(){
+//
+//        mainInteractorImpl.createData();
+//       // mainInteractorImpl.getMusic();
+//    }
     @Override
-    public void onLoadSongSuccess(List<Song> songs) {
+    public void onLoadSongSuccess(ArrayList<Song> songs) {
         mainView.showSong(songs);
     }
 
@@ -33,4 +37,5 @@ public class MainPresenter implements MainInteractor {
     public void onLoadSongFailue(String message) {
 
     }
+
 }
