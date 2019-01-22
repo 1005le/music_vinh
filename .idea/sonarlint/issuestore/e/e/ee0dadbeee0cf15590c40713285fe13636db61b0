@@ -1,5 +1,7 @@
 
-nsquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ºæ»Þøÿÿÿÿ8íŽÛþ†-
-Žsquid:S1319 "pThe type of the "songs" object should be an interface such as "List" rather than the implementation "ArrayList".(“Î‰³8íŽÛþ†-
 ¤squid:S1186%"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(òùÁèüÿÿÿÿ8íŽÛþ†-
-[squid:UselessImportCheck	"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ8âÿÈý†-
+isquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(È“×Î8Å™¡‡-
+Žsquid:S1319 "pThe type of the "songs" object should be an interface such as "List" rather than the implementation "ArrayList".(“Î‰³8½ýÁ˜‡-
+Tsquid:S1068"6Remove this unused "mainInteractorImpl" private field.(¸êçÇ8Å™¡‡-
+nsquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ºæ»Þøÿÿÿÿ8Å™¡‡-
+[squid:UselessImportCheck	"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ8½ýÁ˜‡-

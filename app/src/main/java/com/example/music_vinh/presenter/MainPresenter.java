@@ -2,6 +2,7 @@ package com.example.music_vinh.presenter;
 
 import com.example.music_vinh.interactor.MainInteractor;
 import com.example.music_vinh.interactor.impl.MainInteractorImpl;
+import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.MainView;
 
@@ -30,6 +31,7 @@ public class MainPresenter implements MainInteractor {
 //    }
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
+
         mainView.showSong(songs);
     }
 

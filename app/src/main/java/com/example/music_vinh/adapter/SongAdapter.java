@@ -22,7 +22,8 @@ import java.util.List;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     Context context;
     ArrayList<Song> songList;
-       //List<Song> songList;
+
+    //List<Song> songList;
 
     private AdapterView.OnItemClickListener itemClickListener;
 

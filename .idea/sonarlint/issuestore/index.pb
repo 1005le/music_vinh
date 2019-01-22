@@ -70,3 +70,5 @@ Gapp/src/main/java/com/example/music_vinh/interactor/MainInteractor.java,7\9\79
 Papp/src/main/java/com/example/music_vinh/interactor/impl/MainInteractorImpl.java,e\b\eb1e99b313801688dc10935f4b9be8878bba3c22
 q
 Aapp/src/main/java/com/example/music_vinh/adapter/SongAdapter.java,3\5\35fa7cb80e02b50e1744ff67277b2e0750f64be9
+U
+%app/src/main/res/layout/item_song.xml,0\7\0773f61b8da31680a578dd204a883a7271085dd6

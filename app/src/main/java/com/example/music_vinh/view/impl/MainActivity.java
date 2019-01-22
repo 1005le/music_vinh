@@ -15,7 +15,6 @@ import com.example.music_vinh.adapter.MainViewAdapter;
 
 public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
-
     ViewPager viewPager;
     DrawerLayout drawerLayout;
     Toolbar toolbarMainActivity;
@@ -31,18 +30,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void act() {
         setSupportActionBar(toolbarMainActivity);
-        getSupportActionBar().setTitle("Beauty Music");
+        getSupportActionBar().setTitle(getString(R.string.beauty));
 
     }
-    //khai baso cac Tab
+
+    /**
+     * Khai báo các Tab
+     */
     private void initTab() {
         MainViewAdapter mainViewAdapter = new MainViewAdapter(getSupportFragmentManager());
 
-        mainViewAdapter.addFragment(new SongFragment(),"SONGS");
-        mainViewAdapter.addFragment(new AlbumFragment(),"ALBUMS");
-        mainViewAdapter.addFragment(new ArtistFragment(), "ARTIST");
-        // mainViewAdapter.addFragment(new);
-
+        mainViewAdapter.addFragment(new SongFragment(),getString(R.string.song));
+        mainViewAdapter.addFragment(new AlbumFragment(),getString(R.string.album));
+        mainViewAdapter.addFragment(new ArtistFragment(), getString(R.string.artist));
         viewPager.setAdapter(mainViewAdapter);
         tabLayout.setupWithViewPager(viewPager);
 

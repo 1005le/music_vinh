@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
+import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.view.MainView;
@@ -59,7 +60,6 @@ public class SongFragment extends Fragment implements MainView {
         initPresenter();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                 ActivityCompat.requestPermissions(getActivity(),
@@ -92,31 +92,29 @@ public class SongFragment extends Fragment implements MainView {
     }
 
     private void doStuff() {
-
         songList = new ArrayList<>();
-        getMusic();
+        getMusicSong();
         mainPresenter.onLoadSongSuccess(songList);
     }
-    public void getMusic() {
-
+    public void getMusicSong() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+          //  int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+          //  int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
             do {
                 String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
-                String currentAlbum = songCursor.getString(songAlbum);
-                String currentPath = songCursor.getString(songPath);
+             //   String currentAlbum = songCursor.getString(songAlbum);
+             //   String currentPath = songCursor.getString(songPath);
 
                 songList.add(new Song(currentTitle, currentArtist));
             } while (songCursor.moveToNext());
-
         }}
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

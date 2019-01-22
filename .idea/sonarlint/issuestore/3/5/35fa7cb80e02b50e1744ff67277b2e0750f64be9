@@ -1,8 +1,10 @@
 
-Lsquid:S1068"5Remove this unused "itemClickListener" private field.(¹…Ş
-Bsquid:S1659<"&Declare "imgPause" on a separate line.(¦Şø¥ÿÿÿÿÿ
-.squid:S21768"Rename this class.(Â×Öúÿÿÿÿ
-gsquid:CommentedOutCodeLineG"<This block of commented-out lines of code should be removed.(†Ÿ¶±ùÿÿÿÿ
+nsquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(×å‡£üÿÿÿÿ8¨šÄ˜‡-
+Fsquid:S1659<"*Declare "tvNameArtist" on a separate line.(Â´ıÿÿÿÿ
 gsquid:UselessImportCheck"DRemove this unused import 'android.support.v4.app.FragmentActivity'.(¸­¯D
-Fsquid:S1659:"*Declare "tvNameArtist" on a separate line.(Â´ıÿÿÿÿ
-squid:S1319"sThe type of the "songList" object should be an interface such as "List" rather than the implementation "ArrayList".(ÄÏµC8úæ¹ı†-
+gsquid:CommentedOutCodeLineI"<This block of commented-out lines of code should be removed.(†Ÿ¶±ùÿÿÿÿ
+squid:S1319"sThe type of the "songList" object should be an interface such as "List" rather than the implementation "ArrayList".(ÄÏµC8îÇÄ˜‡-
+Bsquid:S1659>"&Declare "imgPause" on a separate line.(¦Şø¥ÿÿÿÿÿ
+.squid:S2176:"Rename this class.(Â×Öúÿÿÿÿ
+Lsquid:S1068"5Remove this unused "itemClickListener" private field.(¹…Ş
+isquid:CommentedOutCodeLine/"<This block of commented-out lines of code should be removed.(Ôñ®8Ÿ›¥‡-
