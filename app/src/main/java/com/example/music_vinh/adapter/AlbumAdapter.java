@@ -40,7 +40,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         Album album = albumList.get(i);
         viewHolder.tvName.setText(album.getName());
         viewHolder.tvNameArtist.setText(album.getNameArtist());
-        viewHolder.imgAlbum.setImageResource(R.drawable.img_album);
+      //  viewHolder.imgAlbum.setImageResource(R.drawable.img_album);
 
     }
 

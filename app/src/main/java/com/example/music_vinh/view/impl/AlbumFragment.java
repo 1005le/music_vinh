@@ -53,7 +53,9 @@ public class AlbumFragment extends Fragment implements AlbumView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_album, container, false);
+       view = inflater.inflate(R.layout.fragment_album, container, false);
+       albumRecyclerView = view.findViewById(R.id.recycleViewAlbum);
+        return view;
     }
 
     @Override
@@ -77,6 +79,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
             doStuff();
         }
     }
+
     private void initPresenter(){
        albumPresenter = new AlbumPresenter(this);
 
@@ -85,22 +88,18 @@ public class AlbumFragment extends Fragment implements AlbumView {
     public void showAlbum(ArrayList<Album> albums) {
         albumAdapter = new AlbumAdapter(getActivity(),albums);
 
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-//        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
-//        albumRecyclerView.setLayoutManager(gridLayoutManager);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        albumRecyclerView.setLayoutManager(linearLayoutManager);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+        albumRecyclerView.setLayoutManager(gridLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
     }
 
     private void doStuff() {
         albumList = new ArrayList<>();
-        getMusicSong1();
+        getMusicAlbum();
         albumPresenter.onLoadAlbumSuccess(albumList);
     }
-    public void getMusicSong1() {
+    public void getMusicAlbum() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);

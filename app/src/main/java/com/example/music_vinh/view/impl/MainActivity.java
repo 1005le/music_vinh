@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private void act() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
-
     }
 
     /**
@@ -47,11 +46,11 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
     }
-
     private void init() {
         tabLayout = findViewById(R.id.myTabLayout);
         drawerLayout = findViewById(R.id.drawerLayout);
         toolbarMainActivity = findViewById(R.id.toolBarMainActivity);
         viewPager = findViewById(R.id.myViewPager);
     }
+
 }

@@ -1,13 +1,11 @@
 
-ysquid:S3923?"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8¾¥öş†-
+Ksquid:S1199{"-Extract this nested code block into a method.(Éæó•8¶§æş†-
 “squid:S1319U"pThe type of the "songs" object should be an interface such as "List" rather than the implementation "ArrayList".(Íî¯üÿÿÿÿ8¬Ì¿˜‡-
-Nsquid:S1481r"0Remove this unused "currentPath" local variable.(™À«8¸ß›‡-
-]squid:S1854r"?Remove this useless assignment to local variable "currentPath".(™À«8¸ß›‡-
-\"squid:SwitchLastCaseIsDefaultCheck|""Add a default case to this switch.(×ö³–úÿÿÿÿ8¶§æş†-
-]squid:S1854q"@Remove this useless assignment to local variable "currentAlbum".(ÇØŞ=8¸ß›‡-
-nsquid:S1301|"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8¶§æş†-
-:squid:S3626ˆ"Remove this redundant jump.(ûÁİ…8¶§æş†-
-Ksquid:S1199}"-Extract this nested code block into a method.(Éæó•8¶§æş†-
+\"squid:SwitchLastCaseIsDefaultCheckz""Add a default case to this switch.(×ö³–úÿÿÿÿ8¶§æş†-
 nsquid:CommentedOutCodeLineV"<This block of commented-out lines of code should be removed.(ãî…Åÿÿÿÿÿ8Â©¼˜‡-
-osquid:CommentedOutCodeLine†"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ÀÊíş†-
-Nsquid:S1481q"1Remove this unused "currentAlbum" local variable.(ÇØŞ=8¸ß›‡-
+ysquid:S3923?"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8¾¥öş†-
+:squid:S3626†"Remove this redundant jump.(ûÁİ…8¶§æş†-
+osquid:CommentedOutCodeLine„"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ÀÊíş†-
+nsquid:S1301z"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8¶§æş†-
+nsquid:CommentedOutCodeLinej"<This block of commented-out lines of code should be removed.(²ı…ùÿÿÿÿÿ8ÆĞÍ©‡-
+nsquid:CommentedOutCodeLineo"<This block of commented-out lines of code should be removed.(¤ù”Şùÿÿÿÿ8ÆĞÍ©‡-

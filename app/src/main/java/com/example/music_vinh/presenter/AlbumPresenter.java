@@ -14,11 +14,11 @@ public class AlbumPresenter implements AlbumInteractor {
     private AlbumInteractorImpl albumInteractorImpl;
     private AlbumView albumView;
 
-
     public AlbumPresenter(AlbumView albumView) {
         this.albumView = albumView;
         albumInteractorImpl = new AlbumInteractorImpl(this);
     }
+
     @Override
     public void onLoadAlbumSuccess(ArrayList<Album> albums) {
         albumView.showAlbum(albums);

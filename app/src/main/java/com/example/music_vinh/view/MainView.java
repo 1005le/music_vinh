@@ -8,6 +8,4 @@ import java.util.List;
 
 public interface MainView {
      void showSong(ArrayList<Song> songs);
-
-
 }

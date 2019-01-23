@@ -1,0 +1,14 @@
+
+nsquid:CommentedOutCodeLinek"<This block of commented-out lines of code should be removed.(²ý…ùÿÿÿÿÿ8Á©íÅ‡-
+nsquid:S1301|"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8ÔÎÇÅ‡-
+nsquid:CommentedOutCodeLineo"<This block of commented-out lines of code should be removed.(™âÀüÿÿÿÿ8ÔÎÇÅ‡-
+vsquid:UselessImportCheck"LRemove this unused import 'com.example.music_vinh.presenter.AlbumPresenter'.(ä›j8¸ÛÈÅ‡-
+ysquid:S3923A"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8ãÒ¾Å‡-
+isquid:CommentedOutCodeLinei"<This block of commented-out lines of code should be removed.(Á¾÷á8ÔÎÇÅ‡-
+ssquid:UselessImportCheck"HRemove this unused import 'com.example.music_vinh.adapter.AlbumAdapter'.(†íÆ¾8žïßÅ‡-
+osquid:CommentedOutCodeLine†"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ÔÎÇÅ‡-
+:squid:S3626ˆ"Remove this redundant jump.(ûÁÝ…8ÔÎÇÅ‡-
+\"squid:SwitchLastCaseIsDefaultCheck|""Add a default case to this switch.(×ö³–úÿÿÿÿ8ÔÎÇÅ‡-
+Ksquid:S1199}"-Extract this nested code block into a method.(Éæó•8ÔÎÇÅ‡-
+squid:S1319V"rThe type of the "artists" object should be an interface such as "List" rather than the implementation "ArrayList".(¤¿Â8ÔÎÇÅ‡-
+nsquid:CommentedOutCodeLineq"<This block of commented-out lines of code should be removed.(¤ù”Þùÿÿÿÿ8µ¿íÅ‡-
