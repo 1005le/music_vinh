@@ -7,9 +7,9 @@ import com.example.music_vinh.interactor.MainInteractor;
 
 public class AlbumInteractorImpl {
     private AlbumInteractor albumInteractor;
-    Context context;
 
     public AlbumInteractorImpl(AlbumInteractor albumInteractor){
         this.albumInteractor = albumInteractor;
     }
+
 }

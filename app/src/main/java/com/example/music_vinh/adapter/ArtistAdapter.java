@@ -1,6 +1,7 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,8 +38,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
         Artist artist = artistList.get(i);
         viewHolder.tvNameArtist.setText(artist.getName());
-        viewHolder.tvAmountAlbum.setText(artist.getAmountAlbum()+"");
-        viewHolder.tvAmountSong.setText(artist.getAmountSong()+"");
+        viewHolder.tvAmountAlbum.setText(artist.getAmountAlbum()+" albums");
+        viewHolder.tvAmountSong.setText(artist.getAmountSong()+" songs");
+
+//        Drawable img = Drawable.createFromPath(artist.getImages());
+//        viewHolder.imgArtist.setImageDrawable(img);
+
     }
 
     @Override

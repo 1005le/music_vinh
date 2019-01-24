@@ -98,3 +98,15 @@ j
 :app/src/main/java/com/example/music_vinh/model/Artist.java,1\9\191c80529fb8744e37dcee17f2ef942191d7eeae
 s
 Capp/src/main/java/com/example/music_vinh/adapter/ArtistAdapter.java,9\1\913c8295e2e235c16fd4afd2f17c59a1e6c2a711
+[
++app/src/main/res/layout/fragment_artist.xml,9\3\9342682d030aa47b4be1cd365a553e6ea6b8ee39
+Y
+)app/src/main/res/layout/fragment_song.xml,5\2\5259ce3524f53ab3d43bbcecb5c1e462306d27ab
+W
+'app/src/main/res/layout/item_artist.xml,9\1\9199d9fdffd76e59585498d84535ce8a340616de
+
+Oapp/src/main/java/com/example/music_vinh/presenter/impl/AlbumPresenterImpl.java,3\9\3983b524d31a7e13e4bf63fa7205af1b29321c6a
+€
+Papp/src/main/java/com/example/music_vinh/presenter/impl/ArtistPresenterImpl.java,b\0\b0056d052cffdb8f6b4b7ee6430c6f42d7368c1c
+~
+Napp/src/main/java/com/example/music_vinh/presenter/impl/MainPresenterImpl.java,e\8\e89c5fc70e074b81b4fc9f199fa9ebd3ac292939

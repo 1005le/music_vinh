@@ -22,13 +22,11 @@ import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
-import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.presenter.MainPresenter;
+import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +37,7 @@ public class SongFragment extends Fragment implements MainView {
     SongAdapter songAdapter;
     ArrayList<Song> songList;
    //Presenter
-    private MainPresenter mainPresenter;
+    private MainPresenterImpl mainPresenter;
     private static final int MY_PERMISSION_REQUEST = 1;
 
     public SongFragment() {
@@ -77,7 +75,7 @@ public class SongFragment extends Fragment implements MainView {
     }
 
     private void initPresenter(){
-        mainPresenter = new MainPresenter(this);
+        mainPresenter = new MainPresenterImpl(this);
 
      }
 
@@ -103,13 +101,13 @@ public class SongFragment extends Fragment implements MainView {
         if (songCursor != null && songCursor.moveToFirst()) {
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-          //  int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-          //  int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+        //    int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+          // int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
             do {
                 String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
              //   String currentAlbum = songCursor.getString(songAlbum);
-             //   String currentPath = songCursor.getString(songPath);
+            //    String currentPath = songCursor.getString(songPath);
 
                 songList.add(new Song(currentTitle, currentArtist));
             } while (songCursor.moveToNext());

@@ -1,16 +1,15 @@
 
-gsquid:UselessImportCheck"<Remove this unused import 'android.content.ContentResolver'.(½Àô“8¶Ş”‡-
 ]squid:UselessImportCheck"-Remove this unused import 'android.Manifest'.(¦øïúÿÿÿÿ8º½åş†-
-asquid:UselessImportCheck"1Remove this unused import 'android.widget.Toast'.(©›ïÍúÿÿÿÿ8º½åş†-
-\squid:UselessImportCheck"1Remove this unused import 'android.app.Activity'.(‡ÊÍÆ8º½åş†-
-dsquid:UselessImportCheck"4Remove this unused import 'android.database.Cursor'.(Ôäåúÿÿÿÿ8¶Ş”‡-
-nsquid:CommentedOutCodeLine%"<This block of commented-out lines of code should be removed.(°õ²Îÿÿÿÿÿ8¦ñ‡-
-isquid:UselessImportCheck"?Remove this unused import 'android.support.annotation.NonNull'.(¼Åß8º½åş†-
-nsquid:UselessImportCheck">Remove this unused import 'android.content.pm.PackageManager'.(€®¥õÿÿÿÿÿ8º½åş†-
 csquid:UselessImportCheck
 "8Remove this unused import 'android.provider.MediaStore'.(ãçšş8¶Ş”‡-
-\squid:UselessImportCheck	",Remove this unused import 'android.net.Uri'.(òêû‘ıÿÿÿÿ8¶Ş”‡-
-psquid:UselessImportCheck"ERemove this unused import 'android.support.v4.content.ContextCompat'.(¹†Ç8º½åş†-
 usquid:UselessImportCheck"ERemove this unused import 'android.support.v7.app.AppCompatActivity'.(«Û®ûüÿÿÿÿ8«ŞÆş†-
+dsquid:UselessImportCheck"4Remove this unused import 'android.database.Cursor'.(Ôäåúÿÿÿÿ8¶Ş”‡-
+\squid:UselessImportCheck"1Remove this unused import 'android.app.Activity'.(‡ÊÍÆ8º½åş†-
+\squid:UselessImportCheck	",Remove this unused import 'android.net.Uri'.(òêû‘ıÿÿÿÿ8¶Ş”‡-
+asquid:UselessImportCheck"1Remove this unused import 'android.widget.Toast'.(©›ïÍúÿÿÿÿ8º½åş†-
 zsquid:UselessImportCheck"JRemove this unused import 'android.support.v7.widget.LinearLayoutManager'.(í™½Úúÿÿÿÿ8º½åş†-
-Usquid:S1068"2Remove this unused "mainInteractor" private field.( ğ§Ëúÿÿÿÿ8¦ñ‡-
+nsquid:UselessImportCheck">Remove this unused import 'android.content.pm.PackageManager'.(€®¥õÿÿÿÿÿ8º½åş†-
+psquid:UselessImportCheck"ERemove this unused import 'android.support.v4.content.ContextCompat'.(¹†Ç8º½åş†-
+isquid:UselessImportCheck"?Remove this unused import 'android.support.annotation.NonNull'.(¼Åß8º½åş†-
+[squid:UselessImportCheck"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ8šâ°î‡-
+gsquid:UselessImportCheck"<Remove this unused import 'android.content.ContentResolver'.(½Àô“8¶Ş”‡-

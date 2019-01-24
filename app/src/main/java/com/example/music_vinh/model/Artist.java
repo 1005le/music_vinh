@@ -5,20 +5,30 @@ public class Artist {
     private String name;
     private int amountAlbum;
     private int amountSong;
+    private String images;
 
-    public Artist(String name, int amountAlbum, int amountSong) {
+    public Artist(String name, int amountAlbum, int amountSong, String images) {
         this.name = name;
         this.amountAlbum = amountAlbum;
         this.amountSong = amountSong;
+        this.images = images;
     }
 
-    public Artist(String id, String name, int amountAlbum, int amountSong) {
+    public Artist(String id, String name, int amountAlbum, int amountSong, String images) {
         this.id = id;
         this.name = name;
         this.amountAlbum = amountAlbum;
         this.amountSong = amountSong;
+        this.images = images;
     }
 
+    public String getImages() {
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
+    }
 
     public String getId() {
         return id;

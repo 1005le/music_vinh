@@ -21,12 +21,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.music_vinh.R;
-import com.example.music_vinh.adapter.AlbumAdapter;
 import com.example.music_vinh.adapter.ArtistAdapter;
-import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
-import com.example.music_vinh.presenter.AlbumPresenter;
-import com.example.music_vinh.presenter.ArtistPresenter;
+import com.example.music_vinh.presenter.impl.ArtistPresenterImpl;
 import com.example.music_vinh.view.ArtistView;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     View view;
     RecyclerView artistRecyclerView;
-    private ArtistPresenter artistPresenter;
+    private ArtistPresenterImpl artistPresenter;
     ArtistAdapter artistAdapter;
     ArrayList<Artist> artistList;
     private static final int MY_PERMISSION_REQUEST = 1;
@@ -79,7 +76,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
     }
 
     private void initPresenter(){
-        artistPresenter = new ArtistPresenter(this);
+        artistPresenter = new ArtistPresenterImpl(this);
 
     }
     @Override
@@ -87,7 +84,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         artistAdapter = new ArtistAdapter(getActivity(),artists);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+      //  gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         artistRecyclerView.setLayoutManager(gridLayoutManager);
         artistRecyclerView.setAdapter(artistAdapter);
     }
@@ -99,21 +96,22 @@ public class ArtistFragment extends Fragment implements ArtistView {
     }
     public void getMusicAlbum() {
         ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Uri songUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
-            //  int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-          //  int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            //int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            //  int songImg = songCursor.getColumnIndex(MediaStore.Audio.Media.)
+            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST);
+          //  int amountAlbum = songCursor.getColumnIndex(MediaStore.Audio.Artists.Albums.NUMBER_OF_SONGS);
+           // int amountSong = songCursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS_FOR_ARTIST);
+            int imgArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART);
             do {
                 // String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
-             //   String currentAlbum = songCursor.getString(songAlbum);
-                //     String currentPath = songCursor.getString(songPath);
+               // String currentAmountAlbum = songCursor.getString(amountAlbum);
+              //  String currentAmountSong = songCursor.getString(amountSong);
+         //        String currentImgArtist = songCursor.getString(imgArtist);
+                artistList.add(new Artist(currentArtist, 0,
+                       0,""));
 
-                artistList.add(new Artist(currentArtist, 1,2));
             } while (songCursor.moveToNext());
         }}
 

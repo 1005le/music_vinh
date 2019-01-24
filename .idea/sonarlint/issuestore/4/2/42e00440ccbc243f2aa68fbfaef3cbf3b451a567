@@ -1,17 +1,10 @@
 
-isquid:CommentedOutCodeLinek"<This block of commented-out lines of code should be removed.(Á¾÷á8´µâ¨‡-
-:squid:S3626Š"Remove this redundant jump.(ûÁİ…8ğßÿ§‡-
-nsquid:CommentedOutCodeLineq"<This block of commented-out lines of code should be removed.(™âÀüÿÿÿÿ8Íøâ¨‡-
-qsquid:UselessImportCheck "ARemove this unused import 'com.example.music_vinh.view.MainView'.(ßÖ€•üÿÿÿÿ8¥‚Á©‡-
-Ksquid:S1199"-Extract this nested code block into a method.(Éæó•8ğßÿ§‡-
-rsquid:UselessImportCheck"GRemove this unused import 'com.example.music_vinh.adapter.SongAdapter'.(©§üä8ù°™©‡-
-osquid:CommentedOutCodeLineˆ"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ğßÿ§‡-
-ysquid:S3923C"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8ª¯ş§‡-
-\"squid:SwitchLastCaseIsDefaultCheck~""Add a default case to this switch.(×ö³–úÿÿÿÿ8ğßÿ§‡-
-{squid:UselessImportCheck"KRemove this unused import 'com.example.music_vinh.presenter.MainPresenter'.(«·¯³üÿÿÿÿ8–±Ä©‡-
-hsquid:CommentedOutCodeLinen"<This block of commented-out lines of code should be removed.(Õ·J8ÀÚÎ©‡-
-nsquid:S1301~"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8ğßÿ§‡-
-nsquid:CommentedOutCodeLinet"<This block of commented-out lines of code should be removed.(ôÙÅœüÿÿÿÿ8ÀÚÎ©‡-
-hsquid:UselessImportCheck">Remove this unused import 'com.example.music_vinh.model.Song'.(“¥ã28ïÀÅ©‡-
-squid:S1319X"qThe type of the "albums" object should be an interface such as "List" rather than the implementation "ArrayList".(ñè¶…8©Ò¨‡-
-zsquid:UselessImportCheck"JRemove this unused import 'android.support.v7.widget.LinearLayoutManager'.(í™½Úúÿÿÿÿ8ğŞ­Å‡-
+nsquid:CommentedOutCodeLinem"<This block of commented-out lines of code should be removed.(™âÀüÿÿÿÿ8Íøâ¨‡-
+\"squid:SwitchLastCaseIsDefaultCheckz""Add a default case to this switch.(×ö³–úÿÿÿÿ8ğßÿ§‡-
+nsquid:S1301z"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8ğßÿ§‡-
+ysquid:S3923>"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8ª¯ş§‡-
+isquid:CommentedOutCodeLineg"<This block of commented-out lines of code should be removed.(Á¾÷á8´µâ¨‡-
+squid:S1319S"qThe type of the "albums" object should be an interface such as "List" rather than the implementation "ArrayList".(ñè¶…8©Ò¨‡-
+Ksquid:S1199{"-Extract this nested code block into a method.(Éæó•8ğßÿ§‡-
+:squid:S3626†"Remove this redundant jump.(ûÁİ…8ğßÿ§‡-
+osquid:CommentedOutCodeLine„"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ğßÿ§‡-

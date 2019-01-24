@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +22,9 @@ import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.AlbumAdapter;
-import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.model.Album;
-import com.example.music_vinh.model.Song;
-import com.example.music_vinh.presenter.AlbumPresenter;
-import com.example.music_vinh.presenter.MainPresenter;
+import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
 import com.example.music_vinh.view.AlbumView;
-import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
 
@@ -40,7 +35,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
      View view;
      RecyclerView albumRecyclerView;
-     private AlbumPresenter albumPresenter;
+     private AlbumPresenterImpl albumPresenter;
      AlbumAdapter albumAdapter;
      ArrayList<Album> albumList;
 
@@ -81,7 +76,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
 
     private void initPresenter(){
-       albumPresenter = new AlbumPresenter(this);
+       albumPresenter = new AlbumPresenterImpl(this);
 
     }
     @Override
@@ -89,9 +84,10 @@ public class AlbumFragment extends Fragment implements AlbumView {
         albumAdapter = new AlbumAdapter(getActivity(),albums);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+       // gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         albumRecyclerView.setLayoutManager(gridLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
+
     }
 
     private void doStuff() {
@@ -101,21 +97,22 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
     public void getMusicAlbum() {
         ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Uri songUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
           //  int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            //int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
+            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
+            int imgAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
           //  int songImg = songCursor.getColumnIndex(MediaStore.Audio.Media.)
             do {
                // String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
                 String currentAlbum = songCursor.getString(songAlbum);
-           //     String currentPath = songCursor.getString(songPath);
+                String currentImages = songCursor.getString(imgAlbum);
 
-                albumList.add(new Album(currentAlbum, currentArtist,""));
+                albumList.add(new Album(currentAlbum,currentArtist,currentImages));
             } while (songCursor.moveToNext());
         }}
 

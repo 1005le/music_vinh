@@ -34,13 +34,9 @@ public class MainInteractorImpl {
     }
 
     //Xu ly tao du lieu, gia lap
-//    public void createData(){
-//      ArrayList<Song> songs = new ArrayList<>();
-//        for( int i= 0;i <5;i++){
-//            Song song = new Song("Vung La Me Bay "+i+"","Nhu Quynh");
-//            songs.add(song);
-//        }
-//        mainInteractor.onLoadSongSuccess(songs);
-//    }
+    public void createData(){
+      ArrayList<Song> songs = new ArrayList<>();
+        mainInteractor.onLoadSongSuccess(songs);
+    }
 
 }

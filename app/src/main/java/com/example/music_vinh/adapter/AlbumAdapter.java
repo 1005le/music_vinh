@@ -1,6 +1,9 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
@@ -40,7 +44,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         Album album = albumList.get(i);
         viewHolder.tvName.setText(album.getName());
         viewHolder.tvNameArtist.setText(album.getNameArtist());
-      //  viewHolder.imgAlbum.setImageResource(R.drawable.img_album);
+
+        Drawable img = Drawable.createFromPath(album.getImages());
+        //ImageView coverAlbum=(ImageView)view.findViewById(R.id.album_cover);
+        viewHolder.imgAlbum.setImageDrawable(img);
+
 
     }
 
