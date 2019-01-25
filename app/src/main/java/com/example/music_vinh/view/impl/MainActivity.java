@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private void act() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -57,33 +57,35 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         toolbarMainActivity = findViewById(R.id.toolBarMainActivity);
         viewPager = findViewById(R.id.myViewPager);
-
     }
 
     /**
      * khoi tao search
      */
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_view, menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_search);
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu) {
+        getMenuInflater().inflate( R.menu.search_view, menu);
 
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setMaxWidth(Integer.MAX_VALUE);
-
+        MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
+        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-              //  Log.d("AAB",query);
-               // searchTuKhoaTuDien(query);
-                return true;
-
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                if (TextUtils.isEmpty(newText)) {
+//                    adapter.filter("");
+//                    listView.clearTextFilter();
+                } else {
+                   // adapter.filter(newText);
+                }
+                return true;
             }
         });
 
+        return true;
     }
 }

@@ -1,11 +1,14 @@
 
-nsquid:S1301y"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8ÔÎÇÅ‡-
+nsquid:CommentedOutCodeLineg"<This block of commented-out lines of code should be removed.(ÕçÕúÿÿÿÿ8—˜Áø‡-
+osquid:CommentedOutCodeLine„"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ÂÕ®÷‡-
+Ksquid:S1199{"-Extract this nested code block into a method.(Éæó•8ÂÕ®÷‡-
+nsquid:S1301z"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8ÂÕ®÷‡-
+:squid:S3626†"Remove this redundant jump.(ûÁİ…8ÂÕ®÷‡-
 ysquid:S3923>"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8ãÒ¾Å‡-
-:squid:S3626…"Remove this redundant jump.(ûÁİ…8ÔÎÇÅ‡-
-nsquid:CommentedOutCodeLinen"<This block of commented-out lines of code should be removed.(¤ù”Şùÿÿÿÿ8µ¿íÅ‡-
-isquid:CommentedOutCodeLinef"<This block of commented-out lines of code should be removed.(Á¾÷á8ÔÎÇÅ‡-
-Ksquid:S1199z"-Extract this nested code block into a method.(Éæó•8ÔÎÇÅ‡-
-osquid:CommentedOutCodeLineƒ"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ÔÎÇÅ‡-
-nsquid:CommentedOutCodeLinel"<This block of commented-out lines of code should be removed.(™âÀüÿÿÿÿ8ÔÎÇÅ‡-
-\"squid:SwitchLastCaseIsDefaultChecky""Add a default case to this switch.(×ö³–úÿÿÿÿ8ÔÎÇÅ‡-
+Qsquid:S1481i".Remove this unused "imgArtist" local variable.(êøÆüÿÿÿÿ8ôœÆø‡-
+hsquid:CommentedOutCodeLineW"<This block of commented-out lines of code should be removed.(£¼ö+8‘ÒÚô‡-
+nsquid:CommentedOutCodeLinek"<This block of commented-out lines of code should be removed.(™âÀüÿÿÿÿ8ÂÕ®÷‡-
+\"squid:SwitchLastCaseIsDefaultCheckz""Add a default case to this switch.(×ö³–úÿÿÿÿ8ÂÕ®÷‡-
+isquid:CommentedOutCodeLinem"<This block of commented-out lines of code should be removed.(•ªè™8Ä°Áø‡-
 squid:S1319S"rThe type of the "artists" object should be an interface such as "List" rather than the implementation "ArrayList".(¤¿Â8ÔÎÇÅ‡-
+`squid:S1854i"=Remove this useless assignment to local variable "imgArtist".(êøÆüÿÿÿÿ8ôœÆø‡-

@@ -110,3 +110,5 @@ Oapp/src/main/java/com/example/music_vinh/presenter/impl/AlbumPresenterImpl.java
 Papp/src/main/java/com/example/music_vinh/presenter/impl/ArtistPresenterImpl.java,b\0\b0056d052cffdb8f6b4b7ee6430c6f42d7368c1c
 ~
 Napp/src/main/java/com/example/music_vinh/presenter/impl/MainPresenterImpl.java,e\8\e89c5fc70e074b81b4fc9f199fa9ebd3ac292939
+U
+%app/src/main/res/menu/search_view.xml,3\a\3a5d1c7800a0c80f1059723f0f572af9d3892fc8
