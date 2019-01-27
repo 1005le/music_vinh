@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.music_vinh.view.impl.AlbumInfoActivity">
+
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="650dp"
+    android:id="@+id/coordinator">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            app:expandedTitleGravity="center|bottom"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:expandedTitleMarginBottom="33dp"
+            android:background="@mipmap/ic_launcher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.Toolbar
+                app:popupTheme="@style/Theme.AppCompat.Light"
+                android:id="@+id/toolbarDanhSach"
+                app:layout_collapseMode="pin"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+            </android.support.v7.widget.Toolbar>
+
+            <ImageView
+                android:background="#E9E5E5"
+                android:id="@+id/imgAlbumInfo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/imgIconAlbum"
+                    android:background="#00BCD4"
+                    android:scaleType="fitXY"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
+                <TextView
+                    android:id="@+id/tvNameAlbumInfo"
+                    android:text="Name Artist"
+                    android:textSize="14sp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_below="@+id/tvNameAlbumInfo"
+                    android:id="@+id/tvamountSongA"
+                    android:text="2 songs"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_below="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="15dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@+id/view"
+            android:id="@+id/recyclerViewListSong"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>
+
+    <include layout="@layout/content_bottom"/>
+
+</RelativeLayout>

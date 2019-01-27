@@ -1,25 +1,42 @@
 package com.example.music_vinh.model;
 
-public class Album {
-    private String id;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class Album implements Serializable {
+    private Long id;
     private String name;
     private String nameArtist;
     private String images;
+    private int amountSong;
 
-    public Album(String id, String name, String nameArtist, String images) {
+    public Album(Long id, String name, String nameArtist, String images,int amountSong) {
         this.id = id;
         this.name = name;
         this.nameArtist = nameArtist;
         this.images = images;
+        this.amountSong = amountSong;
     }
 
-    public Album(String name, String nameArtist, String images) {
+    public Album(String name, String nameArtist, String images, int amountSong) {
         this.name = name;
         this.nameArtist = nameArtist;
         this.images = images;
+        this.amountSong = amountSong;
     }
 
-    public void setId(String id) {
+    public int getAmountSong() {
+        return amountSong;
+    }
+    public void setAmountSong(int amountSong) {
+        this.amountSong = amountSong;
+    }
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
         this.id = id;
     }
 

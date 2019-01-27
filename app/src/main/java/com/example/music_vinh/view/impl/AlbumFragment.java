@@ -56,6 +56,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         initPresenter();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -70,14 +71,12 @@ public class AlbumFragment extends Fragment implements AlbumView {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
             }
         } else {
-
             doStuff();
         }
     }
 
     private void initPresenter(){
        albumPresenter = new AlbumPresenterImpl(this);
-
     }
     @Override
     public void showAlbum(ArrayList<Album> albums) {
@@ -92,34 +91,36 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     private void doStuff() {
         albumList = new ArrayList<>();
-        getMusicAlbum();
+        getAlbum();
         albumPresenter.onLoadAlbumSuccess(albumList);
     }
-    public void getMusicAlbum() {
+    public void getAlbum() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
-          //  int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
+            int idAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums._ID);
             int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
+            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
             int imgAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
-          //  int songImg = songCursor.getColumnIndex(MediaStore.Audio.Media.)
+            int amountSong = songCursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS);
             do {
-               // String currentTitle = songCursor.getString(songTitle);
-                String currentArtist = songCursor.getString(songArtist);
+                String currentId = songCursor.getString(idAlbum);
                 String currentAlbum = songCursor.getString(songAlbum);
+                String currentArtist = songCursor.getString(songArtist);
                 String currentImages = songCursor.getString(imgAlbum);
+                String currentamountSong = songCursor.getString(amountSong);
 
-                albumList.add(new Album(currentAlbum,currentArtist,currentImages));
+                albumList.add(new Album(Long.parseLong(currentId),currentAlbum,currentArtist,
+                        currentImages,Integer.parseInt(currentamountSong)));
+
             } while (songCursor.moveToNext());
         }}
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         switch (requestCode) {
             case MY_PERMISSION_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -135,10 +136,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
                 return;
 
             }
-
         }
-
     }
-
-
 }

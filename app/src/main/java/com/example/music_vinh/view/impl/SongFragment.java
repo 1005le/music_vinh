@@ -83,6 +83,7 @@ public class SongFragment extends Fragment implements MainView {
     public void showSong(ArrayList<Song>songs) {
         // songs = new ArrayList<>();
         songAdapter = new SongAdapter(getActivity(),songs);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         songRecyclerView.setLayoutManager(linearLayoutManager);
@@ -99,17 +100,21 @@ public class SongFragment extends Fragment implements MainView {
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
+            int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-        //    int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-          // int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+             int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+             int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             do {
+                String currentId = songCursor.getString(songId);
                 String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
-             //   String currentAlbum = songCursor.getString(songAlbum);
-            //    String currentPath = songCursor.getString(songPath);
+                String currentAlbum = songCursor.getString(songAlbum);
+                String currentPath = songCursor.getString(songPath);
+                String currentDuration = songCursor.getString(songDuration);
 
-                songList.add(new Song(currentTitle, currentArtist));
+                songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,"",currentDuration));
             } while (songCursor.moveToNext());
         }}
 

@@ -19,14 +19,13 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
         this.albumView = albumView;
         albumInteractorImpl = new AlbumInteractorImpl(this);
     }
-
     @Override
     public void onLoadAlbumSuccess(ArrayList<Album> albums) {
         albumView.showAlbum(albums);
     }
-
     @Override
     public void loadAlbums() {
-
+        albumInteractorImpl.createAlbum();
     }
+
 }

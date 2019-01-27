@@ -1,15 +1,0 @@
-
-\squid:UselessImportCheck"1Remove this unused import 'android.app.Activity'.(‡ÊÍÆ8º½åş†-
-dsquid:UselessImportCheck"4Remove this unused import 'android.database.Cursor'.(Ôäåúÿÿÿÿ8¶Ş”‡-
-nsquid:UselessImportCheck">Remove this unused import 'android.content.pm.PackageManager'.(€®¥õÿÿÿÿÿ8º½åş†-
-]squid:UselessImportCheck"-Remove this unused import 'android.Manifest'.(¦øïúÿÿÿÿ8º½åş†-
-\squid:UselessImportCheck	",Remove this unused import 'android.net.Uri'.(òêû‘ıÿÿÿÿ8¶Ş”‡-
-gsquid:UselessImportCheck"<Remove this unused import 'android.content.ContentResolver'.(½Àô“8¶Ş”‡-
-usquid:UselessImportCheck"ERemove this unused import 'android.support.v7.app.AppCompatActivity'.(«Û®ûüÿÿÿÿ8«ŞÆş†-
-csquid:UselessImportCheck
-"8Remove this unused import 'android.provider.MediaStore'.(ãçšş8¶Ş”‡-
-zsquid:UselessImportCheck"JRemove this unused import 'android.support.v7.widget.LinearLayoutManager'.(í™½Úúÿÿÿÿ8º½åş†-
-[squid:UselessImportCheck"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ8šâ°î‡-
-psquid:UselessImportCheck"ERemove this unused import 'android.support.v4.content.ContextCompat'.(¹†Ç8º½åş†-
-isquid:UselessImportCheck"?Remove this unused import 'android.support.annotation.NonNull'.(¼Åß8º½åş†-
-asquid:UselessImportCheck"1Remove this unused import 'android.widget.Toast'.(©›ïÍúÿÿÿÿ8º½åş†-

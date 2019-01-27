@@ -33,7 +33,7 @@ public class MainInteractorImpl {
         this.mainInteractor = mainInteractor;
     }
 
-    //Xu ly tao du lieu, gia lap
+
     public void createData(){
       ArrayList<Song> songs = new ArrayList<>();
         mainInteractor.onLoadSongSuccess(songs);

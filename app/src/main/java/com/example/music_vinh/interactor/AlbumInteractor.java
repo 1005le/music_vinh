@@ -6,4 +6,5 @@ import java.util.ArrayList;
 
 public interface AlbumInteractor {
     void onLoadAlbumSuccess(ArrayList<Album> albums);
+
 }

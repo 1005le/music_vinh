@@ -2,31 +2,28 @@ package com.example.music_vinh.model;
 
 import java.io.Serializable;
 
-public class Song {
-    private String id;
+public class Song implements Serializable{
+    private Long id;
     private String name;
     private String nameArtist;
     private String nameAlbum;
     private String path;
+    private String duration;
 
-    public Song(String name, String nameArtist) {
-        this.name = name;
-        this.nameArtist = nameArtist;
-    }
-
-    public Song(String id, String name, String nameArtist, String nameAlbum, String path) {
+    public Song(Long id, String name, String nameArtist, String nameAlbum, String path,String duration) {
         this.id = id;
         this.name = name;
         this.nameArtist = nameArtist;
         this.nameAlbum = nameAlbum;
         this.path = path;
+        this.duration = duration;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

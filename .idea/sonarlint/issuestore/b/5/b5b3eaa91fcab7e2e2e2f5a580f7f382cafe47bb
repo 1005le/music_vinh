@@ -1,11 +1,0 @@
-
-\"squid:SwitchLastCaseIsDefaultCheckx""Add a default case to this switch.(×ö³–úÿÿÿÿ8¶§æþ†-
-“squid:S1319S"pThe type of the "songs" object should be an interface such as "List" rather than the implementation "ArrayList".(ÍîŽ¯üÿÿÿÿ8¬Ì¿˜‡-
-nsquid:S1301x"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8¶§æþ†-
-nsquid:CommentedOutCodeLineT"<This block of commented-out lines of code should be removed.(ãî…Åÿÿÿÿÿ8Â©¼˜‡-
-osquid:CommentedOutCodeLine‚"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ÀÊíþ†-
-nsquid:CommentedOutCodeLineh"<This block of commented-out lines of code should be removed.(²ý…ùÿÿÿÿÿ8¹ëýî‡-
-:squid:S3626„"Remove this redundant jump.(ûÁÝ…8¶§æþ†-
-ysquid:S3923="[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8¾¥öþ†-
-Ksquid:S1199y"-Extract this nested code block into a method.(Éæó•8¶§æþ†-
-nsquid:CommentedOutCodeLinem"<This block of commented-out lines of code should be removed.(¤ù”Þùÿÿÿÿ8ÆÐÍ©‡-

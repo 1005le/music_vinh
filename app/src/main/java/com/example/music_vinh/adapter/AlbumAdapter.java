@@ -1,11 +1,9 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +13,8 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
-import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.impl.AlbumInfoActivity;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
@@ -46,9 +43,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         viewHolder.tvNameArtist.setText(album.getNameArtist());
 
         Drawable img = Drawable.createFromPath(album.getImages());
-        //ImageView coverAlbum=(ImageView)view.findViewById(R.id.album_cover);
         viewHolder.imgAlbum.setImageDrawable(img);
-
 
     }
 
@@ -70,7 +65,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             tvName = itemView.findViewById(R.id.tvNameAlbum);
             tvNameArtist = itemView.findViewById(R.id.tvNameArtist_A);
 
-
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, AlbumInfoActivity.class);
+                    intent.putExtra("albumArrayList",albumList.get(getPosition()));
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }

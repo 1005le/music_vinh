@@ -1,11 +1,0 @@
-
-isquid:CommentedOutCodeLineh"<This block of commented-out lines of code should be removed.(Á¾÷á8´µâ¨‡-
-nsquid:CommentedOutCodeLinen"<This block of commented-out lines of code should be removed.(™âÀüÿÿÿÿ8Íøâ¨‡-
-osquid:CommentedOutCodeLine…"<This block of commented-out lines of code should be removed.(Àµ®ãüÿÿÿÿ8ğßÿ§‡-
-\"squid:SwitchLastCaseIsDefaultCheck{""Add a default case to this switch.(×ö³–úÿÿÿÿ8ğßÿ§‡-
-:squid:S3626‡"Remove this redundant jump.(ûÁİ…8ğßÿ§‡-
-hsquid:CommentedOutCodeLineW"<This block of commented-out lines of code should be removed.(£¼ö+8¯öØô‡-
-ysquid:S3923>"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ñìîú8ª¯ş§‡-
-nsquid:S1301{"KReplace this "switch" statement by "if" statements to increase readability.(×ö³–úÿÿÿÿ8ğßÿ§‡-
-squid:S1319S"qThe type of the "albums" object should be an interface such as "List" rather than the implementation "ArrayList".(ñè¶…8©Ò¨‡-
-Ksquid:S1199|"-Extract this nested code block into a method.(Éæó•8ğßÿ§‡-

@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.music_vinh">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".view.impl.AlbumInfoActivity"></activity>
         <activity android:name=".view.impl.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

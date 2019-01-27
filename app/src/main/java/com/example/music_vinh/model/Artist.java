@@ -1,7 +1,9 @@
 package com.example.music_vinh.model;
 
-public class Artist {
-    private String id;
+import java.io.Serializable;
+
+public class Artist implements Serializable {
+    private Long id;
     private String name;
     private int amountAlbum;
     private int amountSong;
@@ -14,7 +16,7 @@ public class Artist {
         this.images = images;
     }
 
-    public Artist(String id, String name, int amountAlbum, int amountSong, String images) {
+    public Artist(Long id, String name, int amountAlbum, int amountSong, String images) {
         this.id = id;
         this.name = name;
         this.amountAlbum = amountAlbum;
@@ -30,11 +32,11 @@ public class Artist {
         this.images = images;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

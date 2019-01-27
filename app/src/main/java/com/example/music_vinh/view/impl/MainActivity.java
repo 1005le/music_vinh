@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         initTab();
         act();
     }
-
     private void act() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (TextUtils.isEmpty(newText)) {

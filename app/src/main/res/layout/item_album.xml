@@ -9,42 +9,28 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imgArtist"
+        android:id="@+id/imgAlbum"
         android:background="#00BCD4"
         android:scaleType="fitXY"
         android:layout_width="180dp"
         android:layout_height="180dp" />
     <TextView
-        android:id="@+id/tvNameArtist"
+        android:id="@+id/tvNameAlbum"
         android:text="Name Artist"
         android:textSize="16sp"
         android:layout_marginTop="40dp"
         android:layout_marginLeft="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_below="@+id/tvNameArtist"
-        android:layout_width="180dp"
-        android:layout_marginLeft="20dp"
-        android:layout_height="wrap_content">
+
         <TextView
-            android:id="@+id/tvAmountAlbum"
+            android:layout_below="@+id/tvNameAlbum"
+            android:id="@+id/tvNameArtist_A"
             android:text="2 album"
-            android:textSize="14sp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <TextView
-            android:text="|"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/tvAmountSong"
-            android:textSize="14sp"
-            android:text="2 song"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
 
 </RelativeLayout>

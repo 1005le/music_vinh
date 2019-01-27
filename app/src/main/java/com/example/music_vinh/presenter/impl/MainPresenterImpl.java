@@ -23,11 +23,7 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
         this.mainView = mainView;
         mainInteractorImpl = new MainInteractorImpl(this);
     }
-//    public void loadData(){
-//
-//        mainInteractorImpl.createData();
-//       // mainInteractorImpl.getMusic();
-//    }
+
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
         mainView.showSong(songs);
@@ -39,6 +35,6 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
 
     @Override
     public void loadData() {
-
+        mainInteractorImpl.createData();
     }
 }
