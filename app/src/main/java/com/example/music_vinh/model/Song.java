@@ -8,14 +8,28 @@ public class Song implements Serializable{
     private String nameArtist;
     private String nameAlbum;
     private String path;
-    private String duration;
+    private Long duration;
 
-    public Song(Long id, String name, String nameArtist, String nameAlbum, String path,String duration) {
+    public Song(Long id, String name, String nameArtist, String nameAlbum) {
+        this.id = id;
+        this.name = name;
+        this.nameArtist = nameArtist;
+        this.nameAlbum = nameAlbum;
+    }
+
+    public Song(Long id, String name, String nameArtist, String nameAlbum, String path, Long duration) {
         this.id = id;
         this.name = name;
         this.nameArtist = nameArtist;
         this.nameAlbum = nameAlbum;
         this.path = path;
+        this.duration = duration;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 

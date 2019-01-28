@@ -1,6 +1,7 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Artist;
+import com.example.music_vinh.view.impl.AlbumInfoActivity;
+import com.example.music_vinh.view.impl.ArtistInfoActivity;
 
 import java.util.ArrayList;
 
@@ -41,8 +44,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         viewHolder.tvAmountAlbum.setText(artist.getAmountAlbum()+" albums");
         viewHolder.tvAmountSong.setText(artist.getAmountSong()+" songs");
 
-//        Drawable img = Drawable.createFromPath(artist.getImages());
-//        viewHolder.imgArtist.setImageDrawable(img);
+        Drawable img = Drawable.createFromPath(artist.getImages());
+        viewHolder.imgArtist.setImageDrawable(img);
 
     }
 
@@ -62,6 +65,15 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             tvNameArtist = itemView.findViewById(R.id.tvNameArtist);
             tvAmountAlbum = itemView.findViewById(R.id.tvAmountAlbum);
             tvAmountSong = itemView.findViewById(R.id.tvAmountSong);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ArtistInfoActivity.class);
+                    intent.putExtra("artistArrayList",artistList.get(getPosition()));
+                    context.startActivity(intent);
+                }
+            });
 
         }
     }

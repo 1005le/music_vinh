@@ -16,7 +16,7 @@ public class Artist implements Serializable {
         this.images = images;
     }
 
-    public Artist(Long id, String name, int amountAlbum, int amountSong, String images) {
+    public Artist(Long id, String name,int amountAlbum, int amountSong, String images) {
         this.id = id;
         this.name = name;
         this.amountAlbum = amountAlbum;

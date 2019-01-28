@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
     }
-
     /**
      * Khai báo các Tab
      */

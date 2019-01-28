@@ -7,8 +7,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:id="@+id/imgSong"
-        android:src="@drawable/ic_song"
+        android:id="@+id/imgIconSong"
+        android:src="@drawable/ic_song_artist"
         android:scaleType="fitXY"
         android:layout_width="60dp"
         android:layout_height="60dp" />
@@ -16,12 +16,12 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_toRightOf="@+id/imgSong"
+        android:layout_toRightOf="@+id/imgIconSong"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/tvNameSongInArtist"
             android:textSize="16sp"
             android:text="Hello"
             android:layout_width="match_parent"

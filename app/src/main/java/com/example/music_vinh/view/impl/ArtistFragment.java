@@ -91,26 +91,31 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     private void doStuff() {
        artistList = new ArrayList<>();
-        getMusicAlbum();
+        getMusicArtist();
         artistPresenter.onLoadArtistSuccess(artistList);
     }
-    public void getMusicAlbum() {
+    public void getMusicArtist() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
+
         if (songCursor != null && songCursor.moveToFirst()) {
+
+            int idArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists._ID);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST);
-          //  int amountAlbum = songCursor.getColumnIndex(MediaStore.Audio.Artists.Albums.NUMBER_OF_SONGS);
-           // int amountSong = songCursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS_FOR_ARTIST);
-            int imgArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART);
+            int amountAlbum = songCursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS);
+            int amountSong = songCursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS);
+           // int imgArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.ALBUM_ART);
             do {
-                // String currentTitle = songCursor.getString(songTitle);
+                String currentId = songCursor.getString(idArtist);
                 String currentArtist = songCursor.getString(songArtist);
-               // String currentAmountAlbum = songCursor.getString(amountAlbum);
-              //  String currentAmountSong = songCursor.getString(amountSong);
-         //        String currentImgArtist = songCursor.getString(imgArtist);
-                artistList.add(new Artist(currentArtist, 0,
-                       0,""));
+                String currentAmountAlbum = songCursor.getString(amountAlbum);
+                String currentAmountSong = songCursor.getString(amountSong);
+
+               //  String currentImgArtist = songCursor.getString(imgArtist);
+                artistList.add(new Artist(Long.parseLong(currentId),currentArtist, Integer.parseInt(currentAmountAlbum),
+                       Integer.parseInt(currentAmountSong),""));
 
             } while (songCursor.moveToNext());
         }}
@@ -134,9 +139,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
                 return;
 
             }
-
         }
-
     }
 
 }

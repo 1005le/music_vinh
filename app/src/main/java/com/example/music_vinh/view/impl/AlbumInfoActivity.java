@@ -39,6 +39,7 @@ import com.example.music_vinh.view.AlbumInfoView;
 import java.util.ArrayList;
 
 public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoView {
+
     CoordinatorLayout coordinatorLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
     Toolbar toolbar;
@@ -93,17 +94,16 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             collapsingToolbarLayout.setBackground(img);
         }
-        // collapsingToolbarLayout.setBackground(img);
-         imgAlbumInfo.setImageDrawable(img);
+          imgAlbumInfo.setImageDrawable(img);
 
          imgIconAlbum.setImageDrawable(img);
         tvNameAlbumInfo.setText(album.getName());
         tvamountSongA.setText(album.getAmountSong()+"songs");
-
     }
     private void act() {
         setSupportActionBar(toolbar);
         //getSupportActionBar().setTitle(album.getName());
+        toolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +123,6 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
         listSongrecyclerView = findViewById(R.id.recyclerViewListSong);
 
         imgAlbumInfo = findViewById(R.id.imgAlbumInfo);
-
         imgIconAlbum = findViewById(R.id.imgIconAlbum);
         tvNameAlbumInfo = findViewById(R.id.tvNameAlbumInfo);
         tvamountSongA = findViewById(R.id.tvamountSongA);
@@ -180,7 +179,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
                 {
                     Log.wtf("SAME2SAME", String.valueOf(thisalbumId));
                     Log.wtf("SAME2SAME", String.valueOf(this.album.getId()));
-                    songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",thisDuration));
+                    songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",Long.parseLong(thisDuration)));
                 }
             }
             while (mediaCursor.moveToNext());

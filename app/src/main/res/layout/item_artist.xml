@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/imgArtist"
-        android:background="#00BCD4"
+        android:background="@drawable/img_headphone"
         android:scaleType="fitXY"
         android:layout_width="180dp"
         android:layout_height="180dp" />
