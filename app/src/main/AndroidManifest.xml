@@ -11,17 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SearchView.SearchActivity">
+        <activity android:name=".view.impl.PlayActivity"></activity>
+       
+        <activity android:name=".view.impl.ArtistInfoActivity" />
+        <activity android:name=".view.impl.AlbumInfoActivity" />
+        <activity android:name=".view.impl.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".view.impl.ArtistInfoActivity" />
-        <activity android:name=".view.impl.AlbumInfoActivity" />
-        <activity android:name=".view.impl.MainActivity">
-
         </activity>
     </application>
 

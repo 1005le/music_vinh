@@ -22,7 +22,8 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/tvName"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textColor="#186CAF"
             android:text="Hello"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

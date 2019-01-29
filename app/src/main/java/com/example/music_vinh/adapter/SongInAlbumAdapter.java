@@ -2,6 +2,7 @@ package com.example.music_vinh.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.util.ArrayList;
 
@@ -58,6 +60,15 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
             imgSongA = itemView.findViewById(R.id.imgSongA);
             tvNameSong = itemView.findViewById(R.id.tvNameSong);
             tvNameAlbumInSong = itemView.findViewById(R.id.tvNameAlbumInSong);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, PlayActivity.class);
+                    intent.putExtra("song", songArrayList.get(getPosition()));
+                    context.startActivity(intent);
+                }
+            });
 
         }
 

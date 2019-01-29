@@ -27,7 +27,6 @@ public class ArtistInfoPresenterImpl implements ArtistInfoInteractor, ArtistInfo
     @Override
     public void onLoadSongFailue(String message) {
     }
-
     @Override
     public void loadData() {
        artistInfoInteractorImpl.createSong();

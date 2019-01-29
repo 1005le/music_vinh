@@ -1,8 +1,11 @@
 package com.example.music_vinh.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
-public class Song implements Serializable{
+public class Song implements Parcelable {
     private Long id;
     private String name;
     private String nameArtist;
@@ -25,6 +28,35 @@ public class Song implements Serializable{
         this.path = path;
         this.duration = duration;
     }
+
+    protected Song(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        name = in.readString();
+        nameArtist = in.readString();
+        nameAlbum = in.readString();
+        path = in.readString();
+        if (in.readByte() == 0) {
+            duration = null;
+        } else {
+            duration = in.readLong();
+        }
+    }
+
+    public static final Creator<Song> CREATOR = new Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
 
     public Long getDuration() {
         return duration;
@@ -71,5 +103,30 @@ public class Song implements Serializable{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(id);
+        }
+        parcel.writeString(name);
+        parcel.writeString(nameArtist);
+        parcel.writeString(nameAlbum);
+        parcel.writeString(path);
+        if (duration == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(duration);
+        }
     }
 }

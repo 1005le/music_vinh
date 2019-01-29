@@ -1,6 +1,7 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.impl.PlayActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapter.ViewHolder> {
@@ -35,7 +38,8 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
        Song song = songArrayList.get(position);
        holder.imgIconSong.setImageResource(R.drawable.ic_song_artist);
        holder.tvNameSongInArtist.setText(song.getName());
-       holder.tvDuration.setText(song.getDuration()+"");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+       holder.tvDuration.setText(simpleDateFormat.format(song.getDuration()));
     }
 
     @Override
@@ -54,6 +58,15 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
             imgIconSong = itemView.findViewById(R.id.imgIconSong);
             tvNameSongInArtist = itemView.findViewById(R.id.tvNameSongInArtist);
             tvDuration = itemView.findViewById(R.id.tvDuration);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, PlayActivity.class);
+                    intent.putExtra("song", songArrayList.get(getPosition()));
+                    context.startActivity(intent);
+                }
+            });
 
         }
     }

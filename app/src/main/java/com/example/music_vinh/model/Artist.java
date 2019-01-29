@@ -1,8 +1,11 @@
 package com.example.music_vinh.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
-public class Artist implements Serializable {
+public class Artist implements Parcelable {
     private Long id;
     private String name;
     private int amountAlbum;
@@ -23,6 +26,30 @@ public class Artist implements Serializable {
         this.amountSong = amountSong;
         this.images = images;
     }
+
+    protected Artist(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        name = in.readString();
+        amountAlbum = in.readInt();
+        amountSong = in.readInt();
+        images = in.readString();
+    }
+
+    public static final Creator<Artist> CREATOR = new Creator<Artist>() {
+        @Override
+        public Artist createFromParcel(Parcel in) {
+            return new Artist(in);
+        }
+
+        @Override
+        public Artist[] newArray(int size) {
+            return new Artist[size];
+        }
+    };
 
     public String getImages() {
         return images;
@@ -62,5 +89,24 @@ public class Artist implements Serializable {
 
     public void setAmountSong(int amountSong) {
         this.amountSong = amountSong;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(id);
+        }
+        parcel.writeString(name);
+        parcel.writeInt(amountAlbum);
+        parcel.writeInt(amountSong);
+        parcel.writeString(images);
     }
 }

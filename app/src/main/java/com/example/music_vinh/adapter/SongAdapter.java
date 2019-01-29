@@ -1,6 +1,7 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
-
     }
 
     @Override
@@ -69,9 +70,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             imgPlay = itemView.findViewById(R.id.imgPlay);
             imgPause = itemView.findViewById(R.id.imgPause);
 
-//            imgSong.setImageResource(R.drawable.ic_song);
-//            imgPlay.setImageResource(R.drawable.ic_play);
-//            imgPause.setImageResource(R.drawable.ic_pause);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, PlayActivity.class);
+                    intent.putExtra("song", songList.get(getPosition()));
+                    context.startActivity(intent);
+                }
+            });
         }
     }
     public interface OnItemClickListener{

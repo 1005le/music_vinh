@@ -19,8 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -56,11 +60,11 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_info);
-
+        getDataIntent();
         init();
         act();
-        getDataIntent();
-        getData();
+
+       getData();
 
         initPresenter();
         if (ContextCompat.checkSelfPermission(ArtistInfoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -79,7 +83,6 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
     }
 
     private void getData() {
-
         Drawable img = Drawable.createFromPath(artist.getImages());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             collapsingToolbarLayoutArtist.setBackground(img);
@@ -95,7 +98,7 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
 
     private void getDataIntent() {
         Intent intent = getIntent();
-        artist = (Artist) intent.getSerializableExtra("artistArrayList");
+        artist = (Artist) intent.getParcelableExtra("artistArrayList");
 
     }
     private void act() {
@@ -110,7 +113,6 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
         });
 
        // collapsingToolbarLayoutArtist.setTitle(artist.getName());
-
         collapsingToolbarLayoutArtist.setExpandedTitleColor(Color.WHITE);
         collapsingToolbarLayoutArtist.setCollapsedTitleTextColor(Color.WHITE);
     }
@@ -205,5 +207,32 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
                 return;
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu) {
+        getMenuInflater().inflate( R.menu.search_view, menu);
+
+        MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
+        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+//                    adapter.filter("");
+//                    listView.clearTextFilter();
+
+
+                } else {
+                    // adapter.filter(newText);
+                }
+                return true;
+            }
+        });
+        return true;
     }
 }

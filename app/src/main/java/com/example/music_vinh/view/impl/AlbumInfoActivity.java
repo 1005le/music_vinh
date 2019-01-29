@@ -20,8 +20,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -85,7 +89,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
     }
     private void getDataIntent() {
         Intent intent = getIntent();
-        album = (Album) intent.getSerializableExtra("albumArrayList");
+        album = (Album) intent.getParcelableExtra("albumArrayList");
 
     }
     private void getData() {
@@ -132,6 +136,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
     private void initPresenter(){
         albumInfoPresenter = new AlbumInfoPresenterImpl(this);
     }
+
     @Override
     public void showSong(ArrayList<Song> songs) {
         songInAlbumAdapter = new SongInAlbumAdapter(AlbumInfoActivity.this, songs);
@@ -211,6 +216,32 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
 
         }
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu) {
+        getMenuInflater().inflate( R.menu.search_view, menu);
+
+        MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
+        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+//                    adapter.filter("");
+//                    listView.clearTextFilter();
+
+
+                } else {
+                    // adapter.filter(newText);
+                }
+                return true;
+            }
+        });
+        return true;
     }
 
 

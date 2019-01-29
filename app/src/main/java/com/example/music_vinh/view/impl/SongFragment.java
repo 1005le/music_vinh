@@ -104,17 +104,17 @@ public class SongFragment extends Fragment implements MainView {
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            // int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            // int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+             int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+             int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             do {
                 String currentId = songCursor.getString(songId);
                 String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
                 String currentAlbum = songCursor.getString(songAlbum);
-               // String currentPath = songCursor.getString(songPath);
-              // String currentDuration = songCursor.getString(songDuration);
+                String currentPath = songCursor.getString(songPath);
+               String currentDuration = songCursor.getString(songDuration);
 
-                songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum));
+                songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath,Long.parseLong(currentDuration)));
             } while (songCursor.moveToNext());
         }}
 
