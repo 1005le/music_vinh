@@ -78,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
         tvNameArtist = findViewById(R.id.tvNameArtist);
         imgPause = findViewById(R.id.imgButtonPause);
 
+    }
+    private void getDataBottom() {
+        tvNameSong.setText(PlayActivity.song.getName());
+        tvNameArtist.setText(PlayActivity.song.getNameArtist());
+        imgPause.setImageResource(R.drawable.ic_pause);
+
         if(song.getName().length() > 0 && song.getNameArtist().length() >0) {
             linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -88,16 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
-    private void getDataBottom() {
-        tvNameSong.setText(PlayActivity.song.getName());
-        tvNameArtist.setText(PlayActivity.song.getNameArtist());
-        imgPause.setImageResource(R.drawable.ic_pause);
 
-
-
-    }
     /**
      * khoi tao search
      */

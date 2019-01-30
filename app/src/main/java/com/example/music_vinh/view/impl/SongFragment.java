@@ -36,7 +36,7 @@ public class SongFragment extends Fragment implements MainView {
     View view;
     RecyclerView songRecyclerView;
     SongAdapter songAdapter;
-    ArrayList<Song> songList;
+   public static ArrayList<Song> songList;
    //Presenter
     private MainPresenterImpl mainPresenter;
     private static final int MY_PERMISSION_REQUEST = 1;

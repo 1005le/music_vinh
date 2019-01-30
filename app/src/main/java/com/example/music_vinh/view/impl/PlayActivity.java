@@ -1,9 +1,11 @@
 package com.example.music_vinh.view.impl;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -21,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,7 +52,7 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     ImageView imgPre, imgNext, imgShuttle, imgRepeat,imgRepeatOne;
     SeekBar seekBar;
     RecyclerView playSongRecycleview;
-    ArrayList<Song> arrSong = new ArrayList<Song>();
+   public static ArrayList<Song> arrSong = new ArrayList<Song>();
     SongAdapter songAdapter;
     TextView tvNameArtistPlay;
     public static Song song;
@@ -64,10 +67,11 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         initPresenter();
+
         getDataIntent();
         init();
         act();
-         getDataSong();
+       //  getDataSong();
         doStuff();
     }
 
@@ -99,15 +103,19 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     }
 
     private void doStuff() {
-        arrSong = new ArrayList<>();
-        getDataIntent();
-        playSongPresenter.onLoadSongSuccess(arrSong);
+     //  arrSong = new ArrayList<>();
+       // getDataIntent();
+      //  getMusicSong();
+      //  playSongPresenter.onLoadSongSuccess(arrSong);
+        playSongPresenter.onLoadSongSuccess(SongFragment.songList);
     }
 
     private void getDataSong() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        tvTime.setText(simpleDateFormat.format(arrSong.get(0).getDuration()));
-        tvNameArtistPlay.setText(arrSong.get(0).getNameArtist());
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+//        tvTime.setText(simpleDateFormat.format(arrSong.get(0).getDuration()));
+//        tvNameArtistPlay.setText(arrSong.get(0).getNameArtist());
+
+
     }
 
     private void getDataIntent() {
@@ -116,17 +124,47 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
         if (intent != null) {
             if (intent.hasExtra("song")) {
                 song = intent.getParcelableExtra("song");
-                arrSong.add(song);
 
+                tvTime = findViewById(R.id.tvTime);
+                tvNameArtistPlay = findViewById(R.id.tvNameArtistPlay);
+              //  getSupportActionBar().setTitle(song.getName());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+                tvTime.setText(simpleDateFormat.format(song.getDuration()));
+                tvNameArtistPlay.setText(song.getNameArtist());
+                arrSong.add(song);
             }
         }
     }
 
+    public void getMusicSong() {
+        ContentResolver contentResolver = getContentResolver();
+        Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Log.d("uri",songUri+"");
+        Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
+        if (songCursor != null && songCursor.moveToFirst()) {
+            int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+            int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+            int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            do {
+                String currentId = songCursor.getString(songId);
+                String currentTitle = songCursor.getString(songTitle);
+                String currentArtist = songCursor.getString(songArtist);
+                String currentAlbum = songCursor.getString(songAlbum);
+                String currentPath = songCursor.getString(songPath);
+                String currentDuration = songCursor.getString(songDuration);
+
+                arrSong.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath,Long.parseLong(currentDuration)));
+            } while (songCursor.moveToNext());
+        }
+    }
 
     private void act() {
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(arrSong.get(0).getName());
+
         toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,8 +202,7 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
 
     private void init() {
         toolbarPlaySong = findViewById(R.id.toolbarPlaySong);
-        tvTime = findViewById(R.id.tvTime);
-        tvNameArtistPlay = findViewById(R.id.tvNameArtistPlay);
+
         imgPre = findViewById(R.id.imgPrev);
         imgNext = findViewById(R.id.imgNext);
         imgShuttle= findViewById(R.id.imgShuttle);
