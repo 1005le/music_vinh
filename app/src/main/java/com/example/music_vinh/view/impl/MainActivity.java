@@ -139,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 new String[] {songTitle},
                 "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
 */
-
         final Cursor mExternalCursor = getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 new String[] { MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA },
