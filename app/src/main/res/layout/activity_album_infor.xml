@@ -20,7 +20,7 @@
             android:fitsSystemWindows="true">
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="250dp"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
@@ -28,7 +28,7 @@
 
         <ImageView
             android:id="@+id/imgAlbumInfo"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/collapse_toolbar"
             android:fitsSystemWindows="true"

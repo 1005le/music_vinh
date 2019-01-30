@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +60,7 @@ public class SongFragment extends Fragment implements MainView {
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
                 ActivityCompat.requestPermissions(getActivity(),
-
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
             } else {
                 ActivityCompat.requestPermissions(getActivity(),
@@ -69,7 +68,6 @@ public class SongFragment extends Fragment implements MainView {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
             }
         } else {
-
             doStuff();
         }
     }
@@ -95,9 +93,11 @@ public class SongFragment extends Fragment implements MainView {
         getMusicSong();
         mainPresenter.onLoadSongSuccess(songList);
     }
+
     public void getMusicSong() {
         ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Log.d("uri",songUri+"");
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
             int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -139,6 +139,5 @@ public class SongFragment extends Fragment implements MainView {
             }
 
         }
-
     }
 }

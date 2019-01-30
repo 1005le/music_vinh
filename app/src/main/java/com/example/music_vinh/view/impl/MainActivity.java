@@ -2,6 +2,7 @@ package com.example.music_vinh.view.impl;
 
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.provider.MediaStore;
@@ -17,17 +18,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.MainViewAdapter;
+import com.example.music_vinh.model.Song;
 
 public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     DrawerLayout drawerLayout;
     Toolbar toolbarMainActivity;
+    LinearLayout linearLayoutBottom;
+    TextView tvNameSong;
+    TextView tvNameArtist;
+    ImageButton imgPause;
+     public static Song song;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         init();
         initTab();
         act();
+      //  getDataBottom();
     }
-
     private void act() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
@@ -60,6 +71,32 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         toolbarMainActivity = findViewById(R.id.toolBarMainActivity);
         viewPager = findViewById(R.id.myViewPager);
+
+        //Khởi tạo layout bottom
+        linearLayoutBottom = findViewById(R.id.linearBottom);
+        tvNameSong = findViewById(R.id.tvNameSong);
+        tvNameArtist = findViewById(R.id.tvNameArtist);
+        imgPause = findViewById(R.id.imgButtonPause);
+
+        if(song.getName().length() > 0 && song.getNameArtist().length() >0) {
+            linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                    intent.putExtra("song", song);
+                    startActivity(intent);
+                }
+            });
+        }
+
+    }
+    private void getDataBottom() {
+        tvNameSong.setText(PlayActivity.song.getName());
+        tvNameArtist.setText(PlayActivity.song.getNameArtist());
+        imgPause.setImageResource(R.drawable.ic_pause);
+
+
+
     }
     /**
      * khoi tao search
@@ -89,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         });
         return true;
     }
-
 
     /**
      * Search song

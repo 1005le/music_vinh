@@ -101,15 +101,16 @@
 
     </RelativeLayout>
     <SeekBar
-        android:layout_below="@id/relay1"
         android:id="@+id/seekBarSong"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="288dp"
         android:layout_marginBottom="0dp"
-        android:thumb="@drawable/ic_play_seekbar" />
+        android:thumb="@drawable/ic_stop_seekbar" />
 
     <ScrollView
         android:layout_below="@+id/seekBarSong"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     <android.support.v7.widget.RecyclerView

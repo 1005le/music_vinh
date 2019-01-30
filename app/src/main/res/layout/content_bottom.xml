@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/linearBottom"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
@@ -33,16 +34,7 @@
         </LinearLayout>
         <ImageButton
             android:scaleType="fitXY"
-            android:id="@+id/imgPlay"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_pause"
-            android:layout_alignParentRight="true"
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
-        <ImageButton
-            android:scaleType="fitXY"
-            android:visibility="gone"
-            android:id="@+id/imgPause"
+            android:id="@+id/imgButtonPause"
             android:layout_gravity="center"
             android:src="@drawable/ic_stop"
             android:layout_alignParentRight="true"

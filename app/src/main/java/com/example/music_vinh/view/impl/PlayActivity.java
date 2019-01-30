@@ -1,8 +1,19 @@
 package com.example.music_vinh.view.impl;
 
+import android.Manifest;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +27,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
@@ -26,6 +38,7 @@ import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.view.PlaySongView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -39,8 +52,9 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     ArrayList<Song> arrSong = new ArrayList<Song>();
     SongAdapter songAdapter;
     TextView tvNameArtistPlay;
-    Song song;
+    public static Song song;
     MediaPlayer mediaPlayer;
+    private static final int MY_PERMISSION_REQUEST = 1;
 
    // ArrayList<Song> songList;
     private PlaySongPresenterImpl playSongPresenter;
@@ -55,14 +69,29 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
         act();
          getDataSong();
         doStuff();
-        playSong();
-
     }
 
     private void playSong() {
-       mediaPlayer = MediaPlayer.create(this, Uri.parse(arrSong.get(0).getPath()));
-        mediaPlayer.setLooping(true);
+        long id = song.getId();
+        // android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+        Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        try {
+            mediaPlayer.setDataSource(getApplicationContext(), contentUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            mediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         mediaPlayer.start();
+
+        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
+              getApplicationContext().getResources(), R.drawable.ic_play_seekbar)));
     }
 
     private void initPresenter(){
@@ -71,7 +100,6 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
 
     private void doStuff() {
         arrSong = new ArrayList<>();
-       // getPlaySong();
         getDataIntent();
         playSongPresenter.onLoadSongSuccess(arrSong);
     }
@@ -89,13 +117,8 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
             if (intent.hasExtra("song")) {
                 song = intent.getParcelableExtra("song");
                 arrSong.add(song);
+
             }
-            //truyen mot mang bai hat
-//            if (intent.hasExtra("cacbaihat")) {
-//                //intent ca mang Bai Hat
-//                ArrayList<Song> arrayListBH = intent.getParcelableArrayListExtra("cacbaihat");
-//                mangBaiHat = arrayListBH;
-//            }
         }
     }
 
@@ -104,7 +127,6 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(arrSong.get(0).getName());
-
         toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,6 +187,7 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
                 mediaPlayer.seekTo(seekBar.getProgress());
             }
         });
+        playSong();
     }
 
     @Override
@@ -176,4 +199,5 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
         playSongRecycleview.setLayoutManager(linearLayoutManager);
         playSongRecycleview.setAdapter(songAdapter);
     }
+
 }

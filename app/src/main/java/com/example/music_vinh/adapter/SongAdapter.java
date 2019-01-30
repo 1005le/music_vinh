@@ -48,6 +48,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
+      //  viewHolder.tvNameArtist.setText(song.getPath());
     }
 
     @Override
@@ -59,7 +60,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
         TextView tvNameSong, tvNameArtist;
         ImageView imgSong;
-        ImageButton imgPlay, imgPause;
+       // ImageButton imgPlay, imgPause;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -67,8 +68,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             tvNameArtist = itemView.findViewById(R.id.tvNameArtist);
 
             imgSong = itemView.findViewById(R.id.imgSong);
-            imgPlay = itemView.findViewById(R.id.imgPlay);
-            imgPause = itemView.findViewById(R.id.imgPause);
+          //  imgPlay = itemView.findViewById(R.id.imgPlay);
+          //  imgPause = itemView.findViewById(R.id.imgPause);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
