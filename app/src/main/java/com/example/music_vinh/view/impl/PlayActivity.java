@@ -107,7 +107,6 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     private void initPresenter(){
        playSongPresenter = new PlaySongPresenterImpl(this);
     }
-
     private void doStuff() {
      //  arrSong = new ArrayList<>();
        // getDataIntent();
