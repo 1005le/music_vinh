@@ -1,12 +1,15 @@
 package com.example.music_vinh.view.impl;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -24,10 +27,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -45,6 +51,9 @@ import com.example.music_vinh.view.PlaySongView;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity implements PlaySongView {
@@ -54,7 +63,7 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     ImageView imgPre, imgNext, imgShuttle, imgRepeat,imgRepeatOne;
     SeekBar seekBar;
     RecyclerView playSongRecycleview;
-   public static ArrayList<Song> arrSong = new ArrayList<Song>();
+     ArrayList<Song> arrSong = new ArrayList<Song>();
     SongAdapter songAdapter;
     TextView tvNameArtistPlay;
     public static Song song;
@@ -65,6 +74,10 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     boolean repeat = false;
     boolean checkrandom = false;
     boolean next = false;
+
+    private int     scaledTouchSlop = 0;
+    private float   initTouchX      = 0;
+    private boolean thumbPressed    = false;
 
    // ArrayList<Song> songList;
     private PlaySongPresenterImpl playSongPresenter;
@@ -243,6 +256,40 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
                 mediaPlayer.seekTo(seekBar.getProgress());
             }
         });
+
+
+
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                float prevX = Float.MIN_VALUE;
+                float eps = 0.001f;
+                Drawable drawable =  new BitmapDrawable(BitmapFactory.decodeResource(
+                        getApplicationContext().getResources(), R.drawable.ic_stop_seekbar));
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    if (event.getX() >= drawable.getBounds().left && event.getX() <= drawable.getBounds().right
+                            && event.getRawY() >= drawable.getBounds().top && event.getRawY() >= drawable.getBounds().bottom) {
+                        prevX = event.getX();
+                    }
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    if (event.getX() >= drawable.getBounds().left && event.getX() <= drawable.getBounds().right
+                            && event.getRawY() >= drawable.getBounds().top && event.getRawY() >= drawable.getBounds().bottom) {
+                        if (Math.abs(event.getX() - prevX) < eps) {
+                            Log.d("here", "clicked on place");
+                        }
+                    }
+                    prevX = Float.MIN_VALUE;
+                }
+
+                return false;
+            }
+        });
+
+
 
         imgRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -463,4 +510,91 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
             }
         },1000);
     }
-}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_setting:
+                Collections.sort(arrSong, new Comparator<Song>() {
+                    @Override
+                    public int compare(Song song, Song t1) {
+                        return (song.getName().compareTo(t1.getName()));
+                    }
+                });
+
+              Intent intent =  new Intent(PlayActivity.this, SortActivity.class);
+              intent.putExtra("listSong",arrSong);
+              startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+//    @SuppressLint("AppCompatCustomView")
+//    public class SeekbarWithThumbTouch extends SeekBar {
+
+//        public PlayActivity(Context context) {
+//            super(context);
+//            initSeekbar(context);
+//        }
+//
+//        public PlayActivity(Context context, AttributeSet attrs) {
+//           // super(context, attrs);
+//            initSeekbar(context);
+//        }
+//
+//        public PlayActivity(Context context, AttributeSet attrs, int defStyleAttr) {
+//           // super(context, attrs, defStyleAttr);
+//            initSeekbar(context);
+//        }
+//
+//        private void initSeekbar(Context context) {
+//            scaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+//        }
+//
+//        @Override
+//        public boolean onTouchEvent(MotionEvent event) {
+//            Drawable thumb = null;
+//            switch (event.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                   // thumb = getThumb();//works only for API >=16!
+////                    thumb =   new BitmapDrawable(BitmapFactory.decodeResource(
+////                            getApplicationContext().getResources(), R.drawable.ic_stop_seekbar));
+//                    seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
+//                            getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+//                    if (thumb != null) {
+//                        //contains current position of thumb in view as bounds
+//                        RectF bounds = new RectF(thumb.getBounds());
+//                        thumbPressed = bounds.contains(event.getX(), event.getY());
+//                        if (thumbPressed) {
+//                            Log.d("Thumb", "pressed");
+//                            initTouchX = event.getX();
+//                            return true;
+//                        }
+//                    }
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    if (thumbPressed) {
+//                        Log.d("Thumb", "was pressed -- listener call");
+//                        thumbPressed = false;
+//                    }
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//                    if (thumbPressed) {
+//                        if (Math.abs(initTouchX - event.getX()) > scaledTouchSlop) {
+//                            initTouchX = 0;
+//                            thumbPressed = false;
+//                            return super.onTouchEvent(event);
+//                        }
+//                        Log.d("Thumb", "move blocked");
+//                        return true;
+//                    }
+//                    break;
+//            }
+//
+//            return super.onTouchEvent(event);
+//        }
+    }

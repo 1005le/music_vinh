@@ -77,6 +77,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                     Intent intent = new Intent(context, PlayActivity.class);
                     intent.putExtra("song", songList.get(getPosition()));
                     context.startActivity(intent);
+
+
                 }
             });
         }

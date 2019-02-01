@@ -100,16 +100,27 @@
         </RelativeLayout>
 
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/linearSeekbar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <SeekBar
         android:id="@+id/seekBarSong"
-        android:layout_width="fill_parent"
+        android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="288dp"
-        android:layout_marginBottom="0dp"
-        android:thumb="@drawable/ic_stop_seekbar" />
+        android:layout_marginBottom="0dp" />
+        <ImageButton
+            android:layout_marginTop="280dp"
+            android:layout_toRightOf="@+id/seekBarSong"
+            android:src="@drawable/ic_play_seekbar"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+    </RelativeLayout>
 
     <ScrollView
-        android:layout_below="@+id/seekBarSong"
+        android:layout_below="@+id/linearSeekbar"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

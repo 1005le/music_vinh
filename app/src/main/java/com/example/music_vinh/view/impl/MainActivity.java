@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvNameSong;
     TextView tvNameArtist;
     ImageButton imgPause;
-     public static Song song;
+    public static Song song;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         init();
         initTab();
         act();
-      //  getDataBottom();
+       // getDataBottom();
     }
     private void act() {
         setSupportActionBar(toolbarMainActivity);
@@ -77,23 +77,22 @@ public class MainActivity extends AppCompatActivity {
         tvNameSong = findViewById(R.id.tvNameSong);
         tvNameArtist = findViewById(R.id.tvNameArtist);
         imgPause = findViewById(R.id.imgButtonPause);
-
     }
     private void getDataBottom() {
-        tvNameSong.setText(PlayActivity.song.getName());
+       tvNameSong.setText(PlayActivity.song.getName());
         tvNameArtist.setText(PlayActivity.song.getNameArtist());
         imgPause.setImageResource(R.drawable.ic_pause);
 
-        if(song.getName().length() > 0 && song.getNameArtist().length() >0) {
-            linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                    intent.putExtra("song", song);
-                    startActivity(intent);
-                }
-            });
-        }
+//        if(song.getName().length() > 0 && song.getNameArtist().length() >0) {
+//            linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+//                    intent.putExtra("song", song);
+//                    startActivity(intent);
+//                }
+//            });
+//        }
     }
 
     /**
