@@ -41,8 +41,8 @@ public class AlbumFragment extends Fragment implements AlbumView {
       @Inject
      AlbumPresenterImpl albumPresenter;
 
-     AlbumAdapter albumAdapter;
-     ArrayList<Album> albumList;
+     static AlbumAdapter albumAdapter;
+    static ArrayList<Album> albumList;
 
     private static final int MY_PERMISSION_REQUEST = 1;
     public AlbumFragment() {

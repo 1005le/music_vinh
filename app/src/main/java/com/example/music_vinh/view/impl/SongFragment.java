@@ -37,7 +37,7 @@ import javax.inject.Inject;
 public class SongFragment extends Fragment implements MainView {
     View view;
     RecyclerView songRecyclerView;
-    SongAdapter songAdapter;
+   public static SongAdapter songAdapter;
    public static ArrayList<Song> songList;
    //Presenter
    @Inject

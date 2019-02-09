@@ -41,8 +41,8 @@ public class ArtistFragment extends Fragment implements ArtistView {
     @Inject
     ArtistPresenterImpl artistPresenter;
 
-    ArtistAdapter artistAdapter;
-    ArrayList<Artist> artistList;
+    static ArtistAdapter artistAdapter;
+   static ArrayList<Artist> artistList;
     private static final int MY_PERMISSION_REQUEST = 1;
 
     public ArtistFragment() {

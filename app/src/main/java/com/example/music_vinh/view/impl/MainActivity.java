@@ -30,10 +30,20 @@ import com.example.music_vinh.adapter.MainViewAdapter;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.DaggerMainViewComponent;
 import com.example.music_vinh.injection.MainViewModule;
+import com.example.music_vinh.model.Album;
+import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static com.example.music_vinh.view.impl.AlbumFragment.albumAdapter;
+import static com.example.music_vinh.view.impl.AlbumFragment.albumList;
+import static com.example.music_vinh.view.impl.ArtistFragment.artistAdapter;
+import static com.example.music_vinh.view.impl.ArtistFragment.artistList;
+import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
+import static com.example.music_vinh.view.impl.SongFragment.songList;
 
 public class MainActivity extends BaseActivity implements MainView {
     TabLayout tabLayout;
@@ -118,68 +128,72 @@ public class MainActivity extends BaseActivity implements MainView {
     public boolean onCreateOptionsMenu( Menu menu) {
         getMenuInflater().inflate( R.menu.search_view, menu);
 
-        MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
+     final MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if(!searchView.isIconified()){
+                    searchView.setIconified(true);
+                }
+                myActionMenuItem.collapseActionView();
                 return false;
             }
             @Override
-            public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
-//                    adapter.filter("");
-//                    listView.clearTextFilter();
+            public boolean onQueryTextChange(String searchQuery) {
+               // switch (R)
+                final List<Song>filterModel = filter(songList, searchQuery);
+                songAdapter.getFilte(filterModel);
 
-                } else {
-                   // adapter.filter(newText);
-                }
+                final List<Album>filterModelAlbum = filterAlbum(albumList, searchQuery);
+                albumAdapter.getFilte(filterModelAlbum);
+
+                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
+                artistAdapter.getFilte(filterModelArtist);
+
                 return true;
             }
         });
         return true;
     }
 
-    /**
-     * Search song
-     * @param songTitle
-     * @return
-     */
-    private String[] getAudioPath(String songTitle) {
-/*
-        final Cursor mInternalCursor = getContentResolver().query(
-                MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA },
-                MediaStore.Audio.Media.TITLE+ "=?",
-                new String[] {songTitle},
-                "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
-*/
-        final Cursor mExternalCursor = getContentResolver().query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DATA },
-                MediaStore.Audio.Media.TITLE+ "=?",
-                new String[] {songTitle},
-                "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
+    private List<Song> filter(List<Song>listItem, String query){
+        query = query.toLowerCase();
+        final List<Song>filterModel = new ArrayList<>();
 
-      //  Cursor[] cursors = {mInternalCursor, mExternalCursor};
-        Cursor[] cursors = { mExternalCursor};
-        final MergeCursor mMergeCursor = new MergeCursor(cursors);
-
-        int count = mMergeCursor.getCount();
-
-        String[] songs = new String[count];
-        String[] mAudioPath = new String[count];
-        int i = 0;
-        if (mMergeCursor.moveToFirst()) {
-            do {
-                songs[i] = mMergeCursor.getString(mMergeCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
-                mAudioPath[i] = mMergeCursor.getString(mMergeCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-                i++;
-            } while (mMergeCursor.moveToNext());
+        for( Song item :listItem){
+            final String text = item.getName().toLowerCase();
+            if( text.startsWith(query)){
+                filterModel.add(item);
+            }
         }
+        return filterModel;
+    }
 
-        mMergeCursor.close();
-        return mAudioPath;
+    private List<Album> filterAlbum(List<Album>listItem, String query){
+        query = query.toLowerCase();
+        final List<Album>filterModel = new ArrayList<>();
+
+        for( Album item :listItem){
+            final String text = item.getName().toLowerCase();
+            if( text.startsWith(query)){
+                filterModel.add(item);
+            }
+        }
+        return filterModel;
+    }
+
+    private List<Artist> filterArtist(List<Artist>listItem, String query){
+        query = query.toLowerCase();
+        final List<Artist>filterModel = new ArrayList<>();
+
+        for( Artist item :listItem){
+            final String text = item.getName().toLowerCase();
+            if( text.startsWith(query)){
+                filterModel.add(item);
+            }
+        }
+        return filterModel;
     }
 
     @Override

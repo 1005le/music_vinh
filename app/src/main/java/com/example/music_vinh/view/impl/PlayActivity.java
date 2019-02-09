@@ -67,7 +67,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
     Toolbar toolbarPlaySong;
     TextView tvTime;
-    ImageView imgPre, imgNext, imgShuttle, imgRepeat,imgRepeatOne;
+    ImageView imgPre, imgNext, imgShuttle, imgRepeat,imgRepeatOne, imgPlay;
     SeekBar seekBar;
     RecyclerView playSongRecycleview;
      ArrayList<Song> arrSong = new ArrayList<Song>();
@@ -130,8 +130,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         }
         mediaPlayer.start();
 
-        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-              getApplicationContext().getResources(), R.drawable.ic_play_seekbar)));
+//        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
+//              getApplicationContext().getResources(), R.drawable.ic_play_seekbar)));
     }
 
     private void initPresenter(){
@@ -237,6 +237,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         imgRepeat = findViewById(R.id.imgRepeat);
         imgRepeatOne = findViewById(R.id.imgRepeatOne);
         seekBar = findViewById(R.id.seekBarSong);
+        imgPlay = findViewById(R.id.imgPlay);
         playSongRecycleview = findViewById(R.id.recycleViewPlaySong);
         tvTime = findViewById(R.id.tvTime);
         tvNameArtistPlay = findViewById(R.id.tvNameArtistPlay);
@@ -274,8 +275,19 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             }
         });
 
-
-
+        imgPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    imgPlay.setImageResource(R.drawable.ic_stop_seekbar);
+                }else{
+                    mediaPlayer.start();
+                    imgPlay.setImageResource(R.drawable.ic_play_seekbar);
+                }
+            }
+        });
+/*
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
@@ -306,7 +318,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             }
         });
 
-
+*/
 
         imgRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -357,8 +369,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                     }
                     //gia tri phai nho hon kich thuoc cua mang thi cho next
                     if(position < (arrSong.size())){
-                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
+//                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
+//                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
                         position++;
                         if(repeat == true){
                             if(position == 0){
@@ -409,8 +423,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                     }
                     //gia tri phai nho hon kich thuoc cua mang thi cho next
                     if(position < (arrSong.size())){
-                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
+//                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
+//                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
                         position--;
                         if(position < 0){
                             position = arrSong.size() -1;
@@ -482,8 +498,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             public void run() {
                 if(next == true){
                     if(position < (arrSong.size())){
-                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
+//                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
+//                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
                         position++;
                         if(repeat == true){
                             if(position == 0){

@@ -113,6 +113,7 @@
         android:layout_marginBottom="0dp" />
         <ImageButton
             android:layout_marginTop="280dp"
+            android:id="@+id/imgPlay"
             android:layout_toRightOf="@+id/seekBarSong"
             android:src="@drawable/ic_play_seekbar"
             android:layout_width="50dp"

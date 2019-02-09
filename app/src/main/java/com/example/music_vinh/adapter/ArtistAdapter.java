@@ -12,11 +12,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.music_vinh.R;
+import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
 import com.example.music_vinh.view.impl.ArtistInfoActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,5 +86,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void getFilte(List<Artist> listItem){
+        artistList = new ArrayList<>();
+        artistList.addAll(listItem);
+        notifyDataSetChanged();
     }
 }

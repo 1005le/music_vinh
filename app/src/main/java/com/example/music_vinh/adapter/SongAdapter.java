@@ -89,4 +89,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     public interface OnItemClickListener{
         void onItemClick(int position);
     }
+
+    public void getFilte(List<Song> listItem){
+        songList = new ArrayList<>();
+        songList.addAll(listItem);
+        notifyDataSetChanged();
+    }
 }

@@ -13,9 +13,11 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
+import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,5 +81,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void getFilte(List<Album> listItem){
+        albumList = new ArrayList<>();
+        albumList.addAll(listItem);
+        notifyDataSetChanged();
     }
 }
