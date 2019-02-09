@@ -21,6 +21,11 @@ import android.widget.TextView;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.adapter.SortSongAdapter;
+import com.example.music_vinh.injection.AppComponent;
+import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
+import com.example.music_vinh.injection.DaggerSortViewComponent;
+import com.example.music_vinh.injection.PlaySongViewModule;
+import com.example.music_vinh.injection.SortViewModule;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.presenter.impl.SortPresenterImpl;
@@ -30,14 +35,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import static com.example.music_vinh.view.impl.PlayActivity.song;
 
-public class SortActivity extends AppCompatActivity implements SortView {
+public class SortActivity extends BaseActivity implements SortView {
 
    Toolbar toolbarSort;
     RecyclerView sortSongRecycleview;
     ArrayList<Song> songArrayList;
-    private SortPresenterImpl sortPresenter;
+    @Inject
+   SortPresenterImpl sortPresenter;
     SortSongAdapter sortSongAdapter;
     MediaPlayer mediaPlayer;
    public static TextView tvNameSongBottom , tvNameArtistBottom;
@@ -49,6 +57,15 @@ public class SortActivity extends AppCompatActivity implements SortView {
         setContentView(R.layout.activity_sort);
         init();
         atc();
+    }
+
+    @Override
+    protected void setupComponent(AppComponent appComponent) {
+        DaggerSortViewComponent.builder()
+                .appComponent(appComponent)
+                .sortViewModule(new SortViewModule(this))
+                .build()
+                .inject(this);
     }
 
     private void atc() {

@@ -19,6 +19,12 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     private MainInteractorImpl mainInteractorImpl;
     private MainView mainView;
 
+
+    public MainPresenterImpl(MainInteractorImpl mainInteractorImpl, MainView mainView) {
+        this.mainInteractorImpl = mainInteractorImpl;
+        this.mainView = mainView;
+    }
+
     public MainPresenterImpl(MainView mainView) {
         this.mainView = mainView;
         mainInteractorImpl = new MainInteractorImpl(this);

@@ -6,8 +6,14 @@ import com.example.music_vinh.model.Song;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class ArtistInfoInteractorImpl {
     private ArtistInfoInteractor artistInfoInteractor;
+
+    @Inject
+    public ArtistInfoInteractorImpl() {
+    }
 
     public ArtistInfoInteractorImpl(ArtistInfoInteractor artistInfoInteractor){
         this.artistInfoInteractor = artistInfoInteractor;

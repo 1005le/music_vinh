@@ -32,6 +32,11 @@ import android.widget.Toast;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongInAlbumAdapter;
 import com.example.music_vinh.adapter.SongInArtistAdapter;
+import com.example.music_vinh.injection.AppComponent;
+import com.example.music_vinh.injection.ArtistInfoViewModule;
+import com.example.music_vinh.injection.DaggerArtistInfoViewComponent;
+import com.example.music_vinh.injection.DaggerMainViewComponent;
+import com.example.music_vinh.injection.MainViewModule;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
@@ -41,7 +46,9 @@ import com.example.music_vinh.view.ArtistInfoView;
 
 import java.util.ArrayList;
 
-public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoView {
+import javax.inject.Inject;
+
+public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
     CoordinatorLayout coordinatorLayoutArtist;
     CollapsingToolbarLayout collapsingToolbarLayoutArtist;
@@ -53,7 +60,9 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
 
     ImageView imgViewArtist;
 
-    private ArtistInfoPresenterImpl artistInfoPresenter;
+    @Inject
+    ArtistInfoPresenterImpl artistInfoPresenter;
+
     private static final int MY_PERMISSION_REQUEST = 1;
 
     @Override
@@ -82,6 +91,15 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
         }
     }
 
+    @Override
+    protected void setupComponent(AppComponent appComponent) {
+        DaggerArtistInfoViewComponent.builder()
+                .appComponent(appComponent)
+                .artistInfoViewModule(new ArtistInfoViewModule(this))
+                .build()
+                .inject(this);
+    }
+
     private void getData() {
         Drawable img = Drawable.createFromPath(artist.getImages());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -93,7 +111,6 @@ public class ArtistInfoActivity extends AppCompatActivity implements ArtistInfoV
 //        imgIconAlbum.setImageDrawable(img);
 //        tvNameAlbumInfo.setText(album.getName());
 //        tvamountSongA.setText(album.getAmountSong()+"songs");
-
     }
 
     private void getDataIntent() {

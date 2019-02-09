@@ -18,6 +18,9 @@ import com.example.music_vinh.view.impl.ArtistInfoActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
 
     Context context;
@@ -37,7 +40,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
 
         Artist artist = artistList.get(i);
         viewHolder.tvNameArtist.setText(artist.getName());
@@ -47,6 +50,15 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         Drawable img = Drawable.createFromPath(artist.getImages());
         viewHolder.imgArtist.setImageDrawable(img);
 
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ArtistInfoActivity.class);
+                intent.putExtra("artistArrayList",artistList.get(i));
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -55,26 +67,22 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.imgArtist)
         ImageView imgArtist;
+
+        @BindView(R.id.tvNameArtist)
         TextView tvNameArtist;
-        TextView tvAmountAlbum, tvAmountSong;
+
+       @BindView(R.id.tvAmountAlbum)
+        TextView tvAmountAlbum;
+
+        @BindView(R.id.tvAmountSong)
+        TextView tvAmountSong;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            imgArtist = itemView.findViewById(R.id.imgArtist);
-            tvNameArtist = itemView.findViewById(R.id.tvNameArtist);
-            tvAmountAlbum = itemView.findViewById(R.id.tvAmountAlbum);
-            tvAmountSong = itemView.findViewById(R.id.tvAmountSong);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, ArtistInfoActivity.class);
-                    intent.putExtra("artistArrayList",artistList.get(getPosition()));
-                    context.startActivity(intent);
-                }
-            });
-
+            ButterKnife.bind(this, itemView);
         }
     }
 }

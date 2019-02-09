@@ -20,6 +20,9 @@ import com.example.music_vinh.view.impl.SortActivity;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHolder> {
 
     static Context context;
@@ -41,7 +44,7 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder,final int position) {
 
         Song song = songList.get(position);
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
@@ -51,6 +54,45 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
 //        holder.tvNameSort.setSelected(isSelectedAfterClick);
 
         holder.tvNameArtistSort.setText(song.getNameArtist());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onClick(View view) {
+                // tvNameSort.setT
+                boolean isSelectedAfterClick = !view.isSelected();
+                view.setSelected(isSelectedAfterClick);
+
+                SortActivity.tvNameSongBottom.setText(songList.get(position).getName());
+                SortActivity.tvNameArtistBottom.setText(songList.get(position).getNameArtist());
+                SortActivity.imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
+
+                SortActivity.imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        SortActivity.imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
+                        mediaPlayer.stop();
+                    }
+                });
+
+                Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        songList.get(position).getId());
+
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                try {
+                    mediaPlayer.setDataSource(context, contentUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mediaPlayer.start();
+            }
+        });
     }
 
     @Override
@@ -60,56 +102,21 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imgSort, imgSongSort;
-        TextView tvNameSort, tvNameArtistSort;
+        @BindView(R.id.imgSort)
+        ImageView imgSort;
+
+        @BindView(R.id.imgSongSort)
+        ImageView imgSongSort;
+
+        @BindView(R.id.tvNameSort)
+        TextView tvNameSort;
+
+        @BindView(R.id.tvNameArtistSort)
+        TextView tvNameArtistSort;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
-            imgSort = itemView.findViewById(R.id.imgSort);
-            imgSongSort = itemView.findViewById(R.id.imgSongSort);
-            tvNameSort = itemView.findViewById(R.id.tvNameSort);
-            tvNameArtistSort = itemView.findViewById(R.id.tvNameArtistSort);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("ResourceAsColor")
-                @Override
-                public void onClick(View view) {
-                   // tvNameSort.setT
-                    boolean isSelectedAfterClick = !view.isSelected();
-                    view.setSelected(isSelectedAfterClick);
-
-                    SortActivity.tvNameSongBottom.setText(songList.get(getPosition()).getName());
-                    SortActivity.tvNameArtistBottom.setText(songList.get(getPosition()).getNameArtist());
-                    SortActivity.imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
-
-                    SortActivity.imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            SortActivity.imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
-                             mediaPlayer.stop();
-                        }
-                    });
-
-                    Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                            songList.get(getPosition()).getId());
-
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                    try {
-                        mediaPlayer.setDataSource(context, contentUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        mediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mediaPlayer.start();
-                }
-            });
+            ButterKnife.bind(this, itemView);
         }
     }
 }

@@ -21,6 +21,9 @@ import com.example.music_vinh.view.impl.PlayActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     Context context;
     ArrayList<Song> songList;
@@ -42,13 +45,23 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder,final int i) {
 
         Song song = songList.get(i);
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
-      //  viewHolder.tvNameArtist.setText(song.getPath());
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, PlayActivity.class);
+                intent.putExtra("song", songList.get(i));
+                context.startActivity(intent);
+
+
+            }
+        });
     }
 
     @Override
@@ -58,29 +71,19 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tvNameSong, tvNameArtist;
+        @BindView(R.id.tvName)
+        TextView tvNameSong;
+
+        @BindView(R.id.tvNameArtist)
+        TextView tvNameArtist;
+
+        @BindView(R.id.imgSong)
         ImageView imgSong;
+
        // ImageButton imgPlay, imgPause;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            tvNameSong = itemView.findViewById(R.id.tvName);
-            tvNameArtist = itemView.findViewById(R.id.tvNameArtist);
-
-            imgSong = itemView.findViewById(R.id.imgSong);
-          //  imgPlay = itemView.findViewById(R.id.imgPlay);
-          //  imgPause = itemView.findViewById(R.id.imgPause);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, PlayActivity.class);
-                    intent.putExtra("song", songList.get(getPosition()));
-                    context.startActivity(intent);
-
-
-                }
-            });
+            ButterKnife.bind(this, itemView);
         }
     }
     public interface OnItemClickListener{

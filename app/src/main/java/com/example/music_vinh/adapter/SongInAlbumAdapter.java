@@ -18,6 +18,9 @@ import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.ViewHolder> {
     Context context;
     ArrayList<Song> songArrayList;
@@ -36,12 +39,21 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
          Song song = songArrayList.get(position);
          holder.tvNameSong.setText(song.getName());
          holder.tvNameAlbumInSong.setText(song.getNameAlbum());
          holder.imgSongA.setImageResource(R.drawable.ic_song);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, PlayActivity.class);
+                intent.putExtra("song", songArrayList.get(position));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -51,25 +63,18 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-          ImageView imgSongA;
+        @BindView(R.id.imgSongA)
+        ImageView imgSongA;
+
+        @BindView(R.id.tvNameSong)
           TextView tvNameSong;
+
+        @BindView(R.id.tvNameAlbumInSong)
           TextView tvNameAlbumInSong;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imgSongA = itemView.findViewById(R.id.imgSongA);
-            tvNameSong = itemView.findViewById(R.id.tvNameSong);
-            tvNameAlbumInSong = itemView.findViewById(R.id.tvNameAlbumInSong);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, PlayActivity.class);
-                    intent.putExtra("song", songArrayList.get(getPosition()));
-                    context.startActivity(intent);
-                }
-            });
-
+            ButterKnife.bind(this, itemView);
         }
 
     }

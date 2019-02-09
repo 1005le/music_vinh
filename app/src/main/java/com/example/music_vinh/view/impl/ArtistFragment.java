@@ -28,6 +28,8 @@ import com.example.music_vinh.view.ArtistView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -35,7 +37,10 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     View view;
     RecyclerView artistRecyclerView;
-    private ArtistPresenterImpl artistPresenter;
+
+    @Inject
+    ArtistPresenterImpl artistPresenter;
+
     ArtistAdapter artistAdapter;
     ArrayList<Artist> artistList;
     private static final int MY_PERMISSION_REQUEST = 1;

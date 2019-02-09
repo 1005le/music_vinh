@@ -29,6 +29,8 @@ import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -38,8 +40,10 @@ public class SongFragment extends Fragment implements MainView {
     SongAdapter songAdapter;
    public static ArrayList<Song> songList;
    //Presenter
-    private MainPresenterImpl mainPresenter;
+   @Inject
+   MainPresenterImpl mainPresenter;
     private static final int MY_PERMISSION_REQUEST = 1;
+
 
     public SongFragment() {
         // Required empty public constructor

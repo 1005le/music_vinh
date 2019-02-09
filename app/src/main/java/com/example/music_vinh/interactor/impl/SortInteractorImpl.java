@@ -6,8 +6,13 @@ import com.example.music_vinh.model.Song;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class SortInteractorImpl {
     private SortInteractor sortInteractor;
+
+    @Inject
+    public SortInteractorImpl(){}
 
     public SortInteractorImpl(SortInteractor sortInteractor){
         this.sortInteractor = sortInteractor;

@@ -6,10 +6,16 @@ import com.example.music_vinh.model.Song;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class PlaySongInteractorImpl {
 
     private PlaySongInteractor playSongInteractor;
 
+    @Inject
+    public PlaySongInteractorImpl(){
+
+    }
     public PlaySongInteractorImpl(PlaySongInteractor playSongInteractor){
         this.playSongInteractor = playSongInteractor;
     }

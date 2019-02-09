@@ -19,6 +19,11 @@ public class AlbumInfoPresenterImpl implements AlbumInfoInteractor, AlbumInfoPre
     private AlbumInfoInteractorImpl albumInfoInteractorImpl;
     private AlbumInfoView albumInfoView;
 
+    public AlbumInfoPresenterImpl(AlbumInfoInteractorImpl albumInfoInteractorImpl, AlbumInfoView albumInfoView) {
+        this.albumInfoInteractorImpl = albumInfoInteractorImpl;
+        this.albumInfoView = albumInfoView;
+    }
+
     public AlbumInfoPresenterImpl(AlbumInfoView albumInfoView) {
         this.albumInfoView = albumInfoView;
         albumInfoInteractorImpl = new AlbumInfoInteractorImpl(this);

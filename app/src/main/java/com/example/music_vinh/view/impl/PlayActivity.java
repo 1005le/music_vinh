@@ -42,6 +42,11 @@ import android.widget.Toast;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.adapter.SongInAlbumAdapter;
+import com.example.music_vinh.injection.AppComponent;
+import com.example.music_vinh.injection.DaggerMainViewComponent;
+import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
+import com.example.music_vinh.injection.MainViewModule;
+import com.example.music_vinh.injection.PlaySongViewModule;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
@@ -56,7 +61,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 
-public class PlayActivity extends AppCompatActivity implements PlaySongView {
+import javax.inject.Inject;
+
+public class PlayActivity extends BaseActivity implements PlaySongView {
 
     Toolbar toolbarPlaySong;
     TextView tvTime;
@@ -80,7 +87,8 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
     private boolean thumbPressed    = false;
 
    // ArrayList<Song> songList;
-    private PlaySongPresenterImpl playSongPresenter;
+    @Inject
+    PlaySongPresenterImpl playSongPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +100,15 @@ public class PlayActivity extends AppCompatActivity implements PlaySongView {
         init();
       //  act();
         doStuff();
+    }
+
+    @Override
+    protected void setupComponent(AppComponent appComponent) {
+        DaggerPlaySongViewComponent.builder()
+                .appComponent(appComponent)
+                .playSongViewModule(new PlaySongViewModule(this))
+                .build()
+                .inject(this);
     }
 
     private void playSong(long id) {

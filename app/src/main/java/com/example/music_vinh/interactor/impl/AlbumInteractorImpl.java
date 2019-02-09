@@ -9,8 +9,14 @@ import com.example.music_vinh.model.Song;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class AlbumInteractorImpl {
     private AlbumInteractor albumInteractor;
+
+    @Inject
+    public AlbumInteractorImpl() {
+    }
 
     public AlbumInteractorImpl(AlbumInteractor albumInteractor){
         this.albumInteractor = albumInteractor;

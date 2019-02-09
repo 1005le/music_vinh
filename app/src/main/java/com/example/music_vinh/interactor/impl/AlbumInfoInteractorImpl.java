@@ -8,10 +8,16 @@ import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class AlbumInfoInteractorImpl {
 
     private AlbumInfoInteractor albumInfoInteractor;
 
+     @Inject
+     public AlbumInfoInteractorImpl(){
+
+     }
     public AlbumInfoInteractorImpl(AlbumInfoInteractor albumInfoInteractor){
         this.albumInfoInteractor = albumInfoInteractor;
     }

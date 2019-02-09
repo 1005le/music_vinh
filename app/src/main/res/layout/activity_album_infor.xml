@@ -18,9 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true">
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="250dp"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
@@ -28,7 +29,7 @@
 
         <ImageView
             android:id="@+id/imgAlbumInfo"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/collapse_toolbar"
             android:fitsSystemWindows="true"
@@ -48,9 +49,7 @@
                 app:titleMarginTop="5dp" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
-
         </android.support.design.widget.AppBarLayout>
-
 
     <android.support.v4.widget.NestedScrollView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

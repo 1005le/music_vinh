@@ -27,9 +27,15 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.MainViewAdapter;
+import com.example.music_vinh.injection.AppComponent;
+import com.example.music_vinh.injection.DaggerMainViewComponent;
+import com.example.music_vinh.injection.MainViewModule;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.MainView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends BaseActivity implements MainView {
     TabLayout tabLayout;
     ViewPager viewPager;
     DrawerLayout drawerLayout;
@@ -49,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
         act();
        // getDataBottom();
     }
+
+    @Override
+    protected void setupComponent(AppComponent appComponent) {
+        DaggerMainViewComponent.builder()
+                .appComponent(appComponent)
+                .mainViewModule(new MainViewModule(this))
+                .build()
+                .inject(this);
+    }
+
     private void act() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
@@ -166,4 +182,8 @@ public class MainActivity extends AppCompatActivity {
         return mAudioPath;
     }
 
+    @Override
+    public void showSong(ArrayList<Song> songs) {
+
+    }
 }

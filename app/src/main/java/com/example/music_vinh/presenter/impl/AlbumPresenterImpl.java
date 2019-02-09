@@ -15,6 +15,11 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
     private AlbumInteractorImpl albumInteractorImpl;
     private AlbumView albumView;
 
+    public AlbumPresenterImpl(AlbumInteractorImpl albumInteractorImpl, AlbumView albumView) {
+        this.albumInteractorImpl = albumInteractorImpl;
+        this.albumView = albumView;
+    }
+
     public AlbumPresenterImpl(AlbumView albumView) {
         this.albumView = albumView;
         albumInteractorImpl = new AlbumInteractorImpl(this);

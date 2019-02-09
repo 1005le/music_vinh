@@ -9,10 +9,16 @@ import com.example.music_vinh.model.Song;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class ArtistInteractorImpl {
 
     private ArtistInteractor artistInteractor;
     Context context;
+
+    @Inject
+    public ArtistInteractorImpl() {
+    }
 
     public ArtistInteractorImpl(ArtistInteractor artistInteractor){
         this.artistInteractor = artistInteractor;

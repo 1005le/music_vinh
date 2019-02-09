@@ -17,10 +17,14 @@ import com.example.music_vinh.view.impl.AlbumInfoActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
 
     Context context;
     ArrayList<Album> albumList;
+
 
     public AlbumAdapter(Context context, ArrayList<Album> albumList) {
         this.context = context;
@@ -36,7 +40,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
 
         Album album = albumList.get(i);
         viewHolder.tvName.setText(album.getName());
@@ -44,6 +48,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
         Drawable img = Drawable.createFromPath(album.getImages());
         viewHolder.imgAlbum.setImageDrawable(img);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, AlbumInfoActivity.class);
+                intent.putExtra("albumArrayList",albumList.get(i));
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -54,25 +66,18 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+         @BindView(R.id.imgAlbum)
          ImageView imgAlbum;
+
+        @BindView(R.id.tvNameAlbum)
          TextView tvName;
+
+        @BindView(R.id.tvNameArtist_A)
          TextView tvNameArtist;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            imgAlbum = itemView.findViewById(R.id.imgAlbum);
-            tvName = itemView.findViewById(R.id.tvNameAlbum);
-            tvNameArtist = itemView.findViewById(R.id.tvNameArtist_A);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, AlbumInfoActivity.class);
-                    intent.putExtra("albumArrayList",albumList.get(getPosition()));
-                    context.startActivity(intent);
-                }
-            });
+            ButterKnife.bind(this, itemView);
         }
     }
 }

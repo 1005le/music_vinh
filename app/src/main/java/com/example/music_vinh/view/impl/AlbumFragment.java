@@ -28,6 +28,8 @@ import com.example.music_vinh.view.AlbumView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -35,7 +37,10 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
      View view;
      RecyclerView albumRecyclerView;
-     private AlbumPresenterImpl albumPresenter;
+
+      @Inject
+     AlbumPresenterImpl albumPresenter;
+
      AlbumAdapter albumAdapter;
      ArrayList<Album> albumList;
 

@@ -16,6 +16,11 @@ public class ArtistInfoPresenterImpl implements ArtistInfoInteractor, ArtistInfo
     private ArtistInfoInteractorImpl artistInfoInteractorImpl;
     private ArtistInfoView artistInfoView;
 
+    public ArtistInfoPresenterImpl(ArtistInfoInteractorImpl artistInfoInteractorImpl, ArtistInfoView artistInfoView) {
+        this.artistInfoInteractorImpl = artistInfoInteractorImpl;
+        this.artistInfoView = artistInfoView;
+    }
+
     public ArtistInfoPresenterImpl(ArtistInfoView artistInfoView) {
         this.artistInfoView = artistInfoView;
         artistInfoInteractorImpl = new ArtistInfoInteractorImpl(this);

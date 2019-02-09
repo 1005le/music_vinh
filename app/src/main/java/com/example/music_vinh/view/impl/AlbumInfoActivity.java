@@ -33,6 +33,11 @@ import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongInAlbumAdapter;
+import com.example.music_vinh.injection.AlbumInfoViewModule;
+import com.example.music_vinh.injection.AppComponent;
+import com.example.music_vinh.injection.DaggerAlbumInfoViewComponent;
+import com.example.music_vinh.injection.DaggerMainViewComponent;
+import com.example.music_vinh.injection.MainViewModule;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
@@ -42,7 +47,9 @@ import com.example.music_vinh.view.AlbumInfoView;
 
 import java.util.ArrayList;
 
-public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoView {
+import javax.inject.Inject;
+
+public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
     CoordinatorLayout coordinatorLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -52,7 +59,9 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
     ArrayList<Song> songArrayList;
    SongInAlbumAdapter songInAlbumAdapter;
 
-    private AlbumInfoPresenterImpl albumInfoPresenter;
+   @Inject
+     AlbumInfoPresenterImpl albumInfoPresenter;
+
     private static final int MY_PERMISSION_REQUEST = 1;
 
     ImageView imgAlbumInfo;
@@ -87,6 +96,16 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
         }
 
     }
+
+    @Override
+    protected void setupComponent(AppComponent appComponent) {
+        DaggerAlbumInfoViewComponent.builder()
+                .appComponent(appComponent)
+                .albumInfoViewModule(new AlbumInfoViewModule(this))
+                .build()
+                .inject(this);
+    }
+
     private void getDataIntent() {
         Intent intent = getIntent();
         album = (Album) intent.getParcelableExtra("albumArrayList");
@@ -99,6 +118,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements AlbumInfoVie
             collapsingToolbarLayout.setBackground(img);
         }
           imgAlbumInfo.setImageDrawable(img);
+
 
          imgIconAlbum.setImageDrawable(img);
         tvNameAlbumInfo.setText(album.getName());

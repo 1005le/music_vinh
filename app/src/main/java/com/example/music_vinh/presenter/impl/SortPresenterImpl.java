@@ -17,6 +17,11 @@ public class SortPresenterImpl implements SortPresenter, SortInteractor {
     private SortInteractorImpl sortInteractorImpl;
     private SortView sortView;
 
+    public SortPresenterImpl(SortInteractorImpl sortInteractorImpl, SortView sortView) {
+        this.sortInteractorImpl = sortInteractorImpl;
+        this.sortView = sortView;
+    }
+
     public SortPresenterImpl(SortView sortView) {
         this.sortView = sortView;
         sortInteractorImpl = new SortInteractorImpl(this);

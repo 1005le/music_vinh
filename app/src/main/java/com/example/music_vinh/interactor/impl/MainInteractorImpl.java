@@ -20,6 +20,8 @@ import com.example.music_vinh.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /*
  *- Lớp M: xử lý dữ liệu -> Trả dữ liệu về P thông qua callback
  * */
@@ -28,6 +30,15 @@ public class MainInteractorImpl {
 
     private MainInteractor mainInteractor;
      Context context;
+
+    @Inject
+    public MainInteractorImpl() {
+    }
+
+    public MainInteractorImpl(MainInteractor mainInteractor, Context context) {
+        this.mainInteractor = mainInteractor;
+        this.context = context;
+    }
 
     public MainInteractorImpl(MainInteractor mainInteractor){
         this.mainInteractor = mainInteractor;
