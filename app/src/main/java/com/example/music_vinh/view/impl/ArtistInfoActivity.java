@@ -15,7 +15,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,17 +29,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.music_vinh.R;
-import com.example.music_vinh.adapter.SongInAlbumAdapter;
 import com.example.music_vinh.adapter.SongInArtistAdapter;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.ArtistInfoViewModule;
 import com.example.music_vinh.injection.DaggerArtistInfoViewComponent;
-import com.example.music_vinh.injection.DaggerMainViewComponent;
-import com.example.music_vinh.injection.MainViewModule;
-import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
 import com.example.music_vinh.presenter.impl.ArtistInfoPresenterImpl;
 import com.example.music_vinh.view.ArtistInfoView;
 
@@ -48,16 +42,23 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
+    @BindView(R.id.coordinatorArtist)
     CoordinatorLayout coordinatorLayoutArtist;
+    @BindView(R.id.collapsingToolbarArtist)
     CollapsingToolbarLayout collapsingToolbarLayoutArtist;
+    @BindView(R.id.toolbarArtistInfo)
     Toolbar toolbarArtist;
+    @BindView(R.id.SongInArtistrecyclerView)
     RecyclerView songInArtistRecycleView;
     Artist artist;
     ArrayList<Song> songArrayList;
     SongInArtistAdapter songInArtistAdapter;
-
+    @BindView(R.id.imgViewArtist)
     ImageView imgViewArtist;
 
     @Inject
@@ -70,7 +71,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_info);
         getDataIntent();
-        init();
+        ButterKnife.bind(this);
         act();
 
        getData();
@@ -134,15 +135,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         collapsingToolbarLayoutArtist.setCollapsedTitleTextColor(Color.WHITE);
     }
 
-    private void init() {
-        coordinatorLayoutArtist = findViewById(R.id.coordinatorArtist);
-        collapsingToolbarLayoutArtist = findViewById(R.id.collapsingToolbarArtist);
-        toolbarArtist = findViewById(R.id.toolbarArtistInfo);
-        songInArtistRecycleView = findViewById(R.id.SongInArtistrecyclerView);
-        imgViewArtist = findViewById(R.id.imgViewArtist);
 
-
-    }
     private void initPresenter(){
         artistInfoPresenter = new ArtistInfoPresenterImpl(this);
     }

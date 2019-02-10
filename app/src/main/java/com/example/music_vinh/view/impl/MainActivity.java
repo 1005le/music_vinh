@@ -38,6 +38,9 @@ import com.example.music_vinh.view.MainView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.example.music_vinh.view.impl.AlbumFragment.albumAdapter;
 import static com.example.music_vinh.view.impl.AlbumFragment.albumList;
 import static com.example.music_vinh.view.impl.ArtistFragment.artistAdapter;
@@ -46,13 +49,22 @@ import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
 import static com.example.music_vinh.view.impl.SongFragment.songList;
 
 public class MainActivity extends BaseActivity implements MainView {
+
+    @BindView(R.id.myTabLayout)
     TabLayout tabLayout;
+    @BindView(R.id.myViewPager)
     ViewPager viewPager;
+    @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
+    @BindView(R.id.toolBarMainActivity)
     Toolbar toolbarMainActivity;
+    @BindView(R.id.linearBottom)
     LinearLayout linearLayoutBottom;
+    @BindView(R.id.tvNameSong)
     TextView tvNameSong;
+    @BindView(R.id.tvNameArtist)
     TextView tvNameArtist;
+    @BindView(R.id.imgButtonPause)
     ImageButton imgPause;
     public static Song song;
 
@@ -60,7 +72,7 @@ public class MainActivity extends BaseActivity implements MainView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+        ButterKnife.bind(this);
         initTab();
         act();
        // getDataBottom();
@@ -92,18 +104,7 @@ public class MainActivity extends BaseActivity implements MainView {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void init() {
-        tabLayout = findViewById(R.id.myTabLayout);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        toolbarMainActivity = findViewById(R.id.toolBarMainActivity);
-        viewPager = findViewById(R.id.myViewPager);
 
-        //Khởi tạo layout bottom
-        linearLayoutBottom = findViewById(R.id.linearBottom);
-        tvNameSong = findViewById(R.id.tvNameSong);
-        tvNameArtist = findViewById(R.id.tvNameArtist);
-        imgPause = findViewById(R.id.imgButtonPause);
-    }
     private void getDataBottom() {
        tvNameSong.setText(PlayActivity.song.getName());
         tvNameArtist.setText(PlayActivity.song.getNameArtist());
@@ -141,7 +142,7 @@ public class MainActivity extends BaseActivity implements MainView {
             }
             @Override
             public boolean onQueryTextChange(String searchQuery) {
-               // switch (R)
+
                 final List<Song>filterModel = filter(songList, searchQuery);
                 songAdapter.getFilte(filterModel);
 

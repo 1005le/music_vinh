@@ -22,10 +22,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,42 +39,68 @@ import android.view.ViewConfiguration;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
-import com.example.music_vinh.adapter.SongInAlbumAdapter;
+
 import com.example.music_vinh.injection.AppComponent;
-import com.example.music_vinh.injection.DaggerMainViewComponent;
 import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
-import com.example.music_vinh.injection.MainViewModule;
+
 import com.example.music_vinh.injection.PlaySongViewModule;
+import com.example.music_vinh.model.Album;
+import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
-import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.view.PlaySongView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.example.music_vinh.view.impl.AlbumFragment.albumAdapter;
+import static com.example.music_vinh.view.impl.AlbumFragment.albumList;
+import static com.example.music_vinh.view.impl.ArtistFragment.artistAdapter;
+import static com.example.music_vinh.view.impl.ArtistFragment.artistList;
+import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
+import static com.example.music_vinh.view.impl.SongFragment.songList;
+
 public class PlayActivity extends BaseActivity implements PlaySongView {
 
+    @BindView(R.id.toolbarPlaySong)
     Toolbar toolbarPlaySong;
+    @BindView(R.id.tvTime)
     TextView tvTime;
-    ImageView imgPre, imgNext, imgShuttle, imgRepeat,imgRepeatOne, imgPlay;
+    @BindView(R.id.imgPrev)
+    ImageView imgPre;
+    @BindView(R.id.imgNext)
+    ImageView imgNext;
+    @BindView(R.id.imgShuttle)
+    ImageView imgShuttle;
+    @BindView(R.id.imgRepeat)
+    ImageView imgRepeat;
+    @BindView(R.id.imgRepeatOne)
+    ImageView imgRepeatOne;
+    @BindView(R.id.imgPlay)
+    ImageView imgPlay;
+    @BindView(R.id.seekBarSong)
     SeekBar seekBar;
+    @BindView(R.id.recycleViewPlaySong)
     RecyclerView playSongRecycleview;
+
+    @BindView(R.id.tvNameArtistPlay)
+    TextView tvNameArtistPlay;
      ArrayList<Song> arrSong = new ArrayList<Song>();
     SongAdapter songAdapter;
-    TextView tvNameArtistPlay;
+
     public static Song song;
     MediaPlayer mediaPlayer;
     private static final int MY_PERMISSION_REQUEST = 1;
@@ -97,6 +125,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         initPresenter();
 
         getDataIntent();
+
+        ButterKnife.bind(this);
         init();
       //  act();
         doStuff();
@@ -112,8 +142,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     }
 
     private void playSong(long id) {
-         // long id = song.getId();
-        // android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
         Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -146,8 +174,14 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     }
 
     private void getDataSong() {
+
+        seekBar.setProgress(mediaPlayer.getCurrentPosition());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
         tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
+
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+//        tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
+      //  UpdateTime();
         tvNameArtistPlay.setText(song.getNameArtist());
     }
 
@@ -190,7 +224,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     private void act() {
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-          getSupportActionBar().setTitle(song.getName());
+        getSupportActionBar().setTitle(song.getName());
         toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,43 +239,41 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     public boolean onCreateOptionsMenu( Menu menu) {
         getMenuInflater().inflate( R.menu.search_view, menu);
 
-        MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
+       final MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if(!searchView.isIconified()){
+                    searchView.setIconified(true);
+                }
+                myActionMenuItem.collapseActionView();
                 return false;
             }
             @Override
-            public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
-//                    adapter.filter("");
-//                    listView.clearTextFilter();
+            public boolean onQueryTextChange(String searchQuery) {
 
-                } else {
-                    // adapter.filter(newText);
-                }
+                final List<Song>filterModel = filter(songList, searchQuery);
+                songAdapter.getFilte(filterModel);
                 return true;
             }
         });
         return true;
     }
+    private List<Song> filter(List<Song>listItem, String query){
+        query = query.toLowerCase();
+        final List<Song>filterModel = new ArrayList<>();
 
+        for( Song item :listItem){
+            final String text = item.getName().toLowerCase();
+            if( text.startsWith(query)){
+                filterModel.add(item);
+            }
+        }
+        return filterModel;
+    }
 
     private void init() {
-        toolbarPlaySong = findViewById(R.id.toolbarPlaySong);
-
-        imgPre = findViewById(R.id.imgPrev);
-        imgNext = findViewById(R.id.imgNext);
-        imgShuttle= findViewById(R.id.imgShuttle);
-        imgRepeat = findViewById(R.id.imgRepeat);
-        imgRepeatOne = findViewById(R.id.imgRepeatOne);
-        seekBar = findViewById(R.id.seekBarSong);
-        imgPlay = findViewById(R.id.imgPlay);
-        playSongRecycleview = findViewById(R.id.recycleViewPlaySong);
-        tvTime = findViewById(R.id.tvTime);
-        tvNameArtistPlay = findViewById(R.id.tvNameArtistPlay);
-
         playSong(song.getId());
         act();
         getDataSong();

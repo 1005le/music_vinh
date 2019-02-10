@@ -31,12 +31,18 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SongFragment extends Fragment implements MainView {
     View view;
+
+    @BindView(R.id.recycleViewSong)
     RecyclerView songRecyclerView;
+
    public static SongAdapter songAdapter;
    public static ArrayList<Song> songList;
    //Presenter
@@ -53,13 +59,15 @@ public class SongFragment extends Fragment implements MainView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_song, container, false);
-        songRecyclerView = view.findViewById(R.id.recycleViewSong);
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ButterKnife.bind(this,view);
         initPresenter();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

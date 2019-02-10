@@ -9,9 +9,11 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -37,24 +39,37 @@ import java.util.Collections;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.example.music_vinh.view.impl.PlayActivity.song;
 
 public class SortActivity extends BaseActivity implements SortView {
 
-   Toolbar toolbarSort;
+    @BindView(R.id.toolBarSortActivity)
+    Toolbar toolbarSort;
+    @BindView(R.id.recycleViewSortSong)
     RecyclerView sortSongRecycleview;
+
+    @BindView(R.id.tvNameSong)
+     TextView tvNameSongBottom ;
+    @BindView(R.id.tvNameArtist)
+      TextView tvNameArtistBottom;
+    @BindView(R.id.imgButtonPause)
+     ImageButton imgButtonPauseBottom;
+
     ArrayList<Song> songArrayList;
     @Inject
-   SortPresenterImpl sortPresenter;
+    SortPresenterImpl sortPresenter;
     SortSongAdapter sortSongAdapter;
     MediaPlayer mediaPlayer;
-   public static TextView tvNameSongBottom , tvNameArtistBottom;
-   public static ImageButton imgButtonPauseBottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sort);
+
+        ButterKnife.bind(this);
         init();
         atc();
     }
@@ -83,11 +98,6 @@ public class SortActivity extends BaseActivity implements SortView {
     }
 
     private void init() {
-        toolbarSort = findViewById(R.id.toolBarSortActivity);
-        sortSongRecycleview = findViewById(R.id.recycleViewSortSong);
-        tvNameSongBottom = findViewById(R.id.tvNameSong);
-        tvNameArtistBottom = findViewById(R.id.tvNameArtist);
-        imgButtonPauseBottom = findViewById(R.id.imgButtonPause);
 
         Intent intent = getIntent();
         if (intent.hasExtra("listSong")) {
@@ -97,6 +107,29 @@ public class SortActivity extends BaseActivity implements SortView {
             initPresenter();
         sortPresenter.onLoadSongSuccess(songArrayList);
 
+        RecyclerView.ItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        sortSongRecycleview.addItemDecoration(divider);
+
+        ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder dragged, RecyclerView.ViewHolder target) {
+
+                int position_dragged = dragged.getAdapterPosition();
+                int position_target = target.getAdapterPosition();
+
+                Collections.swap(songArrayList, position_dragged, position_target);
+
+                sortSongAdapter.notifyItemMoved(position_dragged, position_target);
+
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        });
+        helper.attachToRecyclerView(sortSongRecycleview);
     }
 
 //    public void playSong() {
@@ -121,6 +154,7 @@ public class SortActivity extends BaseActivity implements SortView {
     private void initPresenter(){
         sortPresenter = new SortPresenterImpl(this);
     }
+
     @Override
     public void showSong(ArrayList<Song> songs) {
 

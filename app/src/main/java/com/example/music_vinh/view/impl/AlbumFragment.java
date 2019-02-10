@@ -30,12 +30,17 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AlbumFragment extends Fragment implements AlbumView {
 
      View view;
+
+    @BindView(R.id.recycleViewAlbum)
      RecyclerView albumRecyclerView;
 
       @Inject
@@ -54,14 +59,14 @@ public class AlbumFragment extends Fragment implements AlbumView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        view = inflater.inflate(R.layout.fragment_album, container, false);
-       albumRecyclerView = view.findViewById(R.id.recycleViewAlbum);
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        ButterKnife.bind(this,view);
         initPresenter();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

@@ -11,12 +11,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,24 +35,29 @@ import com.example.music_vinh.adapter.SongInAlbumAdapter;
 import com.example.music_vinh.injection.AlbumInfoViewModule;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.DaggerAlbumInfoViewComponent;
-import com.example.music_vinh.injection.DaggerMainViewComponent;
-import com.example.music_vinh.injection.MainViewModule;
+
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
-import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
-import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.view.AlbumInfoView;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
+
+    @BindView(R.id.coordinator)
     CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.collapsingToolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.toolbarDanhSach)
     Toolbar toolbar;
+    @BindView(R.id.recyclerViewListSong)
     RecyclerView listSongrecyclerView;
      Album album ;
     ArrayList<Song> songArrayList;
@@ -63,18 +67,20 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
      AlbumInfoPresenterImpl albumInfoPresenter;
 
     private static final int MY_PERMISSION_REQUEST = 1;
-
+    @BindView(R.id.imgAlbumInfo)
     ImageView imgAlbumInfo;
-    TextView tvNameArtistInfoA;
+    @BindView(R.id.imgIconAlbum)
     ImageView imgIconAlbum;
+    @BindView(R.id.tvNameAlbumInfo)
     TextView tvNameAlbumInfo;
+    @BindView(R.id.tvamountSongA)
     TextView tvamountSongA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_infor);
-        init();
+        ButterKnife.bind(this);
         getDataIntent();
         getData();
         act();
@@ -140,18 +146,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
     }
 
-    private void init() {
-        coordinatorLayout = findViewById(R.id.coordinator);
-        collapsingToolbarLayout = findViewById(R.id.collapsingToolbar);
-        toolbar = findViewById(R.id.toolbarDanhSach);
-        listSongrecyclerView = findViewById(R.id.recyclerViewListSong);
 
-        imgAlbumInfo = findViewById(R.id.imgAlbumInfo);
-        imgIconAlbum = findViewById(R.id.imgIconAlbum);
-        tvNameAlbumInfo = findViewById(R.id.tvNameAlbumInfo);
-        tvamountSongA = findViewById(R.id.tvamountSongA);
-
-    }
 
     private void initPresenter(){
         albumInfoPresenter = new AlbumInfoPresenterImpl(this);

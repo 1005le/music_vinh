@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +29,13 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
     static Context context;
     static ArrayList<Song> songList;
     static MediaPlayer mediaPlayer;
+
+    @BindView(R.id.tvNameSong)
+    TextView tvNameSongBottom ;
+    @BindView(R.id.tvNameArtist)
+    TextView tvNameArtistBottom;
+    @BindView(R.id.imgButtonPause)
+    ImageButton imgButtonPauseBottom;
 
     public SortSongAdapter(Context context, ArrayList<Song> songList) {
         this.context = context;
@@ -50,9 +58,6 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         holder.tvNameSort.setText(song.getName());
 
-//        boolean isSelectedAfterClick = !holder.tvNameSort.isSelected();
-//        holder.tvNameSort.setSelected(isSelectedAfterClick);
-
         holder.tvNameArtistSort.setText(song.getNameArtist());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceAsColor")
@@ -62,14 +67,14 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
                 boolean isSelectedAfterClick = !view.isSelected();
                 view.setSelected(isSelectedAfterClick);
 
-                SortActivity.tvNameSongBottom.setText(songList.get(position).getName());
-                SortActivity.tvNameArtistBottom.setText(songList.get(position).getNameArtist());
-                SortActivity.imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
+                tvNameSongBottom.setText(songList.get(position).getName());
+                tvNameArtistBottom.setText(songList.get(position).getNameArtist());
+                imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
 
-                SortActivity.imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
+                imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        SortActivity.imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
+                        imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
                         mediaPlayer.stop();
                     }
                 });
