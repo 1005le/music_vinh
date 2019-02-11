@@ -162,6 +162,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         mediaPlayer.start();
         seekBar.setMax(mediaPlayer.getDuration());
         UpdateTime();
+
 //        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
 //              getApplicationContext().getResources(), R.drawable.ic_play_seekbar)));
     }
@@ -462,6 +463,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
 //                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
 //                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
+
 
                         position--;
                         if(position < 0){
