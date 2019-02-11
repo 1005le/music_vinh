@@ -37,6 +37,7 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
     @BindView(R.id.imgButtonPause)
     ImageButton imgButtonPauseBottom;
 
+
     public SortSongAdapter(Context context, ArrayList<Song> songList) {
         this.context = context;
         this.songList = songList;

@@ -92,6 +92,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     ImageView imgRepeatOne;
     @BindView(R.id.imgPlay)
     ImageView imgPlay;
+
     @BindView(R.id.seekBarSong)
     SeekBar seekBar;
     @BindView(R.id.recycleViewPlaySong)
@@ -159,7 +160,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             e.printStackTrace();
         }
         mediaPlayer.start();
-
+        seekBar.setMax(mediaPlayer.getDuration());
+        UpdateTime();
 //        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
 //              getApplicationContext().getResources(), R.drawable.ic_play_seekbar)));
     }
@@ -176,9 +178,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
     private void getDataSong() {
 
-        seekBar.setProgress(mediaPlayer.getCurrentPosition());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
+           seekBar.setProgress(mediaPlayer.getCurrentPosition());
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+//        tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
 
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
 //        tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));

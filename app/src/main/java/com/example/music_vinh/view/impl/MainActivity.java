@@ -49,7 +49,7 @@ import static com.example.music_vinh.view.impl.ArtistFragment.artistList;
 import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
 import static com.example.music_vinh.view.impl.SongFragment.songList;
 
-public class MainActivity extends BaseActivity implements MainView {
+public class  MainActivity extends BaseActivity implements MainView {
 
     @BindView(R.id.myTabLayout)
     TabLayout tabLayout;
@@ -67,7 +67,8 @@ public class MainActivity extends BaseActivity implements MainView {
     TextView tvNameArtist;
     @BindView(R.id.imgButtonPause)
     ImageButton imgPause;
-    public static Song song;
+
+    public Song song;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

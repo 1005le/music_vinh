@@ -127,7 +127,6 @@ public class SortActivity extends BaseActivity implements SortView {
 
                 return false;
             }
-
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
