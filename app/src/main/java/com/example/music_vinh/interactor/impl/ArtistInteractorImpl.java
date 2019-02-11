@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class ArtistInteractorImpl {
+public class ArtistInteractorImpl implements ArtistInteractor{
 
     private ArtistInteractor artistInteractor;
     Context context;
@@ -39,5 +39,10 @@ public class ArtistInteractorImpl {
 
     public void getArtistCategories(final ArtistInteractor artistInteractor) {
                 artistInteractor.onLoadArtistSuccess(createArrayList());
+    }
+
+    @Override
+    public void onLoadArtistSuccess(ArrayList<Artist> songs) {
+
     }
 }

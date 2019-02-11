@@ -36,10 +36,6 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     }
 
     @Override
-    public void onLoadSongFailue(String message) {
-    }
-
-    @Override
     public void loadData() {
         mainInteractorImpl.getSongCategories(this);
     }

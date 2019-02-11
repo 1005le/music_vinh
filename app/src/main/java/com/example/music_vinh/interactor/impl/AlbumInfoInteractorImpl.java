@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class AlbumInfoInteractorImpl {
+public class AlbumInfoInteractorImpl implements AlbumInfoInteractor{
 
     private AlbumInfoInteractor albumInfoInteractor;
 
@@ -33,8 +33,8 @@ public class AlbumInfoInteractorImpl {
         albumInfoInteractor.onLoadSongSuccess(createArrayList());
     }
 
-    public void createSong(){
-        ArrayList<Song> songArrayList= new ArrayList<>();
-        albumInfoInteractor.onLoadSongSuccess(songArrayList);
+    @Override
+    public void onLoadSongSuccess(ArrayList<Song> songs) {
+
     }
 }

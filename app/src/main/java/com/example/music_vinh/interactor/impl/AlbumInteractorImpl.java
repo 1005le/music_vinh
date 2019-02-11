@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class AlbumInteractorImpl {
+public class AlbumInteractorImpl implements AlbumInteractor{
     private AlbumInteractor albumInteractor;
 
     @Inject
@@ -33,9 +33,8 @@ public class AlbumInteractorImpl {
                 albumInteractor.onLoadAlbumSuccess(createArrayList());
     }
 
-    public void createAlbum(){
-        ArrayList<Album> albums = new ArrayList<>();
-        albumInteractor.onLoadAlbumSuccess(albums);
-    }
+    @Override
+    public void onLoadAlbumSuccess(ArrayList<Album> albums) {
 
+    }
 }

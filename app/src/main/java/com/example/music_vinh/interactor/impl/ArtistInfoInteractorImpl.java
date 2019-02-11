@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class ArtistInfoInteractorImpl {
+public class ArtistInfoInteractorImpl implements ArtistInfoInteractor {
     private ArtistInfoInteractor artistInfoInteractor;
 
     @Inject
@@ -32,5 +32,10 @@ public class ArtistInfoInteractorImpl {
     public void createSong(){
         ArrayList<Song> songArrayList= new ArrayList<>();
         artistInfoInteractor.onLoadSongSuccess(songArrayList);
+    }
+
+    @Override
+    public void onLoadSongSuccess(ArrayList<Song> songs) {
+
     }
 }

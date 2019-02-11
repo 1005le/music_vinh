@@ -28,10 +28,10 @@ import javax.inject.Inject;
  *- Lớp M: xử lý dữ liệu -> Trả dữ liệu về P thông qua callback
  * */
 
-public class MainInteractorImpl {
+public class MainInteractorImpl implements MainInteractor{
 
     private MainInteractor mainInteractor;
-     Context context;
+         Context context;
 
     @Inject
     public MainInteractorImpl() {
@@ -60,4 +60,8 @@ public class MainInteractorImpl {
         mainInteractor.onLoadSongSuccess(songs);
     }
 
+    @Override
+    public void onLoadSongSuccess(ArrayList<Song> songs) {
+
+    }
 }

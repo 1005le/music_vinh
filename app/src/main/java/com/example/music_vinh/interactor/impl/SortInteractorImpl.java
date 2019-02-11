@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class SortInteractorImpl {
+public class SortInteractorImpl implements SortInteractor {
     private SortInteractor sortInteractor;
 
     @Inject
@@ -29,8 +29,8 @@ public class SortInteractorImpl {
         sortInteractor.onLoadSongSuccess(createArrayList());
     }
 
-    public void createSong(){
-        ArrayList<Song> songArrayList= new ArrayList<>();
-        sortInteractor.onLoadSongSuccess(songArrayList);
+    @Override
+    public void onLoadSongSuccess(ArrayList<Song> songs) {
+
     }
 }

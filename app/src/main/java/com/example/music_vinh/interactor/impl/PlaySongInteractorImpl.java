@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class PlaySongInteractorImpl {
+public class PlaySongInteractorImpl implements PlaySongInteractor{
 
     private PlaySongInteractor playSongInteractor;
 
@@ -31,8 +31,8 @@ public class PlaySongInteractorImpl {
         playSongInteractor.onLoadSongSuccess(createArrayList());
     }
 
-    public void createSong(){
-        ArrayList<Song> songArrayList= new ArrayList<>();
-        playSongInteractor.onLoadSongSuccess(songArrayList);
+    @Override
+    public void onLoadSongSuccess(ArrayList<Song> songs) {
+
     }
 }
