@@ -29,11 +29,9 @@ public class ArtistInfoPresenterImpl implements ArtistInfoInteractor, ArtistInfo
     public void onLoadSongSuccess(ArrayList<Song> songs) {
         artistInfoView.showSong(songs);
     }
-    @Override
-    public void onLoadSongFailue(String message) {
-    }
+
     @Override
     public void loadData() {
-       artistInfoInteractorImpl.createSong();
+        artistInfoInteractorImpl.getSongCategories(this);
     }
 }

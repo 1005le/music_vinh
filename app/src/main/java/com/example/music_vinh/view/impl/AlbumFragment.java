@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.AlbumAdapter;
 import com.example.music_vinh.model.Album;
+import com.example.music_vinh.presenter.AlbumPresenter;
 import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
 import com.example.music_vinh.view.AlbumView;
 
@@ -44,10 +45,10 @@ public class AlbumFragment extends Fragment implements AlbumView {
      RecyclerView albumRecyclerView;
 
       @Inject
-     AlbumPresenterImpl albumPresenter;
+      AlbumPresenter albumPresenter;
 
      static AlbumAdapter albumAdapter;
-    static ArrayList<Album> albumList;
+    public static ArrayList<Album> albumList;
 
     private static final int MY_PERMISSION_REQUEST = 1;
     public AlbumFragment() {
@@ -101,10 +102,10 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     private void doStuff() {
         albumList = new ArrayList<>();
-        getAlbum();
-        albumPresenter.onLoadAlbumSuccess(albumList);
+        albumList = getAlbum();
+        albumPresenter.loadAlbums();
     }
-    public void getAlbum() {
+    public ArrayList<Album> getAlbum() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
@@ -126,7 +127,9 @@ public class AlbumFragment extends Fragment implements AlbumView {
                         currentImages,Integer.parseInt(currentamountSong)));
 
             } while (songCursor.moveToNext());
-        }}
+        }
+        return albumList;
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

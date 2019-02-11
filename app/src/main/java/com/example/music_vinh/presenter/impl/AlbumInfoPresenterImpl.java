@@ -35,11 +35,8 @@ public class AlbumInfoPresenterImpl implements AlbumInfoInteractor, AlbumInfoPre
         albumInfoView.showSong(songs);
     }
     @Override
-    public void onLoadSongFailue(String message) {
-
-    }
-    @Override
-    public void loadData() {
-       albumInfoInteractorImpl.createSong();
+    public void loadData()
+    {
+       albumInfoInteractorImpl.getSongCategories(this);
     }
 }

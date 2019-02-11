@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.ArtistAdapter;
 import com.example.music_vinh.model.Artist;
+import com.example.music_vinh.presenter.ArtistPresenter;
 import com.example.music_vinh.presenter.impl.ArtistPresenterImpl;
 import com.example.music_vinh.view.ArtistView;
 
@@ -43,10 +44,10 @@ public class ArtistFragment extends Fragment implements ArtistView {
     RecyclerView artistRecyclerView;
 
     @Inject
-    ArtistPresenterImpl artistPresenter;
+    ArtistPresenter artistPresenter;
 
-    static ArtistAdapter artistAdapter;
-   static ArrayList<Artist> artistList;
+  public static ArtistAdapter artistAdapter;
+  public static ArrayList<Artist> artistList;
     private static final int MY_PERMISSION_REQUEST = 1;
 
     public ArtistFragment() {
@@ -99,10 +100,10 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     private void doStuff() {
        artistList = new ArrayList<>();
-        getMusicArtist();
-        artistPresenter.onLoadArtistSuccess(artistList);
+        artistList = getMusicArtist();
+        artistPresenter.loadArtist();
     }
-    public void getMusicArtist() {
+    public ArrayList<Artist> getMusicArtist() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
@@ -126,7 +127,9 @@ public class ArtistFragment extends Fragment implements ArtistView {
                        Integer.parseInt(currentAmountSong),""));
 
             } while (songCursor.moveToNext());
-        }}
+        }
+        return artistList;
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -8,8 +8,8 @@ import dagger.Component;
 @ActivityScope
 @Component(dependencies = AppComponent.class, modules = SortViewModule.class)
 public interface SortViewComponent {
-
     void inject(SortActivity sortActivity);
+
 }
 
 

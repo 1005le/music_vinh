@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.music_vinh.interactor.MainInteractor;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.impl.SongFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,14 @@ public class MainInteractorImpl {
         this.mainInteractor = mainInteractor;
     }
 
+    private  ArrayList<Song> createArrayList() {
+        ArrayList<Song> songs = SongFragment.songList;
+        return songs;
+    }
+
+    public void getSongCategories(final MainInteractor mainInteractor) {
+                mainInteractor.onLoadSongSuccess(createArrayList());
+    }
 
     public void createData(){
       ArrayList<Song> songs = new ArrayList<>();

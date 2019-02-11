@@ -11,5 +11,5 @@ import dagger.Component;
 public interface AlbumViewComponent {
 
     void inject(MainActivity activity);
-    void inject(AlbumFragment albumFragment);
+   // void inject(AlbumFragment albumFragment);
 }

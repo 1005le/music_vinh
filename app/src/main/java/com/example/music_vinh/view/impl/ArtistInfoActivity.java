@@ -32,9 +32,11 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongInArtistAdapter;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.ArtistInfoViewModule;
+
 import com.example.music_vinh.injection.DaggerArtistInfoViewComponent;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.presenter.ArtistInfoPresenter;
 import com.example.music_vinh.presenter.impl.ArtistInfoPresenterImpl;
 import com.example.music_vinh.view.ArtistInfoView;
 
@@ -56,13 +58,13 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     @BindView(R.id.SongInArtistrecyclerView)
     RecyclerView songInArtistRecycleView;
     Artist artist;
-    ArrayList<Song> songArrayList;
+   public static ArrayList<Song> songArrayList;
     SongInArtistAdapter songInArtistAdapter;
     @BindView(R.id.imgViewArtist)
     ImageView imgViewArtist;
 
     @Inject
-    ArtistInfoPresenterImpl artistInfoPresenter;
+    ArtistInfoPresenter artistInfoPresenter;
 
     private static final int MY_PERMISSION_REQUEST = 1;
 
@@ -151,12 +153,12 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
     private void doStuff() {
         songArrayList= new ArrayList<>();
-        getSongArtist();
+         songArrayList = getSongArtist();
 
-        artistInfoPresenter.onLoadSongSuccess(songArrayList);
+        artistInfoPresenter.loadData();
     }
 
-    public void getSongArtist() {
+    public ArrayList<Song> getSongArtist() {
         ContentResolver contentResolver = getContentResolver();
         Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Log.wtf("SKJDBKJ", mediaUri.toString());
@@ -196,6 +198,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             // For best practices, close the cursor after use.
             mediaCursor.close();
         }
+        return songArrayList;
     }
 
     @Override

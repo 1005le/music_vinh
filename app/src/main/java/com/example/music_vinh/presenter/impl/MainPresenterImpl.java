@@ -41,6 +41,6 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
 
     @Override
     public void loadData() {
-        mainInteractorImpl.createData();
+        mainInteractorImpl.getSongCategories(this);
     }
 }

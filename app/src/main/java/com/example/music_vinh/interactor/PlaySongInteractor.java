@@ -1,4 +1,9 @@
 package com.example.music_vinh.interactor;
 
-public interface PlaySongInteractor extends MainInteractor {
+import com.example.music_vinh.model.Song;
+
+import java.util.ArrayList;
+
+public interface PlaySongInteractor {
+    void onLoadSongSuccess(ArrayList<Song> songs);
 }

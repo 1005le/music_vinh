@@ -31,11 +31,8 @@ public class PlaySongPresenterImpl implements PlaySongPresenter, PlaySongInterac
     }
 
     @Override
-    public void onLoadSongFailue(String message) {
-
-    }
-    @Override
     public void loadData() {
-       playSongInteractorImpl.createSong();
+
+        playSongInteractorImpl.getSongCategories(this);
     }
 }

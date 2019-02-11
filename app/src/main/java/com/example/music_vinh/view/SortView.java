@@ -1,5 +1,9 @@
 package com.example.music_vinh.view;
 
-public interface SortView extends MainView{
+import com.example.music_vinh.model.Song;
 
+import java.util.ArrayList;
+
+public interface SortView {
+    void showSong(ArrayList<Song> songs);
 }

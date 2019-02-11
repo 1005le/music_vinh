@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.MainViewAdapter;
 import com.example.music_vinh.injection.AppComponent;
+
 import com.example.music_vinh.injection.DaggerMainViewComponent;
 import com.example.music_vinh.injection.MainViewModule;
 import com.example.music_vinh.model.Album;

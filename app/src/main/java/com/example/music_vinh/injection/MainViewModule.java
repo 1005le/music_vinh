@@ -1,6 +1,7 @@
 package com.example.music_vinh.injection;
 
 import com.example.music_vinh.interactor.impl.MainInteractorImpl;
+import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.view.MainView;
 
@@ -21,8 +22,7 @@ public class MainViewModule {
     }
 
     @Provides
-    public MainPresenterImpl providePresenter(MainView mainView, MainInteractorImpl mainInteractorImpl) {
+    public MainPresenter providePresenter(MainView mainView, MainInteractorImpl mainInteractorImpl) {
         return new MainPresenterImpl(mainInteractorImpl, mainView);
     }
-
 }

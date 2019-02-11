@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.view.MainView;
 
@@ -47,7 +48,7 @@ public class SongFragment extends Fragment implements MainView {
    public static ArrayList<Song> songList;
    //Presenter
    @Inject
-   MainPresenterImpl mainPresenter;
+   MainPresenter mainPresenter;
     private static final int MY_PERMISSION_REQUEST = 1;
 
 
@@ -102,11 +103,12 @@ public class SongFragment extends Fragment implements MainView {
 
     private void doStuff() {
         songList = new ArrayList<>();
-        getMusicSong();
-        mainPresenter.onLoadSongSuccess(songList);
+       // getMusicSong();
+        songList = getMusicSongArr();
+        mainPresenter.loadData();
     }
+    public ArrayList<Song> getMusicSongArr() {
 
-    public void getMusicSong() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Log.d("uri",songUri+"");
@@ -116,19 +118,22 @@ public class SongFragment extends Fragment implements MainView {
             int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-             int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-             int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+            int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             do {
                 String currentId = songCursor.getString(songId);
                 String currentTitle = songCursor.getString(songTitle);
                 String currentArtist = songCursor.getString(songArtist);
                 String currentAlbum = songCursor.getString(songAlbum);
                 String currentPath = songCursor.getString(songPath);
-               String currentDuration = songCursor.getString(songDuration);
+                String currentDuration = songCursor.getString(songDuration);
 
-                songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath,Long.parseLong(currentDuration)));
+                songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath, Long.parseLong(currentDuration)));
+
             } while (songCursor.moveToNext());
-        }}
+        }
+        return songList;
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

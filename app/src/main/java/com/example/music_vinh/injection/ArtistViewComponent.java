@@ -11,5 +11,5 @@ import dagger.Component;
 public interface ArtistViewComponent {
 
     void inject(MainActivity activity);
-    void inject(ArtistFragment artistFragment);
+   // void inject(ArtistFragment artistFragment);
 }

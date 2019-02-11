@@ -44,12 +44,13 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 
 import com.example.music_vinh.injection.AppComponent;
-import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
 
+import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
 import com.example.music_vinh.injection.PlaySongViewModule;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.presenter.PlaySongPresenter;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.view.PlaySongView;
 
@@ -98,7 +99,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
     @BindView(R.id.tvNameArtistPlay)
     TextView tvNameArtistPlay;
-     ArrayList<Song> arrSong = new ArrayList<Song>();
+
+    public static ArrayList<Song> arrSong = new ArrayList<Song>();
     SongAdapter songAdapter;
 
     public static Song song;
@@ -116,7 +118,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
    // ArrayList<Song> songList;
     @Inject
-    PlaySongPresenterImpl playSongPresenter;
+    PlaySongPresenter playSongPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,11 +168,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
        playSongPresenter = new PlaySongPresenterImpl(this);
     }
     private void doStuff() {
-     //  arrSong = new ArrayList<>();
-       // getDataIntent();
-           getMusicSong();
-         playSongPresenter.onLoadSongSuccess(arrSong);
-      //  playSongPresenter.onLoadSongSuccess(SongFragment.songList);
+        arrSong = new ArrayList<>();
+         arrSong = getMusicSong();
+           //getMusicSong();
+         playSongPresenter.loadData();
     }
 
     private void getDataSong() {
@@ -196,7 +197,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         }
     }
 
-    public void getMusicSong() {
+    public ArrayList<Song> getMusicSong() {
         ContentResolver contentResolver = getContentResolver();
         Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Log.d("uri",songUri+"");
@@ -219,6 +220,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                 arrSong.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath,Long.parseLong(currentDuration)));
             } while (songCursor.moveToNext());
         }
+        return arrSong;
     }
 
     private void act() {

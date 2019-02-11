@@ -2,6 +2,7 @@ package com.example.music_vinh.injection;
 
 import com.example.music_vinh.interactor.impl.AlbumInfoInteractorImpl;
 import com.example.music_vinh.interactor.impl.AlbumInteractorImpl;
+import com.example.music_vinh.presenter.AlbumInfoPresenter;
 import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
 import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
 import com.example.music_vinh.view.AlbumInfoView;
@@ -24,7 +25,7 @@ public class AlbumInfoViewModule {
     }
 
     @Provides
-    public AlbumInfoPresenterImpl providePresenter(AlbumInfoView albumInfoView, AlbumInfoInteractorImpl albumInfoInteractorImpl) {
+    public AlbumInfoPresenter providePresenter(AlbumInfoView albumInfoView, AlbumInfoInteractorImpl albumInfoInteractorImpl) {
         return new AlbumInfoPresenterImpl(albumInfoInteractorImpl, albumInfoView);
     }
 

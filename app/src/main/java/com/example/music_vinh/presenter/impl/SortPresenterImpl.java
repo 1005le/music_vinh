@@ -32,13 +32,9 @@ public class SortPresenterImpl implements SortPresenter, SortInteractor {
        sortView.showSong(songs);
     }
 
-    @Override
-    public void onLoadSongFailue(String message) {
-
-    }
 
     @Override
     public void loadData() {
-      sortInteractorImpl.createSong();
+        sortInteractorImpl.getSongCategories(this);
     }
 }

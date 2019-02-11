@@ -1,5 +1,6 @@
 package com.example.music_vinh.presenter;
 
 
-public interface ArtistInfoPresenter extends MainPresenter {
+public interface ArtistInfoPresenter {
+    void loadData();
 }

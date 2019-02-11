@@ -1,5 +1,10 @@
 package com.example.music_vinh.view;
 
-public interface AlbumInfoView extends MainView{
+import com.example.music_vinh.model.Song;
 
+import java.util.ArrayList;
+
+public interface AlbumInfoView {
+
+    void showSong(ArrayList<Song> songs);
 }

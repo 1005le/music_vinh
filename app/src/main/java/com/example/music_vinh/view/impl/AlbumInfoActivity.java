@@ -34,10 +34,11 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongInAlbumAdapter;
 import com.example.music_vinh.injection.AlbumInfoViewModule;
 import com.example.music_vinh.injection.AppComponent;
-import com.example.music_vinh.injection.DaggerAlbumInfoViewComponent;
 
+import com.example.music_vinh.injection.DaggerAlbumInfoViewComponent;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.presenter.AlbumInfoPresenter;
 import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
 import com.example.music_vinh.view.AlbumInfoView;
 
@@ -60,11 +61,11 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     @BindView(R.id.recyclerViewListSong)
     RecyclerView listSongrecyclerView;
      Album album ;
-    ArrayList<Song> songArrayList;
+   public static ArrayList<Song> songArrayList;
    SongInAlbumAdapter songInAlbumAdapter;
 
    @Inject
-     AlbumInfoPresenterImpl albumInfoPresenter;
+   AlbumInfoPresenter albumInfoPresenter;
 
     private static final int MY_PERMISSION_REQUEST = 1;
     @BindView(R.id.imgAlbumInfo)
@@ -164,10 +165,12 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     }
     private void doStuff() {
         songArrayList= new ArrayList<>();
-        getSongAlbum();
-        albumInfoPresenter.onLoadSongSuccess(songArrayList);
+        songArrayList = getSongAlbum();
+
+      //  albumInfoPresenter.onLoadSongSuccess(songArrayList);
+        albumInfoPresenter.loadData();
     }
-    public void getSongAlbum() {
+    public ArrayList<Song> getSongAlbum() {
         ContentResolver contentResolver = getContentResolver();
         Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Log.wtf("SKJDBKJ", mediaUri.toString());
@@ -207,6 +210,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
             // For best practices, close the cursor after use.
             mediaCursor.close();
         }
+        return songArrayList;
         }
 
     @Override

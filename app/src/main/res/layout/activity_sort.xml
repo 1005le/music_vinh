@@ -24,7 +24,7 @@
         android:layout_below="@+id/appBarLayoutSort"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="400dp">
+        android:layout_height="580dp">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleViewSortSong"
             android:layout_width="match_parent"

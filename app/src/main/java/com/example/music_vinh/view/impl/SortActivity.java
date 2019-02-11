@@ -24,11 +24,12 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.adapter.SortSongAdapter;
 import com.example.music_vinh.injection.AppComponent;
-import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
+
 import com.example.music_vinh.injection.DaggerSortViewComponent;
 import com.example.music_vinh.injection.PlaySongViewModule;
 import com.example.music_vinh.injection.SortViewModule;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.presenter.SortPresenter;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.presenter.impl.SortPresenterImpl;
 import com.example.music_vinh.view.SortView;
@@ -58,9 +59,10 @@ public class SortActivity extends BaseActivity implements SortView {
     @BindView(R.id.imgButtonPause)
      ImageButton imgButtonPauseBottom;
 
-    ArrayList<Song> songArrayList;
+    public static ArrayList<Song> songArrayList;
     @Inject
-    SortPresenterImpl sortPresenter;
+    SortPresenter sortPresenter;
+
     SortSongAdapter sortSongAdapter;
     MediaPlayer mediaPlayer;
 
@@ -105,7 +107,9 @@ public class SortActivity extends BaseActivity implements SortView {
            // arrSong.add(song);
         }
             initPresenter();
-        sortPresenter.onLoadSongSuccess(songArrayList);
+        //sortPresenter.onLoadSongSuccess(songArrayList);
+
+          sortPresenter.loadData();
 
         RecyclerView.ItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         sortSongRecycleview.addItemDecoration(divider);

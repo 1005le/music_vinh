@@ -26,11 +26,13 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
     }
     @Override
     public void onLoadAlbumSuccess(ArrayList<Album> albums) {
+
         albumView.showAlbum(albums);
     }
     @Override
     public void loadAlbums() {
-        albumInteractorImpl.createAlbum();
+
+        albumInteractorImpl.getAlbumCategories(this);
     }
 
 }

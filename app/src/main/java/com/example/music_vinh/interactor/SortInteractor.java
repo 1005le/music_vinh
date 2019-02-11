@@ -1,5 +1,9 @@
 package com.example.music_vinh.interactor;
 
-public interface SortInteractor extends MainInteractor {
+import com.example.music_vinh.model.Song;
 
+import java.util.ArrayList;
+
+public interface SortInteractor {
+     void onLoadSongSuccess(ArrayList<Song> songs);
 }

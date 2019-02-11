@@ -31,6 +31,6 @@ public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
 
     @Override
     public void loadArtist() {
-       artistInteractorImpl.createArtist();
+       artistInteractorImpl.getArtistCategories(this);
     }
 }
