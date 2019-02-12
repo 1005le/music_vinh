@@ -55,10 +55,6 @@ public class MainInteractorImpl implements MainInteractor{
                 mainInteractor.onLoadSongSuccess(createArrayList());
     }
 
-    public void createData(){
-      ArrayList<Song> songs = new ArrayList<>();
-        mainInteractor.onLoadSongSuccess(songs);
-    }
 
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
