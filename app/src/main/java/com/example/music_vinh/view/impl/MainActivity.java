@@ -74,7 +74,6 @@ public class  MainActivity extends BaseActivity implements MainView {
         initTab();
         act();
        // getDataBottom();
-        Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show();
     }
 
     @Override
