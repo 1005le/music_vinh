@@ -20,14 +20,15 @@ import com.example.music_vinh.view.impl.SortActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHolder> {
+public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSongViewHolder> {
 
     static Context context;
-    static ArrayList<Song> songList;
+    static List<Song> songList;
     static MediaPlayer mediaPlayer;
 
     @BindView(R.id.tvNameSong)
@@ -38,22 +39,22 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
     ImageButton imgButtonPauseBottom;
 
 
-    public SortSongAdapter(Context context, ArrayList<Song> songList) {
+    public SortSongAdapter(Context context, List<Song> songList) {
         this.context = context;
         this.songList = songList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SortSongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_sort, parent,false);
 
-        return new SortSongAdapter.ViewHolder(view);
+        return new SortSongViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder,final int position) {
+    public void onBindViewHolder(SortSongViewHolder holder,final int position) {
 
         Song song = songList.get(position);
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
@@ -106,7 +107,7 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
         return songList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class SortSongViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.imgSort)
         ImageView imgSort;
@@ -120,7 +121,7 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.ViewHo
         @BindView(R.id.tvNameArtistSort)
         TextView tvNameArtistSort;
 
-        public ViewHolder(View itemView) {
+        public SortSongViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

@@ -22,27 +22,26 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> {
+public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder> {
 
     Context context;
-    ArrayList<Album> albumList;
+    List<Album> albumList;
 
-
-    public AlbumAdapter(Context context, ArrayList<Album> albumList) {
+    public AlbumAdapter(Context context, List<Album> albumList) {
         this.context = context;
         this.albumList = albumList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public AlbumViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View view =  layoutInflater.inflate(R.layout.item_album, viewGroup, false);
-        return new ViewHolder(view);
+        return new AlbumViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull AlbumViewHolder viewHolder, final int i) {
 
         Album album = albumList.get(i);
         viewHolder.tvName.setText(album.getName());
@@ -66,7 +65,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         return albumList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class AlbumViewHolder extends RecyclerView.ViewHolder {
 
          @BindView(R.id.imgAlbum)
          ImageView imgAlbum;
@@ -77,7 +76,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         @BindView(R.id.tvNameArtist_A)
          TextView tvNameArtist;
 
-        public ViewHolder(@NonNull View itemView) {
+        public AlbumViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

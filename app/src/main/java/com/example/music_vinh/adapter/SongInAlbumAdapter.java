@@ -17,29 +17,30 @@ import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.ViewHolder> {
+public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.SongInAlbumViewHolder> {
     Context context;
-    ArrayList<Song> songArrayList;
+    List<Song> songArrayList;
     Album album;
 
-    public SongInAlbumAdapter(Context context, ArrayList<Song> songArrayList) {
+    public SongInAlbumAdapter(Context context, List<Song> songArrayList) {
         this.context = context;
         this.songArrayList = songArrayList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongInAlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_song_in_album,parent,false);
-        return new ViewHolder(view);
+        return new SongInAlbumViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(SongInAlbumViewHolder holder, final int position) {
 
          Song song = songArrayList.get(position);
          holder.tvNameSong.setText(song.getName());
@@ -51,7 +52,7 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
             public void onClick(View view) {
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("song", songArrayList.get(position));
-                intent.putExtra("arrSong", songArrayList);
+                intent.putExtra("arrSong",(ArrayList) songArrayList);
                 context.startActivity(intent);
             }
         });
@@ -62,7 +63,7 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
         return songArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class SongInAlbumViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.imgSongA)
         ImageView imgSongA;
@@ -73,7 +74,7 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
         @BindView(R.id.tvNameAlbumInSong)
           TextView tvNameAlbumInSong;
 
-        public ViewHolder(View itemView) {
+        public SongInAlbumViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

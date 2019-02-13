@@ -16,28 +16,29 @@ import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapter.ViewHolder> {
+public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapter.SongInArtistViewHolder> {
     Context context;
-    ArrayList<Song> songArrayList;
+    List<Song> songArrayList;
 
-    public SongInArtistAdapter(Context context, ArrayList<Song> songArrayList) {
+    public SongInArtistAdapter(Context context, List<Song> songArrayList) {
         this.context = context;
         this.songArrayList = songArrayList;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongInArtistViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.item_song_artist, parent, false);
-        return new ViewHolder(view);
+        return new SongInArtistViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(SongInArtistViewHolder holder, final int position) {
        Song song = songArrayList.get(position);
        holder.imgIconSong.setImageResource(R.drawable.ic_song_artist);
        holder.tvNameSongInArtist.setText(song.getName());
@@ -60,7 +61,7 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
         return songArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class SongInArtistViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.imgIconSong)
          ImageView imgIconSong;
@@ -70,7 +71,7 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
 
          @BindView(R.id.tvDuration)
          TextView tvDuration;
-        public ViewHolder(View itemView) {
+        public SongInArtistViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);

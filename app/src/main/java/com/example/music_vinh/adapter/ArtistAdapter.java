@@ -23,26 +23,26 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
+public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistViewHolder> {
 
     Context context;
-    ArrayList<Artist> artistList;
+    List<Artist> artistList;
 
-    public ArtistAdapter(Context context, ArrayList<Artist> artistList) {
+    public ArtistAdapter(Context context, List<Artist> artistList) {
         this.context = context;
         this.artistList = artistList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ArtistViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View view = layoutInflater.inflate(R.layout.item_artist, viewGroup, false);
-        return new ViewHolder(view);
+        return new ArtistViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull ArtistViewHolder viewHolder, final int i) {
 
         Artist artist = artistList.get(i);
         viewHolder.tvNameArtist.setText(artist.getName());
@@ -68,7 +68,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         return artistList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ArtistViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.imgArtist)
         ImageView imgArtist;
@@ -82,7 +82,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         @BindView(R.id.tvAmountSong)
         TextView tvAmountSong;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ArtistViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

@@ -24,28 +24,28 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
     Context context;
-    ArrayList<Song> songList;
+    List<Song> songList;
 
     private AdapterView.OnItemClickListener itemClickListener;
 
-    public SongAdapter(Context context, ArrayList<Song> songList) {
+    public SongAdapter(Context context, List<Song> songList) {
         this.context = context;
         this.songList = songList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public SongViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View view = layoutInflater.inflate(R.layout.item_song, viewGroup,false);
 
-        return new ViewHolder(view);
+        return new SongViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder,final int i) {
+    public void onBindViewHolder(@NonNull SongViewHolder viewHolder,final int i) {
 
         Song song = songList.get(i);
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
@@ -57,7 +57,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             public void onClick(View view) {
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("song", songList.get(i));
-                intent.putExtra("arrSong", songList);
+                intent.putExtra("arrSong",(ArrayList) songList);
                 context.startActivity(intent);
 
 
@@ -70,7 +70,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         return songList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class SongViewHolder extends RecyclerView.ViewHolder{
 
         @BindView(R.id.tvName)
         TextView tvNameSong;
@@ -82,7 +82,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         ImageView imgSong;
 
        // ImageButton imgPlay, imgPause;
-        public ViewHolder(@NonNull View itemView) {
+        public SongViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
