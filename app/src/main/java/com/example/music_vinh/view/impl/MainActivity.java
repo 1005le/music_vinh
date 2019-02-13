@@ -45,7 +45,7 @@ import static com.example.music_vinh.view.impl.ArtistFragment.artistList;
 import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
 import static com.example.music_vinh.view.impl.SongFragment.songList;
 
-public class  MainActivity extends BaseActivity implements MainView {
+public class  MainActivity extends BaseActivity {
 
     @BindView(R.id.myTabLayout)
     TabLayout tabLayout;
@@ -57,6 +57,7 @@ public class  MainActivity extends BaseActivity implements MainView {
     Toolbar toolbarMainActivity;
     @BindView(R.id.linearBottom)
     LinearLayout linearLayoutBottom;
+
     @BindView(R.id.tvNameSongBottom)
     TextView tvNameSong;
     @BindView(R.id.tvNameArtistBottom)
@@ -64,6 +65,7 @@ public class  MainActivity extends BaseActivity implements MainView {
     @BindView(R.id.imgButtonPause)
     ImageButton imgPause;
 
+    MainView mainView;
     public Song song;
 
     @Override
@@ -80,7 +82,7 @@ public class  MainActivity extends BaseActivity implements MainView {
     protected void setupComponent(AppComponent appComponent) {
         DaggerMainViewComponent.builder()
                 .appComponent(appComponent)
-                .mainViewModule(new MainViewModule(this))
+                .mainViewModule(new MainViewModule(mainView))
                 .build()
                 .inject(this);
     }
@@ -147,8 +149,8 @@ public class  MainActivity extends BaseActivity implements MainView {
                 final List<Album>filterModelAlbum = filterAlbum(albumList, searchQuery);
                 albumAdapter.getFilte(filterModelAlbum);
 
-//                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
-//                artistAdapter.getFilte(filterModelArtist);
+                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
+               artistAdapter.getFilte(filterModelArtist);
 
                 return true;
             }
@@ -195,8 +197,4 @@ public class  MainActivity extends BaseActivity implements MainView {
         return filterModel;
     }
 
-    @Override
-    public void showSong(ArrayList<Song> songs) {
-          /////
-    }
 }
