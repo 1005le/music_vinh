@@ -57,6 +57,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             public void onClick(View view) {
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("song", songList.get(i));
+                intent.putExtra("arrSong", songList);
                 context.startActivity(intent);
 
 

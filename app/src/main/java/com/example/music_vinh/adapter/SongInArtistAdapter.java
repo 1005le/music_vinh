@@ -49,6 +49,7 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
             public void onClick(View view) {
                 Intent intent = new Intent(context, PlayActivity.class);
                 intent.putExtra("song", songArrayList.get(position));
+                intent.putExtra("arrSong", (ArrayList) songArrayList);
                 context.startActivity(intent);
             }
         });

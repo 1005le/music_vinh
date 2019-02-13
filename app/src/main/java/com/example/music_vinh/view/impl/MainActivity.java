@@ -57,9 +57,9 @@ public class  MainActivity extends BaseActivity implements MainView {
     Toolbar toolbarMainActivity;
     @BindView(R.id.linearBottom)
     LinearLayout linearLayoutBottom;
-    @BindView(R.id.tvNameSong)
+    @BindView(R.id.tvNameSongBottom)
     TextView tvNameSong;
-    @BindView(R.id.tvNameArtist)
+    @BindView(R.id.tvNameArtistBottom)
     TextView tvNameArtist;
     @BindView(R.id.imgButtonPause)
     ImageButton imgPause;
@@ -147,8 +147,8 @@ public class  MainActivity extends BaseActivity implements MainView {
                 final List<Album>filterModelAlbum = filterAlbum(albumList, searchQuery);
                 albumAdapter.getFilte(filterModelAlbum);
 
-                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
-                artistAdapter.getFilte(filterModelArtist);
+//                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
+//                artistAdapter.getFilte(filterModelArtist);
 
                 return true;
             }
@@ -197,6 +197,6 @@ public class  MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showSong(ArrayList<Song> songs) {
-
+          /////
     }
 }

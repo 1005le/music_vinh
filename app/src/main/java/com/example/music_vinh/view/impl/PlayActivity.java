@@ -172,8 +172,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     }
     private void doStuff() {
         arrSong = new ArrayList<>();
-         arrSong = getMusicSong();
-           //getMusicSong();
+        // arrSong = getMusicSong();
+         getDataIntent();
          playSongPresenter.loadData();
     }
 
@@ -196,6 +196,12 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             if (intent.hasExtra("song")) {
                 song = intent.getParcelableExtra("song");
                 arrSong.add(song);
+            }
+            if (intent.hasExtra("arrSong")) {
+                arrSong = intent.getParcelableArrayListExtra("arrSong");
+            }
+            if (intent.hasExtra("dragSong")) {
+                arrSong = intent.getParcelableArrayListExtra("dragSong");
             }
         }
     }
@@ -257,7 +263,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             }
             @Override
             public boolean onQueryTextChange(String searchQuery) {
-
                 final List<Song>filterModel = filter(songList, searchQuery);
                 songAdapter.getFilte(filterModel);
                 return true;

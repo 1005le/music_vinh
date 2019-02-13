@@ -6,6 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".view.impl.SortActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="530dp">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayoutSort"
         android:layout_width="match_parent"
@@ -24,13 +27,15 @@
         android:layout_below="@+id/appBarLayoutSort"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="580dp">
+        android:layout_height="wrap_content">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleViewSortSong"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </android.support.v7.widget.RecyclerView>
+
     </ScrollView>
+</RelativeLayout>
 
     <include layout="@layout/content_bottom"/>
 

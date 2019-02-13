@@ -51,9 +51,9 @@ public class SortActivity extends BaseActivity implements SortView {
     @BindView(R.id.recycleViewSortSong)
     RecyclerView sortSongRecycleview;
 
-    @BindView(R.id.tvNameSong)
+    @BindView(R.id.tvNameSongBottom)
      TextView tvNameSongBottom ;
-    @BindView(R.id.tvNameArtist)
+    @BindView(R.id.tvNameArtistBottom)
       TextView tvNameArtistBottom;
     @BindView(R.id.imgButtonPause)
      ImageButton imgButtonPauseBottom;
@@ -91,6 +91,10 @@ public class SortActivity extends BaseActivity implements SortView {
         toolbarSort.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent intent = new Intent(SortActivity.this, PlayActivity.class);
+                intent.putExtra("dragSong",(ArrayList)songArrayList);
+                startActivity(intent);
                 finish();
               //  mediaPlayer.stop();
                 songArrayList.clear();
