@@ -24,7 +24,6 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.adapter.SortSongAdapter;
 import com.example.music_vinh.injection.AppComponent;
-
 import com.example.music_vinh.injection.DaggerSortViewComponent;
 import com.example.music_vinh.injection.PlaySongViewModule;
 import com.example.music_vinh.injection.SortViewModule;

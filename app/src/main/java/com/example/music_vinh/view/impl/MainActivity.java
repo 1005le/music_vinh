@@ -1,29 +1,25 @@
 package com.example.music_vinh.view.impl;
 
 
-import android.content.ContentResolver;
+
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.MergeCursor;
-import android.provider.MediaStore;
+
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
+
 import android.view.Menu;
-import android.view.MenuInflater;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.MainViewAdapter;
@@ -78,6 +74,7 @@ public class  MainActivity extends BaseActivity implements MainView {
         initTab();
         act();
        // getDataBottom();
+        Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show();
     }
 
     @Override

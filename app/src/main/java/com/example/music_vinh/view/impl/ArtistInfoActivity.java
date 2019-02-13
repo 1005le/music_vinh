@@ -32,7 +32,6 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongInArtistAdapter;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.ArtistInfoViewModule;
-
 import com.example.music_vinh.injection.DaggerArtistInfoViewComponent;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
