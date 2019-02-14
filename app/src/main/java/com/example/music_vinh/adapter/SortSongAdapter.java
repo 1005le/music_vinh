@@ -3,6 +3,7 @@ package com.example.music_vinh.adapter;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -54,32 +55,30 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
     }
 
     @Override
-    public void onBindViewHolder(SortSongViewHolder holder,final int position) {
+    public void onBindViewHolder(final SortSongViewHolder holder, final int position) {
 
         Song song = songList.get(position);
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         holder.tvNameSort.setText(song.getName());
-
         holder.tvNameArtistSort.setText(song.getNameArtist());
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View view) {
-                // tvNameSort.setT
-                boolean isSelectedAfterClick = !view.isSelected();
-                view.setSelected(isSelectedAfterClick);
 
-                tvNameSongBottom.setText(songList.get(position).getName());
-                tvNameArtistBottom.setText(songList.get(position).getNameArtist());
-                imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
+                // holder.tvNameSort.setTextColor(R.color.colorAccent);
+//                tvNameSongBottom.setText(songList.get(position).getName());
+//                tvNameArtistBottom.setText(songList.get(position).getNameArtist());
+//                imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
 
-                imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
-                        mediaPlayer.stop();
-                    }
-                });
+//                imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
+//                        mediaPlayer.stop();
+//                    }
+//                });
 
                 Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         songList.get(position).getId());

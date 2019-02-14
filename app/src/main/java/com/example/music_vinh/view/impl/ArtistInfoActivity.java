@@ -78,19 +78,8 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
        getData();
 
         initPresenter();
-        if (ContextCompat.checkSelfPermission(ArtistInfoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(ArtistInfoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        doStuff();
 
-                ActivityCompat.requestPermissions(ArtistInfoActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            } else {
-                ActivityCompat.requestPermissions(ArtistInfoActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            }
-        } else {
-
-            doStuff();
-        }
     }
 
     @Override
@@ -201,27 +190,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case MY_PERMISSION_REQUEST: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(ArtistInfoActivity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(ArtistInfoActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
-                        doStuff();
-                    }
-                } else {
-                    Toast.makeText(ArtistInfoActivity.this, "No permission granted!", Toast.LENGTH_SHORT).show();
-                    // finish();
-                }
-                return;
-            }
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu( Menu menu) {
         getMenuInflater().inflate( R.menu.search_view, menu);
 
@@ -234,14 +202,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
-//                    adapter.filter("");
-//                    listView.clearTextFilter();
-
-
-                } else {
-                    // adapter.filter(newText);
-                }
                 return true;
             }
         });

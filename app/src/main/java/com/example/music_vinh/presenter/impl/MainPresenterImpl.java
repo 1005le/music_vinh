@@ -19,7 +19,6 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     private MainInteractorImpl mainInteractorImpl;
     private MainView mainView;
 
-
     public MainPresenterImpl(MainInteractorImpl mainInteractorImpl, MainView mainView) {
         this.mainInteractorImpl = mainInteractorImpl;
         this.mainView = mainView;
@@ -36,7 +35,18 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     }
 
     @Override
+    public void onLoadSongGrid(ArrayList<Song> songs) {
+        mainView.showSongGrid(songs);
+    }
+
+    @Override
     public void loadData() {
         mainInteractorImpl.getSongCategories(this);
     }
+
+    @Override
+    public void loadDataGid() {
+        mainInteractorImpl.getSongGrid(this);
+    }
+
 }

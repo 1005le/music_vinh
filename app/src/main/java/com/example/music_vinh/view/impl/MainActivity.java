@@ -122,6 +122,7 @@ public class  MainActivity extends BaseActivity {
 //        }
     }
 
+
     /**
      * khoi tao search
      */
@@ -150,13 +151,14 @@ public class  MainActivity extends BaseActivity {
                 albumAdapter.getFilte(filterModelAlbum);
 
                 final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
-               artistAdapter.getFilte(filterModelArtist);
+                artistAdapter.getFilte(filterModelArtist);
 
                 return true;
             }
         });
         return true;
     }
+
 
     private List<Song> filter(List<Song>listItem, String query){
         query = query.toLowerCase();
@@ -168,6 +170,7 @@ public class  MainActivity extends BaseActivity {
                 filterModel.add(item);
             }
         }
+
         return filterModel;
     }
 

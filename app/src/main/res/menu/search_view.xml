@@ -3,7 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
       android:id="@+id/menu_setting"
-      android:title="Setting" />
+      android:title="Setting" >
+    <menu>
+      <item android:id="@+id/list_view"
+          android:title="List" />
+      <item android:id="@+id/grid_view"
+          android:title="Grid" />
+    </menu>
+  </item>
+
   <item android:id="@+id/menu_search"
       android:icon="@android:drawable/ic_menu_search"
       app:showAsAction="always|collapseActionView"

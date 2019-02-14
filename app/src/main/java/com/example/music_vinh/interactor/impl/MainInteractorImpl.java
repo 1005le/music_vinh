@@ -1,19 +1,14 @@
 package com.example.music_vinh.interactor.impl;
 
-import android.Manifest;
-import android.app.Activity;
+
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.widget.Toast;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.example.music_vinh.interactor.MainInteractor;
 import com.example.music_vinh.model.Song;
@@ -28,7 +23,7 @@ import javax.inject.Inject;
  *- Lớp M: xử lý dữ liệu -> Trả dữ liệu về P thông qua callback
  * */
 
-public class MainInteractorImpl implements MainInteractor{
+public class MainInteractorImpl implements MainInteractor {
 
     private MainInteractor mainInteractor;
          Context context;
@@ -48,16 +43,23 @@ public class MainInteractorImpl implements MainInteractor{
 
     private  ArrayList<Song> createArrayList() {
         ArrayList<Song> songs = SongFragment.songList;
-        return songs;
+       return songs;
     }
 
     public void getSongCategories(final MainInteractor mainInteractor) {
                 mainInteractor.onLoadSongSuccess(createArrayList());
     }
-
+    public void getSongGrid(final MainInteractor mainInteractor) {
+        mainInteractor.onLoadSongGrid(createArrayList());
+    }
 
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
+
+    }
+
+    @Override
+    public void onLoadSongGrid(ArrayList<Song> songs) {
 
     }
 }

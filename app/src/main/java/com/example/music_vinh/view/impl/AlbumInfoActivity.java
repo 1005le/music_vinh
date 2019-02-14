@@ -65,8 +65,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
    @Inject
    AlbumInfoPresenter albumInfoPresenter;
-
-    private static final int MY_PERMISSION_REQUEST = 1;
     @BindView(R.id.imgAlbumInfo)
     ImageView imgAlbumInfo;
     @BindView(R.id.imgIconAlbum)
@@ -87,19 +85,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
         //lay bai hat
         initPresenter();
-        if (ContextCompat.checkSelfPermission(AlbumInfoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(AlbumInfoActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                ActivityCompat.requestPermissions(AlbumInfoActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            } else {
-                ActivityCompat.requestPermissions(AlbumInfoActivity.this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            }
-        } else {
-
-            doStuff();
-        }
+        doStuff();
 
     }
 
@@ -212,29 +198,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         return songArrayList;
         }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case MY_PERMISSION_REQUEST: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(AlbumInfoActivity.this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(AlbumInfoActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
-                        doStuff();
-                    }
-                } else {
-                    Toast.makeText(AlbumInfoActivity.this, "No permission granted!", Toast.LENGTH_SHORT).show();
-                    // finish();
-                }
-                return;
-
-            }
-
-        }
-
-    }
     @Override
     public boolean onCreateOptionsMenu( Menu menu) {
         getMenuInflater().inflate( R.menu.search_view, menu);

@@ -69,21 +69,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
         initPresenter();
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                ActivityCompat.requestPermissions(getActivity(),
-
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            } else {
-                ActivityCompat.requestPermissions(getActivity(),
-
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            }
-        } else {
-            doStuff();
-        }
+        doStuff();
     }
 
     private void initPresenter(){
@@ -92,9 +78,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public void showAlbum(ArrayList<Album> albums) {
         albumAdapter = new AlbumAdapter(getActivity(),albums);
-
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-       // gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         albumRecyclerView.setLayoutManager(gridLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
 
@@ -129,26 +113,5 @@ public class AlbumFragment extends Fragment implements AlbumView {
             } while (songCursor.moveToNext());
         }
         return albumList;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case MY_PERMISSION_REQUEST: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(getContext(),
-                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(getContext(), "Permission granted", Toast.LENGTH_SHORT).show();
-                        doStuff();
-                    }
-                } else {
-                    Toast.makeText(getContext(), "No permission granted!", Toast.LENGTH_SHORT).show();
-                    // finish();
-                }
-                return;
-
-            }
-        }
     }
 }

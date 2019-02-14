@@ -66,22 +66,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
         initPresenter();
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                ActivityCompat.requestPermissions(getActivity(),
-
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            } else {
-                ActivityCompat.requestPermissions(getActivity(),
-
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_REQUEST);
-            }
-        } else {
-
-            doStuff();
-        }
+        doStuff();
     }
 
     private void initPresenter(){
@@ -129,28 +114,6 @@ public class ArtistFragment extends Fragment implements ArtistView {
             } while (songCursor.moveToNext());
         }
         return artistList;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case MY_PERMISSION_REQUEST: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(getContext(),
-                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(getContext(), "Permission granted", Toast.LENGTH_SHORT).show();
-                        doStuff();
-                    }
-                } else {
-                    Toast.makeText(getContext(), "No permission granted!", Toast.LENGTH_SHORT).show();
-                    // finish();
-                }
-                return;
-
-            }
-        }
     }
 
 }

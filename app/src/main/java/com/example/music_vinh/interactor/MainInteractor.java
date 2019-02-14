@@ -9,5 +9,5 @@ import java.util.List;
 public interface MainInteractor {
 
     void onLoadSongSuccess(ArrayList<Song> songs);
-
+    void onLoadSongGrid(ArrayList<Song> songs);
 }

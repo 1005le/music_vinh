@@ -53,6 +53,7 @@ import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.PlaySongPresenter;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.view.PlaySongView;
+import com.example.music_vinh.view.custom.CircularSeekBar;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -93,8 +94,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     @BindView(R.id.imgPlay)
     ImageView imgPlay;
 
-    @BindView(R.id.seekBarSong)
-    SeekBar seekBar;
+//    @BindView(R.id.seekBarSong)
+//    SeekBar seekBar;
     @BindView(R.id.recycleViewPlaySong)
     RecyclerView playSongRecycleview;
 
@@ -106,18 +107,15 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
     public static Song song;
     MediaPlayer mediaPlayer;
-    private static final int MY_PERMISSION_REQUEST = 1;
 
     int position = 0;//xac dinh vị tri de nhan next, preview
     boolean repeat = false;
     boolean checkrandom = false;
     boolean next = false;
+    Random random;
 
-    private int     scaledTouchSlop = 0;
-    private float   initTouchX      = 0;
-    private boolean thumbPressed    = false;
+    CircularSeekBar circularSeekBar;
 
-   // ArrayList<Song> songList;
     @Inject
     PlaySongPresenter playSongPresenter;
 
@@ -160,11 +158,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             e.printStackTrace();
         }
         mediaPlayer.start();
-        seekBar.setMax(mediaPlayer.getDuration());
         UpdateTime();
-
-//        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-//              getApplicationContext().getResources(), R.drawable.ic_play_seekbar)));
     }
 
     private void initPresenter(){
@@ -178,14 +172,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     }
 
     private void getDataSong() {
-
-           seekBar.setProgress(mediaPlayer.getCurrentPosition());
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-//        tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
-
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-//        tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
-      //  UpdateTime();
+         //  seekBar.setProgress(mediaPlayer.getCurrentPosition());
+           circularSeekBar.setProgress(mediaPlayer.getCurrentPosition());
         tvNameArtistPlay.setText(song.getNameArtist());
     }
 
@@ -286,6 +274,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     private void init() {
         playSong(song.getId());
         act();
+        circularSeekBar= (CircularSeekBar) findViewById(R.id.circularSeekBar1);
+
         getDataSong();
         eventClick();
     }
@@ -301,19 +291,32 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     }
 
     private void eventClick() {
-        //khi co ca khuc phat len, thi nut play thay doi trang thais
+//        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+     //         seekBar.setMax(mediaPlayer.getDuration());
+//            }
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//            }
+//            //khi keo chuot den vi tri nao thi bai nghe se duoc phat tu vi tri do tro di
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                mediaPlayer.seekTo(seekBar.getProgress());
+//            }
+//        });
+        circularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+                circularSeekBar.setMax(mediaPlayer.getDuration());
+            }
+            @Override
+            public void onStopTrackingTouch(CircularSeekBar seekBar) {
+                mediaPlayer.seekTo(circularSeekBar.getProgress());
+            }
+            @Override
+            public void onStartTrackingTouch(CircularSeekBar seekBar) {
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            //khi keo chuot den vi tri nao thi bai nghe se duoc phat tu vi tri do tro di
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                mediaPlayer.seekTo(seekBar.getProgress());
             }
         });
 
@@ -329,38 +332,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                 }
             }
         });
-/*
-        seekBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                float prevX = Float.MIN_VALUE;
-                float eps = 0.001f;
-                Drawable drawable =  new BitmapDrawable(BitmapFactory.decodeResource(
-                        getApplicationContext().getResources(), R.drawable.ic_stop_seekbar));
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-                    if (event.getX() >= drawable.getBounds().left && event.getX() <= drawable.getBounds().right
-                            && event.getRawY() >= drawable.getBounds().top && event.getRawY() >= drawable.getBounds().bottom) {
-                        prevX = event.getX();
-                    }
-                }
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-
-                    if (event.getX() >= drawable.getBounds().left && event.getX() <= drawable.getBounds().right
-                            && event.getRawY() >= drawable.getBounds().top && event.getRawY() >= drawable.getBounds().bottom) {
-                        if (Math.abs(event.getX() - prevX) < eps) {
-                            Log.d("here", "clicked on place");
-                        }
-                    }
-                    prevX = Float.MIN_VALUE;
-                }
-
-                return false;
-            }
-        });
-
-*/
 
         imgRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -412,9 +383,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                     //gia tri phai nho hon kich thuoc cua mang thi cho next
                     if(position < (arrSong.size())){
 
-//                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-//                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
-
                         position++;
                         if(repeat == true){
                             if(position == 0){
@@ -424,7 +392,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                             position -=1;
                         }
                         if(checkrandom == true){
-                            Random random = new Random();
+                             random = new Random();
                             int index = random.nextInt(arrSong.size());
                             if( index == position){
                                 position = index -1;
@@ -466,10 +434,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                     //gia tri phai nho hon kich thuoc cua mang thi cho next
                     if(position < (arrSong.size())){
 
-//                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-//                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
-
-
                         position--;
                         if(position < 0){
                             position = arrSong.size() -1;
@@ -478,7 +442,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                             position +=1;
                         }
                         if(checkrandom == true){
-                            Random random = new Random();
+                            random = new Random();
                             int index = random.nextInt(arrSong.size());
                             if( index == position){
                                 position = index -1;
@@ -513,7 +477,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             @Override
             public void run() {
                 if( mediaPlayer != null){
-                    seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                  //  seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                    circularSeekBar.setProgress(mediaPlayer.getCurrentPosition());
+
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
                     tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
                     //Thoi gian duoc cap nhat lien tuc
@@ -526,7 +492,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                             try {
                                 Thread.sleep(1000);
 
-                            } catch (InterruptedException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -542,9 +508,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                 if(next == true){
                     if(position < (arrSong.size())){
 
-//                        seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-//                                getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
-
                         position++;
                         if(repeat == true){
                             if(position == 0){
@@ -553,7 +516,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                             position -=1;
                         }
                         if(checkrandom == true){
-                            Random random = new Random();
+                           random = new Random();
                             int index = random.nextInt(arrSong.size());
                             if( index == position){
                                 position = index -1;
@@ -610,69 +573,4 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         }
     }
 
-
-//    @SuppressLint("AppCompatCustomView")
-//    public class SeekbarWithThumbTouch extends SeekBar {
-
-//        public PlayActivity(Context context) {
-//            super(context);
-//            initSeekbar(context);
-//        }
-//
-//        public PlayActivity(Context context, AttributeSet attrs) {
-//           // super(context, attrs);
-//            initSeekbar(context);
-//        }
-//
-//        public PlayActivity(Context context, AttributeSet attrs, int defStyleAttr) {
-//           // super(context, attrs, defStyleAttr);
-//            initSeekbar(context);
-//        }
-//
-//        private void initSeekbar(Context context) {
-//            scaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-//        }
-//
-//        @Override
-//        public boolean onTouchEvent(MotionEvent event) {
-//            Drawable thumb = null;
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_DOWN:
-//                   // thumb = getThumb();//works only for API >=16!
-////                    thumb =   new BitmapDrawable(BitmapFactory.decodeResource(
-////                            getApplicationContext().getResources(), R.drawable.ic_stop_seekbar));
-//                    seekBar.setThumb(new BitmapDrawable(BitmapFactory.decodeResource(
-//                            getApplicationContext().getResources(), R.drawable.ic_stop_seekbar)));
-//                    if (thumb != null) {
-//                        //contains current position of thumb in view as bounds
-//                        RectF bounds = new RectF(thumb.getBounds());
-//                        thumbPressed = bounds.contains(event.getX(), event.getY());
-//                        if (thumbPressed) {
-//                            Log.d("Thumb", "pressed");
-//                            initTouchX = event.getX();
-//                            return true;
-//                        }
-//                    }
-//                    break;
-//                case MotionEvent.ACTION_UP:
-//                    if (thumbPressed) {
-//                        Log.d("Thumb", "was pressed -- listener call");
-//                        thumbPressed = false;
-//                    }
-//                    break;
-//                case MotionEvent.ACTION_MOVE:
-//                    if (thumbPressed) {
-//                        if (Math.abs(initTouchX - event.getX()) > scaledTouchSlop) {
-//                            initTouchX = 0;
-//                            thumbPressed = false;
-//                            return super.onTouchEvent(event);
-//                        }
-//                        Log.d("Thumb", "move blocked");
-//                        return true;
-//                    }
-//                    break;
-//            }
-//
-//            return super.onTouchEvent(event);
-//        }
     }
