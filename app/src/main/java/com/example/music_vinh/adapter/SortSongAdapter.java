@@ -63,7 +63,6 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
         holder.tvNameArtistSort.setText(song.getNameArtist());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View view) {
 
@@ -80,24 +79,24 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
 //                    }
 //                });
 
-                Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        songList.get(position).getId());
-
-                mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                try {
-                    mediaPlayer.setDataSource(context, contentUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mediaPlayer.start();
-            }
+//                Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+//                        songList.get(position).getId());
+//
+//                mediaPlayer = new MediaPlayer();
+//                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//
+//                try {
+//                    mediaPlayer.setDataSource(context, contentUri);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    mediaPlayer.prepare();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                mediaPlayer.start();
+           }
         });
     }
 

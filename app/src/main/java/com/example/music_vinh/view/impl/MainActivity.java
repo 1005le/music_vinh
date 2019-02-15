@@ -2,8 +2,11 @@ package com.example.music_vinh.view.impl;
 
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.IntentFilter;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -75,7 +78,6 @@ public class  MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initTab();
         act();
-       // getDataBottom();
     }
 
     @Override
@@ -104,7 +106,6 @@ public class  MainActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-
     private void getDataBottom() {
        tvNameSong.setText(PlayActivity.song.getName());
         tvNameArtist.setText(PlayActivity.song.getNameArtist());
@@ -121,7 +122,6 @@ public class  MainActivity extends BaseActivity {
 //            });
 //        }
     }
-
 
     /**
      * khoi tao search
@@ -200,4 +200,6 @@ public class  MainActivity extends BaseActivity {
         return filterModel;
     }
 
+
 }
+
