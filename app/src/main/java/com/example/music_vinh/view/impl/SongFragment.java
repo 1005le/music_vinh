@@ -9,8 +9,8 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,8 +30,10 @@ import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
+import com.example.music_vinh.service.MediaPlayerService;
 import com.example.music_vinh.view.MainView;
 import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
 
 
@@ -47,7 +49,7 @@ import butterknife.ButterKnife;
  */
 public class SongFragment extends Fragment implements MainView {
     View view;
-    public static final String Broadcast_PLAY_NEW_AUDIO = "com.example.music_vinh.view.impl.PlayNewAudio";
+    public static final String Broadcast_PLAY_NEW_AUDIO = "com.example.music_vinh.view.service.PlayNewAudio";
 
     private MediaPlayerService player;
     boolean serviceBound = false;
@@ -81,31 +83,39 @@ public class SongFragment extends Fragment implements MainView {
         ButterKnife.bind(this,view);
         initPresenter();
         doStuff();
-
-        songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+        final Handler handler1 = new Handler();
+        handler1.postDelayed(new Runnable() {
             @Override
-            public void onClick(View view, int index) {
-                playAudio(index);
+            public void run() {
 
-                String actionName = "SongFragment";
-                Intent intent = new Intent(actionName);
-           //Thiết lập tên để cho Receiver nhận được thì biết đó là loại Intent
-                intent.setAction(actionName);
-            //Dữ liệu gắn vào Intent thiết lập bằng putExtra với (tên, dữ liệu), dữ liệu là
-             //các kiểu cơ bản Int, String ... hoặc các loại đối tượng lớp kế thừa từ Serializable
-                intent.putExtra("song",songList.get(index));
-             //Thực hiện lan truyền Intent trong hệ thống
-                getContext().sendBroadcast(intent);
+                songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+                    @Override
+                    public void onClick(View view, final int index) {
+                        playAudio(index);
 
-                Intent intent1 = new Intent(getContext() , PlayActivity.class);
-                intent1.putExtra("song", songList.get(index));
-                intent1.putExtra("arrSong",(ArrayList) songList);
-                getContext().startActivity(intent);
+                        Handler handler1 = new Handler();
+                        handler1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+//                                 StorageUtil storage = new StorageUtil(getContext());
+//                                 storage.loadAudio();
+//                                 storage.loadAudioIndex();
+
+                               //  Intent intent1 = new Intent(getContext() , PlayActivity.class);
+//                                intent1.putExtra("song", songList.get(index));
+//                                intent1.putExtra("arrSong",(ArrayList) songList);
+                              //  getContext().startActivity(intent1);
+                            }
+                        },1000);
+
+
+                    }
+                }));
+
             }
-        }));
+        },1000);
+
     }
-
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -118,7 +128,6 @@ public class SongFragment extends Fragment implements MainView {
       //  super.onRestoreInstanceState(savedInstanceState);
         serviceBound = savedInstanceState.getBoolean("serviceStatus");
     }
-
 
     //Binding this Client to the AudioPlayer Service
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -144,19 +153,36 @@ public class SongFragment extends Fragment implements MainView {
             storage.storeAudio(songList);
             storage.storeAudioIndex(audioIndex);
 
-            Intent playerIntent = new Intent(getContext(), MediaPlayerService.class);
-            getContext().startService(playerIntent);
-            getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            Handler handler1 = new Handler();
+            handler1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent playerIntent = new Intent(getContext(), MediaPlayerService.class);
+                    getContext().startService(playerIntent);
+                    getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+                    Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
+                    getContext().sendBroadcast(broadcastIntent);
+                }
+            },1000);
+
+
         } else {
             //Store the new audioIndex to SharedPreferences
             StorageUtil storage = new StorageUtil(getContext());
-           // storage.storeAudio(songList);
+            //storage.storeAudio(songList);
             storage.storeAudioIndex(audioIndex);
 
             //Service is active
             //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-            getContext().sendBroadcast(broadcastIntent);
+            Handler handler1 = new Handler();
+            handler1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
+                    getContext().sendBroadcast(broadcastIntent);
+                }
+            },1000);
         }
     }
 

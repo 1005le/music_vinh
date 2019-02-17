@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/linearBottom"
@@ -33,10 +34,19 @@
                 android:layout_height="40dp" />
         </LinearLayout>
         <ImageButton
+        android:scaleType="fitXY"
+        android:id="@+id/imgButtonPause"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_stop"
+        android:layout_alignParentRight="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+        <ImageButton
             android:scaleType="fitXY"
-            android:id="@+id/imgButtonPause"
+            android:id="@+id/imgButtonPlay"
             android:layout_gravity="center"
-            android:src="@drawable/ic_stop"
+            android:src="@drawable/ic_pause"
+            android:visibility="gone"
             android:layout_alignParentRight="true"
             android:layout_width="50dp"
             android:layout_height="50dp" />

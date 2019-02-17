@@ -1,12 +1,13 @@
 package com.example.music_vinh.view.impl;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,8 +26,10 @@ import com.example.music_vinh.injection.SortViewModule;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.SortPresenter;
 import com.example.music_vinh.presenter.impl.SortPresenterImpl;
+import com.example.music_vinh.service.MediaPlayerService;
 import com.example.music_vinh.view.SortView;
 import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
@@ -36,6 +39,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.music_vinh.service.MediaPlayerService.ACTION_PLAY;
 
 public class SortActivity extends BaseActivity implements SortView {
 
@@ -52,6 +57,9 @@ public class SortActivity extends BaseActivity implements SortView {
      ImageButton imgButtonPauseBottom;
 
     public static ArrayList<Song> songArrayList;
+    public Song song;
+    public int audioIndex;
+
     @Inject
     SortPresenter sortPresenter;
 
@@ -60,7 +68,7 @@ public class SortActivity extends BaseActivity implements SortView {
 
     private MediaPlayerService player;
     boolean serviceBound = false;
-  //  public static final String Broadcast_PLAY_NEW_AUDIO = "com.example.music_vinh.view.impl.PlayNewAudio";
+    public static final String Broadcast_PLAY_NEW_AUDIO_Sort = "com.example.music_vinh.view.impl.playNewAudioSort";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +78,37 @@ public class SortActivity extends BaseActivity implements SortView {
         ButterKnife.bind(this);
         init();
         atc();
+       // register_DataSortActivity();
 
         sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
             @Override
             public void onClick(View view, int index) {
                 playAudio(index);
+                tvNameSongBottom.setText(songArrayList.get(index).getName());
+                tvNameArtistBottom.setText(songArrayList.get(index).getNameArtist());
             }
         }));
+
+    }
+
+    private BroadcastReceiver dataSortActivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songArrayList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+            song = songArrayList.get(audioIndex);
+
+            tvNameSongBottom.setText(song.getName());
+            tvNameArtistBottom.setText(song.getNameArtist());
+            imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
+        }
+    };
+
+    private void register_DataSortActivity() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(ACTION_PLAY);
+        registerReceiver(dataSortActivity , filter);
     }
 
     @Override
@@ -107,17 +139,12 @@ public class SortActivity extends BaseActivity implements SortView {
     }
 
     private void init() {
-
-        Intent intent = getIntent();
-        if (intent.hasExtra("listSong")) {
-            songArrayList = intent.getParcelableArrayListExtra("listSong");
+           // songArrayList = intent.getParcelableArrayListExtra("listSong");
+            songArrayList = new StorageUtil(getApplicationContext()).loadAudio();
            // arrSong.add(song);
-        }
+       // songArrayList = new StorageUtil(getApplicationContext()).loadAudio();
             initPresenter();
-        //sortPresenter.onLoadSongSuccess(songArrayList);
-
           sortPresenter.loadData();
-
         RecyclerView.ItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         sortSongRecycleview.addItemDecoration(divider);
 
@@ -141,25 +168,6 @@ public class SortActivity extends BaseActivity implements SortView {
         });
         helper.attachToRecyclerView(sortSongRecycleview);
     }
-
-//    public void playSong() {
-//        long id = songArrayList.get(0).getId();
-//        Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
-//        mediaPlayer = new MediaPlayer();
-//        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//
-//        try {
-//            mediaPlayer.setDataSource(getApplicationContext(), contentUri);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            mediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        mediaPlayer.start();
-//    }
 
     private void initPresenter(){
         sortPresenter = new SortPresenterImpl(this);
@@ -204,7 +212,6 @@ public class SortActivity extends BaseActivity implements SortView {
         }
     };
 
-
     private void playAudio(int audioIndex) {
         //Check is service is active
         if (!serviceBound) {
@@ -216,17 +223,21 @@ public class SortActivity extends BaseActivity implements SortView {
             Intent playerIntent = new Intent(this, MediaPlayerService.class);
             startService(playerIntent);
             bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+            Intent broadcastIntent = new Intent("SortPlay");
+            sendBroadcast(broadcastIntent);
         } else {
             //Store the new audioIndex to SharedPreferences
             StorageUtil storage = new StorageUtil(getApplicationContext());
+           // storage.storeAudio(songArrayList);
             storage.storeAudioIndex(audioIndex);
-
             //Service is active
             //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            Intent broadcastIntent = new Intent(SongFragment.Broadcast_PLAY_NEW_AUDIO);
+            Intent broadcastIntent = new Intent("SortPlay");
             sendBroadcast(broadcastIntent);
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

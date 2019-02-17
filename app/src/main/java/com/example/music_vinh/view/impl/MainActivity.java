@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.IntentFilter;
+import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -33,7 +34,10 @@ import com.example.music_vinh.injection.MainViewModule;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.service.MediaPlayerService;
 import com.example.music_vinh.view.MainView;
+import com.example.music_vinh.view.custom.PlaybackStatus;
+import com.example.music_vinh.view.custom.StorageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +45,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.music_vinh.service.MediaPlayerService.ACTION_PLAY;
 import static com.example.music_vinh.view.impl.AlbumFragment.albumAdapter;
 import static com.example.music_vinh.view.impl.AlbumFragment.albumList;
 import static com.example.music_vinh.view.impl.ArtistFragment.artistAdapter;
@@ -65,10 +70,17 @@ public class  MainActivity extends BaseActivity {
     TextView tvNameSong;
     @BindView(R.id.tvNameArtistBottom)
     TextView tvNameArtist;
+
     @BindView(R.id.imgButtonPause)
     ImageButton imgPause;
 
+    @BindView(R.id.imgButtonPlay)
+    ImageButton imgBottomPlay;
+
     MainView mainView;
+
+    public ArrayList<Song> songList;
+    public int audioIndex = -1;
     public Song song;
 
     @Override
@@ -78,8 +90,15 @@ public class  MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initTab();
         act();
-    }
+        register_DataSongFragment();
+       // getDataBottom();
+        register_playAudio();
+        register_stopAudio();
+        register_nextAudio();
+        register_preAudio();
+        register_pauseAudio();
 
+    }
     @Override
     protected void setupComponent(AppComponent appComponent) {
         DaggerMainViewComponent.builder()
@@ -105,22 +124,141 @@ public class  MainActivity extends BaseActivity {
         viewPager.setAdapter(mainViewAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
+    //Nhan du lieu tu SongFragment
+    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+            song = songList.get(audioIndex);
+
+            tvNameSong.setText(song.getName());
+            tvNameArtist.setText(song.getNameArtist());
+           imgPause.setVisibility(View.INVISIBLE);
+           imgBottomPlay.setVisibility(View.VISIBLE);
+            getDataBottom();
+        }
+    };
+
+    private void register_DataSongFragment() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(SongFragment.Broadcast_PLAY_NEW_AUDIO);
+      //  IntentFilter filter = new IntentFilter(ACTION_PLAY );
+        registerReceiver(dataSongFragment, filter);
+    }
+    private BroadcastReceiver stopAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Get the new media index form SharedPreferences
+            tvNameSong.setText("");
+            tvNameArtist.setText("");
+            imgPause.setVisibility(View.VISIBLE);
+            imgBottomPlay.setVisibility(View.INVISIBLE);
+        }
+    };
+
+    private void register_stopAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter("StopMusic");
+        registerReceiver(stopAudio, filter);
+    }
+
+    private BroadcastReceiver playAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+            song = songList.get(audioIndex);
+
+            tvNameSong.setText(song.getName());
+            tvNameArtist.setText(song.getNameArtist());
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private void register_playAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PLAY);
+        registerReceiver(playAudio, filter);
+    }
+
+    private BroadcastReceiver pauseAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            StorageUtil storage = new StorageUtil(getApplicationContext());
+//            songList = storage.loadAudio();
+//            audioIndex = storage.loadAudioIndex();
+//            song = songList.get(audioIndex);
+//
+//            tvNameSong.setText(song.getName());
+//            tvNameArtist.setText(song.getNameArtist());
+            imgPause.setVisibility(View.VISIBLE);
+            imgBottomPlay.setVisibility(View.INVISIBLE);
+        }
+    };
+
+    private void register_pauseAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PAUSE);
+        registerReceiver(pauseAudio, filter);
+    }
+
+    private BroadcastReceiver nextAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+            song = songList.get(audioIndex);
+
+            tvNameSong.setText(song.getName());
+            tvNameArtist.setText(song.getNameArtist());
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private void register_nextAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_NEXT);
+        registerReceiver(nextAudio, filter);
+    }
+
+    private BroadcastReceiver preAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+             songList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+            song = songList.get(audioIndex);
+
+            tvNameSong.setText(song.getName());
+            tvNameArtist.setText(song.getNameArtist());
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private void register_preAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PREVIOUS);
+        registerReceiver(preAudio, filter);
+    }
+
+
 
     private void getDataBottom() {
-       tvNameSong.setText(PlayActivity.song.getName());
-        tvNameArtist.setText(PlayActivity.song.getNameArtist());
-        imgPause.setImageResource(R.drawable.ic_pause);
-
-//        if(song.getName().length() > 0 && song.getNameArtist().length() >0) {
-//            linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-//                    intent.putExtra("song", song);
-//                    startActivity(intent);
-//                }
-//            });
-//        }
+            linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                   // intent.putExtra("song", song);
+                    startActivity(intent);
+                }
+            });
     }
 
     /**
@@ -150,8 +288,8 @@ public class  MainActivity extends BaseActivity {
                 final List<Album>filterModelAlbum = filterAlbum(albumList, searchQuery);
                 albumAdapter.getFilte(filterModelAlbum);
 
-                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
-                artistAdapter.getFilte(filterModelArtist);
+//                final List<Artist>filterModelArtist = filterArtist(artistList, searchQuery);
+//                artistAdapter.getFilte(filterModelArtist);
 
                 return true;
             }

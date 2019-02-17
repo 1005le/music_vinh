@@ -1,7 +1,5 @@
-package com.example.music_vinh.view.impl;
+package com.example.music_vinh.service;
 
-import android.annotation.TargetApi;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -13,13 +11,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.RequiresApi;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -31,6 +29,9 @@ import android.util.Log;
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.custom.PlaybackStatus;
+import com.example.music_vinh.view.impl.SongFragment;
+import com.example.music_vinh.view.impl.SortActivity;
+import com.example.music_vinh.view.custom.StorageUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,13 +45,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         AudioManager.OnAudioFocusChangeListener {
 
-    public static final String ACTION_PLAY = "com.example.music_vinh.view.impl.ACTION_PLAY";
-    public static final String ACTION_PAUSE = "com.example.music_vinh.view.impl.ACTION_PAUSE";
-    public static final String ACTION_PREVIOUS ="com.example.music_vinh.view.impl.ACTION_PREVIOUS";
-    public static final String ACTION_NEXT = "com.example.music_vinh.view.impl.ACTION_NEXT";
-    public static final String ACTION_STOP = "com.example.music_vinh.view.impl.ACTION_STOP";
+    public static final String ACTION_PLAY = "com.example.music_vinh.view.service.ACTION_PLAY";
+    public static final String ACTION_PAUSE = "com.example.music_vinh.view.service.ACTION_PAUSE";
+    public static final String ACTION_PREVIOUS ="com.example.music_vinh.view.service.ACTION_PREVIOUS";
+    public static final String ACTION_NEXT = "com.example.music_vinh.view.service.ACTION_NEXT";
+    public static final String ACTION_STOP = "com.example.music_vinh.view.service.ACTION_STOP";
 
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
 
     //MediaSession
     private MediaSessionManager mediaSessionManager;
@@ -103,13 +104,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerBecomingNoisyReceiver();
         //Listen for new Audio to play -- BroadcastReceiver
         register_playNewAudio();
+        register_stopAudio();
+        register_nextAudio();
+        register_preAudio();
+        register_playSortAudio();
+
     }
 
     //The system calls this method when an activity, requests the service be started
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
-
             //Load data from SharedPreferences
             StorageUtil storage = new StorageUtil(getApplicationContext());
             audioList = storage.loadAudio();
@@ -311,21 +316,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
             // Set the data source to the mediaFile location
-            mediaPlayer.setDataSource(activeAudio.getId().toString());
+            mediaPlayer.setDataSource(activeAudio.getPath());
         } catch (IOException e) {
             e.printStackTrace();
             stopSelf();
         }
-     //   mediaPlayer.prepareAsync();
+        mediaPlayer.prepareAsync();
+
     }
 
-    private void playMedia() {
+    public void playMedia() {
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
     }
 
-    private void stopMedia() {
+    public void stopMedia() {
         if (mediaPlayer == null) return;
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
@@ -407,7 +413,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerReceiver(becomingNoisyReceiver, intentFilter);
     }
 
-
     /**
      * Handle PhoneState changes
      */
@@ -482,7 +487,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             @Override
             public void onPause() {
                 super.onPause();
-
                 pauseMedia();
                 buildNotification(PlaybackStatus.PAUSED);
             }
@@ -540,7 +544,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
          *  2 -> Next track
          *  3 -> Previous track
          */
-
         int notificationAction = android.R.drawable.ic_media_pause;//needs to be initialized
         PendingIntent play_pauseAction = null;
 
@@ -549,10 +552,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             notificationAction = android.R.drawable.ic_media_pause;
             //create the pause action
             play_pauseAction = playbackAction(1);
+
+
         } else if (playbackStatus == PlaybackStatus.PAUSED) {
             notificationAction = android.R.drawable.ic_media_play;
             //create the play action
             play_pauseAction = playbackAction(0);
+
         }
 
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
@@ -585,9 +591,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-
-
-
     private PendingIntent playbackAction(int actionNumber) {
         Intent playbackAction = new Intent(this, MediaPlayerService.class);
 
@@ -598,7 +601,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 return PendingIntent.getService(this, actionNumber, playbackAction, 0);
             case 1:
                 // Pause
-                playbackAction.setAction(ACTION_PAUSE);
+               playbackAction.setAction(ACTION_PAUSE);
                 return PendingIntent.getService(this, actionNumber, playbackAction, 0);
             case 2:
                 // Next track
@@ -625,13 +628,38 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         String actionString = playbackAction.getAction();
         if (actionString.equalsIgnoreCase(ACTION_PLAY)) {
             transportControls.play();
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            audioList = storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+            activeAudio = audioList.get(audioIndex);
+
+            Intent intent0 = new Intent(ACTION_PLAY);
+            sendBroadcast(intent0);
         } else if (actionString.equalsIgnoreCase(ACTION_PAUSE)) {
             transportControls.pause();
+            Intent intent1 = new Intent(ACTION_PAUSE);
+            sendBroadcast(intent1);
         } else if (actionString.equalsIgnoreCase(ACTION_NEXT)) {
+
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            audioList = storage.loadAudio();
+            storage.storeAudioIndex(audioIndex);
+            Intent intent = new Intent(ACTION_NEXT);
+            // You can also include some extra data.
+            sendBroadcast(intent);
             transportControls.skipToNext();
         } else if (actionString.equalsIgnoreCase(ACTION_PREVIOUS)) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            audioList = storage.loadAudio();
+            storage.storeAudioIndex(audioIndex);
+            Intent intent = new Intent(ACTION_PREVIOUS);
+            // You can also include some extra data.
+            sendBroadcast(intent);
             transportControls.skipToPrevious();
         } else if (actionString.equalsIgnoreCase(ACTION_STOP)) {
+            Intent intent = new Intent(ACTION_STOP);
+            // You can also include some extra data.
+            sendBroadcast(intent);
             transportControls.stop();
         }
     }
@@ -640,6 +668,86 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
      * Play new Audio
      */
     private BroadcastReceiver playNewAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Get the new media index form SharedPreferences
+                    audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
+                    if (audioIndex != -1 && audioIndex < audioList.size()) {
+                        //index is in a valid range
+                        activeAudio = audioList.get(audioIndex);
+                    } else {
+                        stopSelf();
+                    }
+                    //A PLAY_NEW_AUDIO action received
+                    //reset mediaPlayer to play the new Audio
+                    stopMedia();
+                    mediaPlayer.reset();
+                    initMediaPlayer();
+                    updateMetaData();
+                    buildNotification(PlaybackStatus.PLAYING);
+
+        }
+    };
+
+    private void register_playNewAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(SongFragment.Broadcast_PLAY_NEW_AUDIO);
+        registerReceiver(playNewAudio, filter);
+    }
+
+
+    private BroadcastReceiver stopAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Get the new media index form SharedPreferences
+            stopMedia();
+            mediaPlayer.reset();
+            buildNotification(PlaybackStatus.PAUSED);
+
+        }
+    };
+
+    private void register_stopAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter("StopMusic");
+        registerReceiver(stopAudio, filter);
+    }
+
+    private BroadcastReceiver nextAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            skipToNext();
+            buildNotification(PlaybackStatus.PLAYING);
+
+        }
+    };
+
+    private void register_nextAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter("NextMusic");
+        registerReceiver(nextAudio, filter);
+    }
+
+    private BroadcastReceiver preAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Get the new media index form SharedPreferences
+            skipToPrevious();
+           // mediaPlayer.reset();
+//            initMediaPlayer();
+//            updateMetaData();
+            buildNotification(PlaybackStatus.PLAYING);
+
+        }
+    };
+
+    private void register_preAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter("PreMusic");
+        registerReceiver(preAudio, filter);
+    }
+
+    private BroadcastReceiver playSortAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Get the new media index form SharedPreferences
@@ -657,35 +765,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             initMediaPlayer();
             updateMetaData();
             buildNotification(PlaybackStatus.PLAYING);
+
         }
     };
 
-    private void register_playNewAudio() {
+    private void register_playSortAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(SongFragment.Broadcast_PLAY_NEW_AUDIO);
-        registerReceiver(playNewAudio, filter);
+        IntentFilter filter = new IntentFilter("SortPlay");
+        registerReceiver(playSortAudio, filter);
     }
 
-    //Nhan du lieu tu SongFragment
-    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //pause audio on ACTION_AUDIO_BECOMING_NOISY
-//            pauseMedia();
-//            buildNotification(PlaybackStatus.PAUSED);
-            if (intent.getAction().equals("SongFragment")) {
-                //Đọc dữ liệu trong Intent
-                // String d = intent.getStringExtra("dataname");
-                audioList = intent.getParcelableExtra("song");
-               // audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
-            }
-        }
-    };
-
-    private void register_DataSongFragment() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(SongFragment.Broadcast_PLAY_NEW_AUDIO);
-        registerReceiver(dataSongFragment, filter);
-    }
-
+//Them phan xu ly vao Pending
 }

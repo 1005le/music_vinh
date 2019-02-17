@@ -1,4 +1,4 @@
-package com.example.music_vinh.view.impl;
+package com.example.music_vinh.view.custom;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class StorageUtil {
 
-    private final String STORAGE = "com.example.music_vinh.view.impl.STORAGE";
+    private final String STORAGE = "com.example.music_vinh.view.custom.STORAGE";
     private SharedPreferences preferences;
     private Context context;
 
