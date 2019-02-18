@@ -35,6 +35,8 @@ import com.example.music_vinh.view.custom.StorageUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Valdio Veliu on 16-07-11.
@@ -59,8 +61,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private MediaControllerCompat.TransportControls transportControls;
 
     //LockSeen
-
-
     //AudioPlayer notification ID
     private static final int NOTIFICATION_ID = 101;
 
@@ -83,6 +83,24 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private PhoneStateListener phoneStateListener;
     private TelephonyManager telephonyManager;
 
+    //handle getCurrentTime
+    private boolean mIsShuffle;
+    private boolean mIsLoop;
+    private Random mRandom;
+    private int mProgess;
+    private ServiceCallback mServiceCallback;
+
+    private Handler mHandler = new Handler();
+    private Runnable mTimeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mServiceCallback.postCurentTime(mediaPlayer.getCurrentPosition());
+            if (mediaPlayer.isPlaying()) {
+                mHandler.postDelayed(this, 50);
+            }
+        }
+    };
+
     /**
      * Service lifecycle methods
      */
@@ -91,11 +109,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         return iBinder;
     }
 
+    public class MyBinder extends Binder {
+        public MediaPlayerService getMusicService() {
+            return MediaPlayerService.this;
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         // Perform one-time setup procedures
-
         // Manage incoming phone calls during playback.
         // Pause MediaPlayer on incoming call,
         // Resume on hangup.
@@ -108,8 +131,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         register_nextAudio();
         register_preAudio();
         register_playSortAudio();
-
     }
+
+//    public void setSongs(List<Song> songs) {
+//        this.mSongs = songs;
+//    }
+//
+//    public void setCurrentSong(int currentSong) {
+//        this.mCurrentPossition = currentSong;
+//    }
 
     //The system calls this method when an activity, requests the service be started
     @Override
@@ -144,12 +174,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 e.printStackTrace();
                 stopSelf();
             }
+
+
             buildNotification(PlaybackStatus.PLAYING);
         }
 
         //Handle Intent action from MediaSession.TransportControls
         handleIncomingActions(intent);
         return super.onStartCommand(intent, flags, startId);
+      // return START_STICKY;
     }
 
     @Override
@@ -191,7 +224,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return MediaPlayerService.this;
         }
     }
-
     /**
      * MediaPlayer callback methods
      */
@@ -236,6 +268,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+
+       // mServiceCallback.postTotalTime(mediaPlayer.getDuration());
+      //  postCurrentTime();
+      //  postTitle(mSongs.get(mCurrentPossition));
+      //  mServiceCallback.postStartButton();
+
         //Invoked when the media source is ready for playback.
         playMedia();
     }
@@ -311,8 +349,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mediaPlayer.setOnInfoListener(this);
         //Reset so that the MediaPlayer is not pointing to another data source
         mediaPlayer.reset();
-
-
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
             // Set the data source to the mediaFile location
@@ -321,8 +357,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             e.printStackTrace();
             stopSelf();
         }
-        mediaPlayer.prepareAsync();
+         mServiceCallback.postTotalTime(mediaPlayer.getDuration());
+         postCurrentTime();
 
+         // postTitle(activeAudio.get());
+        //  mServiceCallback.postStartButton();
+        mediaPlayer.prepareAsync();
     }
 
     public void playMedia() {
@@ -469,10 +509,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         //indicate that the MediaSession handles transport control commands
         // through its MediaSessionCompat.Callback.
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
         //Set mediaSession's MetaData
         updateMetaData();
-
         // Attach Callback to receive MediaSession updates
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             // Implement callbacks
@@ -773,6 +811,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         //Register playNewMedia receiver
         IntentFilter filter = new IntentFilter("SortPlay");
         registerReceiver(playSortAudio, filter);
+    }
+
+    private void postTitle(Song song) {
+        mServiceCallback.postName(song.getName(), song.getNameArtist());
+    }
+
+    private void postCurrentTime() {
+        mHandler.postDelayed(mTimeRunnable, 50);
     }
 
 //Them phan xu ly vao Pending

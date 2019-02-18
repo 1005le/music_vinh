@@ -5,4 +5,5 @@
     <string name="album">ALBUMS</string>
     <string name="artist">ARTISTS</string>
     <string name="playQueue">Playing Queue</string>
+    <string name="date_time">mm:ss</string>
 </resources>

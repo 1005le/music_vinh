@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.music_vinh.R;
@@ -38,8 +39,11 @@ import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.PlaySongPresenter;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.service.MediaPlayerService;
+import com.example.music_vinh.service.MusicService;
+import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.PlaySongView;
 import com.example.music_vinh.view.custom.CircularSeekBar;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.StorageUtil;
 
 import java.io.IOException;
@@ -54,10 +58,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.internal.Utils;
 
 import static com.example.music_vinh.view.impl.SongFragment.songList;
 
-public class PlayActivity extends BaseActivity implements PlaySongView {
+public class PlayActivity extends BaseActivity implements PlaySongView, ServiceCallback, View.OnClickListener {
 
     @BindView(R.id.toolbarPlaySong)
     Toolbar toolbarPlaySong;
@@ -83,6 +88,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
 
     @BindView(R.id.tvNameArtistPlay)
     TextView tvNameArtistPlay;
+    private int mProgess;
 
     public int audioIndex = -1;
     public static ArrayList<Song> arrSong = new ArrayList<Song>();
@@ -96,10 +102,18 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     boolean next = false;
     Random random;
 
+    private boolean mIsShuffle;
+    private boolean mIsRepeat;
+
     CircularSeekBar circularSeekBar;
 
-    private MediaPlayerService player;
-    boolean serviceBound = false;
+    private MediaPlayerService mMediaPlayerService;
+    private MusicService mMusicService;
+   // boolean serviceBound = false;
+    private ServiceConnection mSCon;
+    private int mCurentSong;
+    private SimpleDateFormat mDateFormat;
+    private boolean mIsBound;
 
     @Inject
     PlaySongPresenter playSongPresenter;
@@ -109,14 +123,39 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         initPresenter();
-       // getDataIntent();
+        //getDataIntent();
         ButterKnife.bind(this);
         circularSeekBar= (CircularSeekBar) findViewById(R.id.circularSeekBar1);
+        mIsBound = false;
+        mDateFormat = new SimpleDateFormat(getString(R.string.date_time));
+        connectService();
        // getSongService();
       //  register_DataSongFragmentPlay();
         doStuff();
-        init();
-        eventClick();
+       // init();
+        act();
+        registerListener();
+      //  eventClick();
+    }
+
+    private void registerListener() {
+        circularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+            }
+            @Override
+            public void onStopTrackingTouch(CircularSeekBar seekBar) {
+                mMusicService.seekTo(seekBar.getProgress());
+            }
+            @Override
+            public void onStartTrackingTouch(CircularSeekBar seekBar) {
+            }
+        });
+        imgPre.setOnClickListener(this);
+        imgPlay.setOnClickListener(this);
+        imgRepeat.setOnClickListener(this);
+        imgShuttle.setOnClickListener(this);
+        imgNext.setOnClickListener(this);
     }
 
     @Override
@@ -127,6 +166,27 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                 .build()
                 .inject(this);
     }
+
+    private void connectService() {
+        mSCon = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder iBinder) {
+                mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
+                mMusicService.setListener(PlayActivity.this);
+                mIsBound = true;
+                getDataIntent();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+            }
+        };
+        Intent intent = new Intent(this, MusicService.class);
+        intent.setAction(Constants.ACTION_BIND_SERVICE);
+        startService(intent);
+        bindService(intent, mSCon, BIND_AUTO_CREATE);
+    }
+
     //Nhan du lieu tu SongFragment
     private BroadcastReceiver dataSongFragmentPLay = new BroadcastReceiver() {
         @Override
@@ -151,8 +211,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                 }
             });
           //  playSong(song.getId());
-            eventClick();
-
+         //   eventClick();
         }
     };
 
@@ -165,7 +224,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     private void act() {
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(song.getName());
+       // getSupportActionBar().setTitle(song.getName());
         toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,31 +272,125 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     private void initPresenter(){
        playSongPresenter = new PlaySongPresenterImpl(this);
     }
+
     private void doStuff() {
         arrSong = new ArrayList<>();
          getSongService();
          playSongPresenter.loadData();
+
     }
 
     private void getSongService() {
         arrSong = new StorageUtil(getApplicationContext()).loadAudio();
         audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
         song = arrSong.get(audioIndex);
+
     }
 
-    private void getDataIntent() {
+   public void getDataIntent() {
         Intent intent = getIntent();
-      //  arrSong.clear();
-        if (intent != null) {
-            if (intent.hasExtra("song")) {
-                song = intent.getParcelableExtra("song");
-                arrSong.add(song);
+
+    if (intent != null) {
+            Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
+            arrSong= bundle.getParcelableArrayList(Constants.KEY_SONGS);
+            mCurentSong = bundle.getInt(Constants.KEY_POSITION, 0);
+             Log.d("baihat", arrSong.get(mCurentSong).getName());
+            mMusicService.setSongs(arrSong);
+            mMusicService.setCurrentSong(mCurentSong);
+            mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
+
+            if (mProgess > 0) {
+                mMusicService.seekTo(mProgess);
+            } else {
+                mMusicService.playSong();
             }
-            if (intent.hasExtra("arrSong")) {
-                arrSong = intent.getParcelableArrayListExtra("arrSong");
-            }
-            if (intent.hasExtra("dragSong")) {
-                arrSong = intent.getParcelableArrayListExtra("dragSong");
+        }
+    }
+    @Override
+    public void postName(String songName, String author) {
+//        mTextNameSong.setText(songName);
+//        mTextNameSinger.setText(author);
+        getSupportActionBar().setTitle(songName);
+        Log.d("name",songName);
+        tvNameArtistPlay.setText(author);
+    }
+    @Override
+    public void postTotalTime(long totalTime) {
+//        mTextTotalTime.setText(mDateFormat.format(totalTime));
+        circularSeekBar.setMax((int) totalTime);
+    }
+    //
+    @Override
+    public void postCurentTime(long currentTime) {
+        tvTime.setText(mDateFormat.format(currentTime));
+        //  if (!mTrackingSeekBar) {
+        circularSeekBar.setProgress((int) currentTime);
+        // }
+    }
+
+    @Override
+    public void postPauseButon() {
+        imgPlay.setImageResource(R.drawable.ic_stop_seekbar);
+    }
+
+    @Override
+    public void postStartButton() {
+        imgPlay.setImageResource(R.drawable.ic_play_seekbar);
+    }
+
+    @Override
+    public void postShuffle(boolean isShuffle) {
+        mIsShuffle = isShuffle;
+        if (mIsShuffle) {
+            imgShuttle.setImageResource(R.drawable.ic_shuttle);
+        } else {
+            imgShuttle.setImageResource(R.drawable.ic_shuttled);
+        }
+    }
+
+    @Override
+    public void postLoop(boolean isLoop) {
+        mIsRepeat = isLoop;
+        if (mIsRepeat) {
+            imgRepeat.setImageResource(R.drawable.ic_repeat);
+        } else {
+            imgRepeat.setImageResource(R.drawable.ic_repeat_one);
+        }
+    }
+
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void postAvatar(String url) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (mIsBound) {
+            switch (v.getId()) {
+                case R.id.imgRepeat:
+                    mMusicService.changeLoop();
+                    break;
+                case R.id.imgPrev:
+                    mMusicService.previous();
+                    break;
+                case R.id.imgPlay:
+                    if (mMusicService.isPlay()) {
+                        mMusicService.pauseSong();
+                    } else {
+                        mMusicService.continuesSong();
+                    }
+                    break;
+                case R.id.imgNext:
+                    mMusicService.next();
+                    break;
+                case R.id.imgShuttle:
+                    mMusicService.changeShuffle();
+                    break;
             }
         }
     }
@@ -307,7 +460,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
     }
 
 
-
     @Override
     public void showSong(ArrayList<Song> songs) {
 
@@ -318,7 +470,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
         playSongRecycleview.setAdapter(songAdapter);
     }
 
-    private void eventClick() {
+/*    private void eventClick() {
         circularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
@@ -506,7 +658,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
             }
         });
 
-    }
+    }*/
 
     private void UpdateTime(){
         final Handler handler = new Handler();
@@ -601,7 +753,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                     }
                 });
 
-
               Intent intent =  new Intent(PlayActivity.this, SortActivity.class);
                //intent.putExtra("song",arrSong.get(audioIndex));
              // intent.putExtra("listSong",arrSong);
@@ -611,5 +762,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView {
                 return super.onOptionsItemSelected(item);
         }
     }
+//
 
-    }
+}

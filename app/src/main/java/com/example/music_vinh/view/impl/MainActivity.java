@@ -90,6 +90,7 @@ public class  MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initTab();
         act();
+
         register_DataSongFragment();
        // getDataBottom();
         register_playAudio();
@@ -97,7 +98,6 @@ public class  MainActivity extends BaseActivity {
         register_nextAudio();
         register_preAudio();
         register_pauseAudio();
-
     }
     @Override
     protected void setupComponent(AppComponent appComponent) {
@@ -204,8 +204,8 @@ public class  MainActivity extends BaseActivity {
         //Register playNewMedia receiver
         IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PAUSE);
         registerReceiver(pauseAudio, filter);
-    }
 
+    }
     private BroadcastReceiver nextAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

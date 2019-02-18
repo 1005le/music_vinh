@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +33,7 @@ import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.service.MediaPlayerService;
 import com.example.music_vinh.view.MainView;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.CustomTouchListener;
 import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
@@ -83,37 +85,25 @@ public class SongFragment extends Fragment implements MainView {
         ButterKnife.bind(this,view);
         initPresenter();
         doStuff();
-        final Handler handler1 = new Handler();
-        handler1.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
                 songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
                     @Override
                     public void onClick(View view, final int index) {
-                        playAudio(index);
+                      //  playAudio(index);
+                        Intent intent = new Intent(getActivity(), PlayActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
+                        bundle.putInt(Constants.KEY_POSITION, index);
+//                        intent.putExtra(Constants.KEY_SONGS, songList);
+//                        intent.putExtra(Constants.KEY_POSITION,index);
+                        intent.putExtra(Constants.KEY_BUNDLE, bundle);
+                        startActivity(intent);
 
-                        Handler handler1 = new Handler();
-                        handler1.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-//                                 StorageUtil storage = new StorageUtil(getContext());
-//                                 storage.loadAudio();
-//                                 storage.loadAudioIndex();
-
-                               //  Intent intent1 = new Intent(getContext() , PlayActivity.class);
-//                                intent1.putExtra("song", songList.get(index));
-//                                intent1.putExtra("arrSong",(ArrayList) songList);
-                              //  getContext().startActivity(intent1);
-                            }
-                        },1000);
-
-
+//                  Intent intent = new Intent(getContext(), PlayActivity.class);
+//                  intent.putExtra("index", index);
+//                  intent.putParcelableArrayListExtra("arrSong",songList);
+//                  getContext().startActivity(intent);
                     }
                 }));
-
-            }
-        },1000);
 
     }
 
@@ -153,19 +143,12 @@ public class SongFragment extends Fragment implements MainView {
             storage.storeAudio(songList);
             storage.storeAudioIndex(audioIndex);
 
-            Handler handler1 = new Handler();
-            handler1.postDelayed(new Runnable() {
-                @Override
-                public void run() {
                     Intent playerIntent = new Intent(getContext(), MediaPlayerService.class);
                     getContext().startService(playerIntent);
                     getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 
                     Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
                     getContext().sendBroadcast(broadcastIntent);
-                }
-            },1000);
-
 
         } else {
             //Store the new audioIndex to SharedPreferences
