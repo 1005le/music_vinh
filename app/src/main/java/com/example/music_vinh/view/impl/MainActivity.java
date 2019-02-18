@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 
 import android.view.MenuItem;
@@ -35,7 +36,10 @@ import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.service.MediaPlayerService;
+import com.example.music_vinh.service.MusicService;
+import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.MainView;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.PlaybackStatus;
 import com.example.music_vinh.view.custom.StorageUtil;
 
@@ -53,7 +57,7 @@ import static com.example.music_vinh.view.impl.ArtistFragment.artistList;
 import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
 import static com.example.music_vinh.view.impl.SongFragment.songList;
 
-public class  MainActivity extends BaseActivity {
+public class  MainActivity extends BaseActivity implements ServiceCallback, View.OnClickListener{
 
     @BindView(R.id.myTabLayout)
     TabLayout tabLayout;
@@ -82,6 +86,7 @@ public class  MainActivity extends BaseActivity {
     public ArrayList<Song> songList;
     public int audioIndex = -1;
     public Song song;
+    private MusicService mMusicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,9 +133,9 @@ public class  MainActivity extends BaseActivity {
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-            songList = storage.loadAudio();
-            audioIndex = storage.loadAudioIndex();
+           // StorageUtil storage = new StorageUtil(getApplicationContext());
+            songList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
+            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
             song = songList.get(audioIndex);
 
             tvNameSong.setText(song.getName());
@@ -143,7 +148,7 @@ public class  MainActivity extends BaseActivity {
 
     private void register_DataSongFragment() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(SongFragment.Broadcast_PLAY_NEW_AUDIO);
+        IntentFilter filter = new IntentFilter("send");
       //  IntentFilter filter = new IntentFilter(ACTION_PLAY );
         registerReceiver(dataSongFragment, filter);
     }
@@ -339,5 +344,67 @@ public class  MainActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.imgPlay:
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void postName(String songName, String author) {
+        tvNameSong.setText(songName);
+        tvNameArtist.setText(author);
+    }
+    @Override
+    public void postTotalTime(long totalTime) {
+//        mTextTotalTime.setText(mDateFormat.format(totalTime));
+      //  circularSeekBar.setMax((int) totalTime);
+    }
+    //
+    @Override
+    public void postCurentTime(long currentTime) {
+     //   tvTime.setText(mDateFormat.format(currentTime));
+        //  if (!mTrackingSeekBar) {
+      //  circularSeekBar.setProgress((int) currentTime);
+        // }
+    }
+
+    @Override
+    public void postPauseButon() {
+        imgPause.setImageResource(R.drawable.ic_stop_seekbar);
+    }
+
+    @Override
+    public void postStartButton() {
+        imgPause.setImageResource(R.drawable.ic_play_seekbar);
+    }
+
+
+    @Override
+    public void postShuffle(boolean isShuffle) {
+
+    }
+
+    @Override
+    public void postLoop(boolean isLoop) {
+
+    }
+
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void postAvatar(String url) {
+
+    }
 }
 

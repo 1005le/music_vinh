@@ -32,6 +32,8 @@ import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.service.MediaPlayerService;
+import com.example.music_vinh.service.MusicService;
+import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.MainView;
 import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.CustomTouchListener;
@@ -46,10 +48,13 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+import static com.example.music_vinh.view.impl.PlayActivity.arrSong;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SongFragment extends Fragment implements MainView {
+public class SongFragment extends Fragment implements MainView, ServiceCallback {
     View view;
     public static final String Broadcast_PLAY_NEW_AUDIO = "com.example.music_vinh.view.service.PlayNewAudio";
 
@@ -62,8 +67,14 @@ public class SongFragment extends Fragment implements MainView {
    public static SongAdapter songAdapter;
 
    public static ArrayList<Song> songList;
+    private MusicService mMusicService;
+    // boolean serviceBound = false;
+    private ServiceConnection mSCon;
+    private int mCurentSong;
+    private boolean mIsBound;
 
-   //Presenter
+
+    //Presenter
    @Inject
    MainPresenter mainPresenter;
 
@@ -89,12 +100,13 @@ public class SongFragment extends Fragment implements MainView {
                     @Override
                     public void onClick(View view, final int index) {
                       //  playAudio(index);
+                      //  connectService(index);
+
                         Intent intent = new Intent(getActivity(), PlayActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
                         bundle.putInt(Constants.KEY_POSITION, index);
-//                        intent.putExtra(Constants.KEY_SONGS, songList);
-//                        intent.putExtra(Constants.KEY_POSITION,index);
+
                         intent.putExtra(Constants.KEY_BUNDLE, bundle);
                         startActivity(intent);
 
@@ -107,77 +119,33 @@ public class SongFragment extends Fragment implements MainView {
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("serviceStatus", serviceBound);
+    private void connectService(final int index) {
+        mSCon = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder iBinder) {
+                mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
+                mMusicService.setListener(SongFragment.this);
+                mIsBound = true;
+//                getDataIntent();
+                mMusicService.setSongs(songList);
+                mMusicService.setCurrentSong(index);
+                // mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
+//                if (mProgess > 0) {
+//                    mMusicService.seekTo(mProgess);
+//                } else {
+                mMusicService.playSong();
+                //}
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+            }
+        };
+        Intent intent = new Intent(getContext(), MusicService.class);
+        intent.setAction(Constants.ACTION_BIND_SERVICE);
+        getContext().startService(intent);
+        getContext().bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
 
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-      //  super.onRestoreInstanceState(savedInstanceState);
-        serviceBound = savedInstanceState.getBoolean("serviceStatus");
-    }
-
-    //Binding this Client to the AudioPlayer Service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            player = binder.getService();
-            serviceBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
-        }
-    };
-
-    private void playAudio(int audioIndex) {
-        //Check is service is active
-        if (!serviceBound) {
-            //Store Serializable audioList to SharedPreferences
-            StorageUtil storage = new StorageUtil(getContext());
-            storage.storeAudio(songList);
-            storage.storeAudioIndex(audioIndex);
-
-                    Intent playerIntent = new Intent(getContext(), MediaPlayerService.class);
-                    getContext().startService(playerIntent);
-                    getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-                    Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-                    getContext().sendBroadcast(broadcastIntent);
-
-        } else {
-            //Store the new audioIndex to SharedPreferences
-            StorageUtil storage = new StorageUtil(getContext());
-            //storage.storeAudio(songList);
-            storage.storeAudioIndex(audioIndex);
-
-            //Service is active
-            //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            Handler handler1 = new Handler();
-            handler1.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-                    getContext().sendBroadcast(broadcastIntent);
-                }
-            },1000);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (serviceBound) {
-           getContext().unbindService(serviceConnection);
-            //service is active
-            player.stopSelf();
-        }
-    }
 
     private void initPresenter(){
         mainPresenter = new MainPresenterImpl(this);
@@ -252,4 +220,48 @@ public class SongFragment extends Fragment implements MainView {
         }
     }
 
+    @Override
+    public void postName(String songName, String author) {
+
+    }
+
+    @Override
+    public void postTotalTime(long totalTime) {
+
+    }
+
+    @Override
+    public void postCurentTime(long currentTime) {
+
+    }
+
+    @Override
+    public void postPauseButon() {
+
+    }
+
+    @Override
+    public void postStartButton() {
+
+    }
+
+    @Override
+    public void postShuffle(boolean isShuffle) {
+
+    }
+
+    @Override
+    public void postLoop(boolean isLoop) {
+
+    }
+
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void postAvatar(String url) {
+
+    }
 }

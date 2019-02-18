@@ -292,6 +292,12 @@ public class MusicService extends Service implements BaseMediaPlayer
         intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
+        //Truyen đen mainActivity
+       Intent intent1 = new Intent("send");
+       intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
+       intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
+       sendBroadcast(intent1);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -312,9 +318,9 @@ public class MusicService extends Service implements BaseMediaPlayer
 
         int iconPauseStart;
         if (mMediaPlayer.isPlaying()) {
-            iconPauseStart = R.drawable.ic_stop;
-        } else {
             iconPauseStart = R.drawable.ic_pause;
+        } else {
+            iconPauseStart = R.drawable.ic_stop;
         }
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.custom_notification);
         Song song = mSongs.get(mCurrentPossition);

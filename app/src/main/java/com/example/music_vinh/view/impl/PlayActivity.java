@@ -123,7 +123,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         initPresenter();
-        //getDataIntent();
+        getDataIntent();
         ButterKnife.bind(this);
         circularSeekBar= (CircularSeekBar) findViewById(R.id.circularSeekBar1);
         mIsBound = false;
@@ -174,9 +174,16 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
                 mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
                 mMusicService.setListener(PlayActivity.this);
                 mIsBound = true;
-                getDataIntent();
-            }
+//                getDataIntent();
 
+                mMusicService.setSongs(arrSong);
+                mMusicService.setCurrentSong(mCurentSong);
+                if (mProgess > 0) {
+                    mMusicService.seekTo(mProgess);
+                } else {
+                    mMusicService.playSong();
+                }
+            }
             @Override
             public void onServiceDisconnected(ComponentName name) {
             }
@@ -275,7 +282,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
     private void doStuff() {
         arrSong = new ArrayList<>();
-         getSongService();
+        getDataIntent();
          playSongPresenter.loadData();
 
     }
@@ -283,35 +290,31 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     private void getSongService() {
         arrSong = new StorageUtil(getApplicationContext()).loadAudio();
         audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
-        song = arrSong.get(audioIndex);
+      //  song = arrSong.get(audioIndex);
 
     }
 
    public void getDataIntent() {
         Intent intent = getIntent();
-
     if (intent != null) {
             Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
             arrSong= bundle.getParcelableArrayList(Constants.KEY_SONGS);
             mCurentSong = bundle.getInt(Constants.KEY_POSITION, 0);
-             Log.d("baihat", arrSong.get(mCurentSong).getName());
-            mMusicService.setSongs(arrSong);
-            mMusicService.setCurrentSong(mCurentSong);
+            // Log.d("baihat", arrSong.get(mCurentSong).getName());
+//            mMusicService.setSongs(arrSong);
+//            mMusicService.setCurrentSong(mCurentSong);
             mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
-
-            if (mProgess > 0) {
-                mMusicService.seekTo(mProgess);
-            } else {
-                mMusicService.playSong();
-            }
+//
+//            if (mProgess > 0) {
+//                mMusicService.seekTo(mProgess);
+//            } else {
+//                mMusicService.playSong();
+//            }
         }
     }
     @Override
     public void postName(String songName, String author) {
-//        mTextNameSong.setText(songName);
-//        mTextNameSinger.setText(author);
         getSupportActionBar().setTitle(songName);
-        Log.d("name",songName);
         tvNameArtistPlay.setText(author);
     }
     @Override

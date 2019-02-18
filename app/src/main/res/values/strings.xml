@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Music_Vinh</string>
     <string name="beauty">Beauty Music</string>
     <string name="song">SONGS</string>

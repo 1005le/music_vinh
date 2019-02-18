@@ -8,7 +8,6 @@ import com.example.music_vinh.model.Song;
 import java.util.ArrayList;
 
 public interface MainView {
-    void onRestoreInstanceState(Bundle savedInstanceState);
 
     void showSong(ArrayList<Song> songs);
      void showSongGrid(ArrayList<Song> songs);
