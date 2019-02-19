@@ -324,6 +324,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     public void postTotalTime(long totalTime) {
 //        mTextTotalTime.setText(mDateFormat.format(totalTime));
         circularSeekBar.setMax((int) totalTime);
+        Log.d("totalTimePlay",totalTime+"");
     }
     //
     @Override

@@ -228,7 +228,7 @@ public class MusicService extends Service implements BaseMediaPlayer
         postCurrentTime();
         postTitle(mSongs.get(mCurrentPossition));
         mServiceCallback.postStartButton();
-
+        Log.d("total",getDuration()+"");
 //        if (mSongs.get(mCurrentPossition).getAvatarUrl()!=null){
 //            mServiceCallback.postAvatar(mSongs.get(mCurrentPossition).getAvatarUrl());
 //        }
@@ -319,9 +319,9 @@ public class MusicService extends Service implements BaseMediaPlayer
 
    private void postNotification() {
 
-     /*   Intent intent = new Intent(this, PlayActivity.class);
+        Intent intent = new Intent(this, PlayActivity.class);
       //  Intent intent = new Intent("send");
-        Bundle bundle = new Bundle();
+     /*   Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.KEY_SONGS, mSongs);
         bundle.putInt(Constants.KEY_POSITION,mCurrentPossition);
         intent.putExtra(Constants.KEY_BUNDLE,bundle);
@@ -346,7 +346,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 //                intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-               new Intent(this, MusicService.class), PendingIntent.FLAG_UPDATE_CURRENT);
+               new Intent(this, PlayActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseStartIntent = new Intent(this, MusicService.class);
         pauseStartIntent.setAction(Constants.ACTION_PLAY);

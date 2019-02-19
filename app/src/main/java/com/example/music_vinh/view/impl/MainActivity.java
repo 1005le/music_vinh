@@ -84,7 +84,8 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
 
     @BindView(R.id.imgButtonPlay)
     ImageButton imgBottomPlay;
-    @BindView(R.id.seekBarBottom)
+
+  //  @BindView(R.id.seekBarBottom)
     SeekBar seekBar;
 
     MainView mainView;
@@ -104,6 +105,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         ButterKnife.bind(this);
         initTab();
         act();
+        seekBar = findViewById(R.id.bottomSeekbar);
        // getDataBottom();
       /*  register_playAudio();
         register_stopAudio();
@@ -111,10 +113,11 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         register_preAudio();
         register_pauseAudio();*/
 
+        loadAudioInfo();
         register_DataSongFragment();
         bindServiceMedia();
       //  connectService();
-        loadAudioInfo();
+
     }
 
     @Override
@@ -183,15 +186,6 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         Intent loadAudioIntent = new Intent("load_audio");
         sendBroadcast(loadAudioIntent);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mSCon != null) {
-            unbindService(mSCon);
-        }
-    }
-
 
 //    private BroadcastReceiver stopAudio = new BroadcastReceiver() {
 //        @Override
@@ -303,7 +297,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
                     bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
                     bundle.putInt(Constants.KEY_POSITION,audioIndex);
                     intent.putExtra(Constants.KEY_BUNDLE,bundle);
-                 //   intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+                  //  intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
                     startActivity(intent);
                 }
             });
@@ -401,6 +395,14 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mSCon != null) {
+            unbindService(mSCon);
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.imgPlay:
@@ -417,11 +419,13 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     public void postName(String songName, String author) {
         tvNameSong.setText(songName);
         tvNameArtist.setText(author);
+        Log.d("songMain",songName+"-"+author);
     }
     @Override
     public void postTotalTime(long totalTime) {
 //        mTextTotalTime.setText(mDateFormat.format(totalTime));
-      //  circularSeekBar.setMax((int) totalTime);
+          seekBar.setMax((int) totalTime);
+          Log.d("timeMain",totalTime+"");
     }
     //
     @Override

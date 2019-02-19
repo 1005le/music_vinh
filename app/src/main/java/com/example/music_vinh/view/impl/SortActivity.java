@@ -72,6 +72,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
     public Song song;
     public int audioIndex;
     private MusicService mMusicService;
+    private int mProgess;
 
     @Inject
     SortPresenter sortPresenter;
@@ -94,13 +95,21 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         atc();
         loadAudioInfo();
         register_DataSong();
+
         sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
             @Override
             public void onClick(View view, int index) {
 //                playAudio(index);
 //                tvNameSongBottom.setText(songArrayList.get(index).getName());
 //                tvNameArtistBottom.setText(songArrayList.get(index).getNameArtist());
-
+                mMusicService.setSongs(songArrayList);
+                mMusicService.setCurrentSong(index);
+                Log.d("songSort", songArrayList.get(index).getName()+"");
+                if (mProgess > 0) {
+                    mMusicService.seekTo(mProgess);
+                } else {
+                    mMusicService.playSong();
+                }
             }
         }));
 
@@ -117,6 +126,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
             mMusicService.setListener(SortActivity.this);
+
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -139,15 +149,15 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         @Override
         public void onReceive(Context context, Intent intent) {
             // StorageUtil storage = new StorageUtil(getApplicationContext());
-//            songArrayList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
-//            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-//            song = songArrayList.get(audioIndex);
-
-            Log.d("hh", "a");
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-            songArrayList = storage.loadAudio();
-            audioIndex = storage.loadAudioIndex();
+            songArrayList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
+            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
             song = songArrayList.get(audioIndex);
+
+//            Log.d("hh", "a");
+//            StorageUtil storage = new StorageUtil(getApplicationContext());
+//            songArrayList = storage.loadAudio();
+//            audioIndex = storage.loadAudioIndex();
+         //   song = songArrayList.get(audioIndex);
 
             tvNameSong.setText(song.getName());
             tvNameArtist.setText(song.getNameArtist());
@@ -163,7 +173,6 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         IntentFilter filter = new IntentFilter("send");
         registerReceiver(dataSong, filter);
     }
-
 
     private void getDataBottom() {
         linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
@@ -272,12 +281,13 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
     public void postName(String songName, String author) {
         tvNameSong.setText(songName);
         tvNameArtist.setText(author);
+        Log.d("songSo",songName+"-"+author);
     }
 
     @Override
     public void postTotalTime(long totalTime) {
 //        mTextTotalTime.setText(mDateFormat.format(totalTime));
-        //  circularSeekBar.setMax((int) totalTime);
+        // seek.setMax((int) totalTime);
     }
 
     //
