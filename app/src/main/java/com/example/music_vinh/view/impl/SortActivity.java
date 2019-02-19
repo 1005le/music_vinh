@@ -92,6 +92,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         ButterKnife.bind(this);
         init();
         atc();
+        loadAudioInfo();
         register_DataSong();
         sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
             @Override
@@ -102,7 +103,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
 
             }
         }));
-        loadAudioInfo();
+
     }
 
     private void bindServiceMedia() {
