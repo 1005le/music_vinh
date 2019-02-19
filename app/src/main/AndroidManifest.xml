@@ -32,7 +32,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.MediaPlayerService" />
         <service android:name=".service.MusicService" />
     </application>
 

@@ -3,10 +3,13 @@ package com.example.music_vinh.view.impl;
 
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -23,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,13 +47,13 @@ import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.PlaybackStatus;
 import com.example.music_vinh.view.custom.StorageUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.music_vinh.service.MediaPlayerService.ACTION_PLAY;
 import static com.example.music_vinh.view.impl.AlbumFragment.albumAdapter;
 import static com.example.music_vinh.view.impl.AlbumFragment.albumList;
 import static com.example.music_vinh.view.impl.ArtistFragment.artistAdapter;
@@ -80,13 +84,18 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
 
     @BindView(R.id.imgButtonPlay)
     ImageButton imgBottomPlay;
+    @BindView(R.id.seekBarBottom)
+    SeekBar seekBar;
 
     MainView mainView;
 
     public ArrayList<Song> songList;
-    public int audioIndex = -1;
+    //public int audioIndex = -1;
+    public int audioIndex ;
     public Song song;
     private MusicService mMusicService;
+    private boolean mIsBound;
+    private int totalTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +104,25 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         ButterKnife.bind(this);
         initTab();
         act();
-
-        register_DataSongFragment();
        // getDataBottom();
-        register_playAudio();
+      /*  register_playAudio();
         register_stopAudio();
         register_nextAudio();
         register_preAudio();
-        register_pauseAudio();
+        register_pauseAudio();*/
+
+        register_DataSongFragment();
+        bindServiceMedia();
+      //  connectService();
+        loadAudioInfo();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
     @Override
     protected void setupComponent(AppComponent appComponent) {
         DaggerMainViewComponent.builder()
@@ -122,7 +141,6 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
      */
     private void initTab() {
         MainViewAdapter mainViewAdapter = new MainViewAdapter(getSupportFragmentManager());
-
         mainViewAdapter.addFragment(new SongFragment(),getString(R.string.song));
         mainViewAdapter.addFragment(new AlbumFragment(),getString(R.string.album));
         mainViewAdapter.addFragment(new ArtistFragment(), getString(R.string.artist));
@@ -133,13 +151,22 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           // StorageUtil storage = new StorageUtil(getApplicationContext());
+//
+//            Log.d("aa", "aaa");
+//            StorageUtil storage = new StorageUtil(getApplicationContext());
+//            songList = storage.loadAudio();
+//            audioIndex = storage.loadAudioIndex();
+//            song = songList.get(audioIndex);
+
             songList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
             audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
+             totalTime = intent.getIntExtra(Constants.KEY_PROGESS,0);
             song = songList.get(audioIndex);
-
+             Log.d("time", totalTime+"");
             tvNameSong.setText(song.getName());
             tvNameArtist.setText(song.getNameArtist());
+            seekBar.setMax(totalTime);
+
            imgPause.setVisibility(View.INVISIBLE);
            imgBottomPlay.setVisibility(View.VISIBLE);
             getDataBottom();
@@ -149,50 +176,43 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     private void register_DataSongFragment() {
         //Register playNewMedia receiver
         IntentFilter filter = new IntentFilter("send");
-      //  IntentFilter filter = new IntentFilter(ACTION_PLAY );
         registerReceiver(dataSongFragment, filter);
     }
-    private BroadcastReceiver stopAudio = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Get the new media index form SharedPreferences
-            tvNameSong.setText("");
-            tvNameArtist.setText("");
-            imgPause.setVisibility(View.VISIBLE);
-            imgBottomPlay.setVisibility(View.INVISIBLE);
-        }
-    };
 
-    private void register_stopAudio() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter("StopMusic");
-        registerReceiver(stopAudio, filter);
+    private void loadAudioInfo() {
+        Intent loadAudioIntent = new Intent("load_audio");
+        sendBroadcast(loadAudioIntent);
     }
 
-    private BroadcastReceiver playAudio = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-            songList = storage.loadAudio();
-            audioIndex = storage.loadAudioIndex();
-            song = songList.get(audioIndex);
-
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.INVISIBLE);
-            imgBottomPlay.setVisibility(View.VISIBLE);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mSCon != null) {
+            unbindService(mSCon);
         }
-    };
-
-    private void register_playAudio() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PLAY);
-        registerReceiver(playAudio, filter);
     }
 
-    private BroadcastReceiver pauseAudio = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+
+//    private BroadcastReceiver stopAudio = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            //Get the new media index form SharedPreferences
+//            tvNameSong.setText("");
+//            tvNameArtist.setText("");
+//            imgPause.setVisibility(View.VISIBLE);
+//            imgBottomPlay.setVisibility(View.INVISIBLE);
+//        }
+//    };
+//
+//    private void register_stopAudio() {
+//        //Register playNewMedia receiver
+//        IntentFilter filter = new IntentFilter("StopMusic");
+//        registerReceiver(stopAudio, filter);
+//    }
+//
+//    private BroadcastReceiver playAudio = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
 //            StorageUtil storage = new StorageUtil(getApplicationContext());
 //            songList = storage.loadAudio();
 //            audioIndex = storage.loadAudioIndex();
@@ -200,72 +220,94 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
 //
 //            tvNameSong.setText(song.getName());
 //            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.VISIBLE);
-            imgBottomPlay.setVisibility(View.INVISIBLE);
-        }
-    };
-
-    private void register_pauseAudio() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PAUSE);
-        registerReceiver(pauseAudio, filter);
-
-    }
-    private BroadcastReceiver nextAudio = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-            songList = storage.loadAudio();
-            audioIndex = storage.loadAudioIndex();
-            song = songList.get(audioIndex);
-
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.INVISIBLE);
-            imgBottomPlay.setVisibility(View.VISIBLE);
-        }
-    };
-
-    private void register_nextAudio() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_NEXT);
-        registerReceiver(nextAudio, filter);
-    }
-
-    private BroadcastReceiver preAudio = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-             songList = storage.loadAudio();
-            audioIndex = storage.loadAudioIndex();
-            song = songList.get(audioIndex);
-
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.INVISIBLE);
-            imgBottomPlay.setVisibility(View.VISIBLE);
-        }
-    };
-
-    private void register_preAudio() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PREVIOUS);
-        registerReceiver(preAudio, filter);
-    }
-
-
+//            imgPause.setVisibility(View.INVISIBLE);
+//            imgBottomPlay.setVisibility(View.VISIBLE);
+//        }
+//    };
+//
+//    private void register_playAudio() {
+//        //Register playNewMedia receiver
+//        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PLAY);
+//        registerReceiver(playAudio, filter);
+//    }
+//
+//    private BroadcastReceiver pauseAudio = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+////            StorageUtil storage = new StorageUtil(getApplicationContext());
+////            songList = storage.loadAudio();
+////            audioIndex = storage.loadAudioIndex();
+////            song = songList.get(audioIndex);
+////
+////            tvNameSong.setText(song.getName());
+////            tvNameArtist.setText(song.getNameArtist());
+//            imgPause.setVisibility(View.VISIBLE);
+//            imgBottomPlay.setVisibility(View.INVISIBLE);
+//        }
+//    };
+//
+//    private void register_pauseAudio() {
+//        //Register playNewMedia receiver
+//        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PAUSE);
+//        registerReceiver(pauseAudio, filter);
+//
+//    }
+//    private BroadcastReceiver nextAudio = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            StorageUtil storage = new StorageUtil(getApplicationContext());
+//            songList = storage.loadAudio();
+//            audioIndex = storage.loadAudioIndex();
+//            song = songList.get(audioIndex);
+//
+//            tvNameSong.setText(song.getName());
+//            tvNameArtist.setText(song.getNameArtist());
+//            imgPause.setVisibility(View.INVISIBLE);
+//            imgBottomPlay.setVisibility(View.VISIBLE);
+//        }
+//    };
+//
+//    private void register_nextAudio() {
+//        //Register playNewMedia receiver
+//        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_NEXT);
+//        registerReceiver(nextAudio, filter);
+//    }
+//
+//    private BroadcastReceiver preAudio = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            StorageUtil storage = new StorageUtil(getApplicationContext());
+//             songList = storage.loadAudio();
+//            audioIndex = storage.loadAudioIndex();
+//            song = songList.get(audioIndex);
+//
+//            tvNameSong.setText(song.getName());
+//            tvNameArtist.setText(song.getNameArtist());
+//            imgPause.setVisibility(View.INVISIBLE);
+//            imgBottomPlay.setVisibility(View.VISIBLE);
+//        }
+//    };
+//
+//    private void register_preAudio() {
+//        //Register playNewMedia receiver
+//        IntentFilter filter = new IntentFilter(MediaPlayerService.ACTION_PREVIOUS);
+//        registerReceiver(preAudio, filter);
+//    }
 
     private void getDataBottom() {
             linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                   // intent.putExtra("song", song);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
+                    bundle.putInt(Constants.KEY_POSITION,audioIndex);
+                    intent.putExtra(Constants.KEY_BUNDLE,bundle);
+                 //   intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
                     startActivity(intent);
                 }
             });
     }
-
     /**
      * khoi tao search
      */
@@ -302,7 +344,6 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         return true;
     }
 
-
     private List<Song> filter(List<Song>listItem, String query){
         query = query.toLowerCase();
         final List<Song>filterModel = new ArrayList<>();
@@ -313,7 +354,6 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
                 filterModel.add(item);
             }
         }
-
         return filterModel;
     }
 
@@ -342,7 +382,23 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         }
         return filterModel;
     }
+    private void bindServiceMedia() {
+        Intent intent = new Intent(this, MusicService.class);
+        intent.setAction(Constants.ACTION_BIND_SERVICE);
+        bindService(intent, mSCon, BIND_AUTO_CREATE);
+    }
 
+    private ServiceConnection mSCon = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder iBinder) {
+            mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
+            mMusicService.setListener(MainActivity.this);
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mSCon = null;
+        }
+    };
 
     @Override
     public void onClick(View v) {

@@ -281,6 +281,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onSeekComplete(MediaPlayer mp) {
         //Invoked indicating the completion of a seek operation.
+
     }
 
     @Override

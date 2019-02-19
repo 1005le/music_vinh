@@ -91,7 +91,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     private int mProgess;
 
     public int audioIndex = -1;
-    public static ArrayList<Song> arrSong = new ArrayList<Song>();
+  //  public static ArrayList<Song> arrSong = new ArrayList<Song>();
+    public static ArrayList<Song> arrSong;
     SongAdapter songAdapter;
     public static Song song;
     MediaPlayer mediaPlayer;
@@ -130,7 +131,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         mDateFormat = new SimpleDateFormat(getString(R.string.date_time));
         connectService();
        // getSongService();
-      //  register_DataSongFragmentPlay();
+        //register_DataSongFragment();
         doStuff();
        // init();
         act();
@@ -186,6 +187,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
             }
             @Override
             public void onServiceDisconnected(ComponentName name) {
+                mSCon = null;
             }
         };
         Intent intent = new Intent(this, MusicService.class);
@@ -194,38 +196,23 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
 
-    //Nhan du lieu tu SongFragment
-    private BroadcastReceiver dataSongFragmentPLay = new BroadcastReceiver() {
+    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-            arrSong = storage.loadAudio();
-            audioIndex = storage.loadAudioIndex();
-            song = arrSong.get(audioIndex);
-
-            circularSeekBar.setProgress(mediaPlayer.getCurrentPosition());
-            tvNameArtistPlay.setText(song.getNameArtist());
-
-            setSupportActionBar(toolbarPlaySong);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(song.getName());
-            toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                    mediaPlayer.stop();
-                    arrSong.clear();
-                }
-            });
-          //  playSong(song.getId());
-         //   eventClick();
+            // StorageUtil storage = new StorageUtil(getApplicationContext());
+            Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
+            songList = bundle.getParcelableArrayList(Constants.KEY_SONGS);
+            audioIndex= bundle.getInt(Constants.KEY_POSITION, 0);
+//            songList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
+//            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
+            song = songList.get(audioIndex);
         }
     };
 
-    private void register_DataSongFragmentPlay() {
+    private void register_DataSongFragment() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(SongFragment.Broadcast_PLAY_NEW_AUDIO);
-        registerReceiver(dataSongFragmentPLay, filter);
+        IntentFilter filter = new IntentFilter("send");
+        registerReceiver(dataSongFragment, filter);
     }
 
     private void act() {
@@ -282,21 +269,36 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
     private void doStuff() {
         arrSong = new ArrayList<>();
-        getDataIntent();
+         getDataIntent();
          playSongPresenter.loadData();
 
     }
 
-    private void getSongService() {
-        arrSong = new StorageUtil(getApplicationContext()).loadAudio();
-        audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
-      //  song = arrSong.get(audioIndex);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        if (!mMusicService.isPlay()) {
+//            Intent intent = new Intent(this, MusicService.class);
+//            intent.setAction(Constants.ACTION_BIND_SERVICE);
+//            stopService(intent);
+        if(mSCon != null){
+            unbindService(mSCon);
+        }
 
+//        }
     }
+
+//    private void getSongService() {
+//        arrSong = new StorageUtil(getApplicationContext()).loadAudio();
+//        audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
+//      //  song = arrSong.get(audioIndex);
+//
+//    }
 
    public void getDataIntent() {
         Intent intent = getIntent();
     if (intent != null) {
+
             Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
             arrSong= bundle.getParcelableArrayList(Constants.KEY_SONGS);
             mCurentSong = bundle.getInt(Constants.KEY_POSITION, 0);
@@ -310,6 +312,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 //            } else {
 //                mMusicService.playSong();
 //            }
+
         }
     }
     @Override
@@ -758,7 +761,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
               Intent intent =  new Intent(PlayActivity.this, SortActivity.class);
                //intent.putExtra("song",arrSong.get(audioIndex));
-             // intent.putExtra("listSong",arrSong);
+               intent.putExtra("listSong",arrSong);
               startActivity(intent);
                 return true;
             default:

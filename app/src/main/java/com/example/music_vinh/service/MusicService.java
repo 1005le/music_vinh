@@ -3,7 +3,10 @@ package com.example.music_vinh.service;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -20,6 +23,8 @@ import android.widget.RemoteViews;
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.view.custom.StorageUtil;
+import com.example.music_vinh.view.impl.MainActivity;
 import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.io.IOException;
@@ -72,6 +77,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 //        mIsLoop = Utils.getState(getApplicationContext(), Constants.KEY_LOOP);
         mMediaPlayer = new MediaPlayer();
         initMediaPlayer();
+        register_loadAudio();
     }
 
     private void initMediaPlayer() {
@@ -109,6 +115,8 @@ public class MusicService extends Service implements BaseMediaPlayer
     public void onDestroy() {
         release();
         stopSelf();
+
+        unregisterReceiver(loadAudio);
         super.onDestroy();
     }
 
@@ -224,8 +232,8 @@ public class MusicService extends Service implements BaseMediaPlayer
 //        if (mSongs.get(mCurrentPossition).getAvatarUrl()!=null){
 //            mServiceCallback.postAvatar(mSongs.get(mCurrentPossition).getAvatarUrl());
 //        }
-
-         mMediaPlayer.start();
+        mMediaPlayer.start();
+        sendAudioInfoBroadcast();
         postNotification();
     }
 
@@ -282,27 +290,67 @@ public class MusicService extends Service implements BaseMediaPlayer
         mServiceCallback.postShuffle(mIsShuffle);
     }
 
+    private BroadcastReceiver loadAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sendAudioInfoBroadcast();
+        }
+    };
+
+    private void register_loadAudio() {
+        IntentFilter filter = new IntentFilter("load_audio");
+        registerReceiver(loadAudio, filter);
+    }
+
+    public void sendAudioInfoBroadcast(){
+
+        //Truyen đen mainActivity
+        Intent intent1 = new Intent("send");
+        intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
+        intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getDuration());
+        intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
+
+        Log.d("get", mMediaPlayer.getDuration()+"");
+//        StorageUtil storage = new StorageUtil(getApplicationContext());
+//        storage.storeAudio(mSongs);
+//        storage.storeAudioIndex(mCurrentPossition);
+        sendBroadcast(intent1);
+    }
+
    private void postNotification() {
 
-        Intent intent = new Intent(this, PlayActivity.class);
+     /*   Intent intent = new Intent(this, PlayActivity.class);
+      //  Intent intent = new Intent("send");
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.KEY_SONGS, mSongs);
         bundle.putInt(Constants.KEY_POSITION,mCurrentPossition);
         intent.putExtra(Constants.KEY_BUNDLE,bundle);
         intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);*/
 
-        //Truyen đen mainActivity
-       Intent intent1 = new Intent("send");
-       intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
-       intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
-       sendBroadcast(intent1);
+//        //Truyen đen mainActivity
+//        Intent intent1 = new Intent("send");
+//        // intent1.putExtra(Constants.KEY_BUNDLE,bundle);
+////        intent1.putExtra(Constants.KEY_BUNDLE,bundle);
+//
+////        intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
+////        intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
+//
+//       StorageUtil storage = new StorageUtil(getApplicationContext());
+//         storage.storeAudio(mSongs);
+//         storage.storeAudioIndex(mCurrentPossition);
+//
+//        sendBroadcast(intent1);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+//                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+               new Intent(this, MusicService.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseStartIntent = new Intent(this, MusicService.class);
         pauseStartIntent.setAction(Constants.ACTION_PLAY);
+
         PendingIntent pplayIntent = PendingIntent.getService(getApplicationContext(),
                 0, pauseStartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
