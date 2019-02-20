@@ -27,5 +27,11 @@ public class AlbumViewModule {
     @Provides
     public AlbumPresenter providePresenter(AlbumView albumView, AlbumInteractorImpl albumInteractorImpl) {
         return new AlbumPresenterImpl(albumInteractorImpl, albumView);
+
     }
+//    @Provides
+//    public AlbumPresenter providePresenter1(AlbumPresenterImpl albumInteractorImpl) {
+//        return albumInteractorImpl;
+//    }
+
 }

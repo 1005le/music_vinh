@@ -300,7 +300,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     if (intent != null) {
 
             Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
-            arrSong= bundle.getParcelableArrayList(Constants.KEY_SONGS);
+            arrSong = bundle.getParcelableArrayList(Constants.KEY_SONGS);
             mCurentSong = bundle.getInt(Constants.KEY_POSITION, 0);
             // Log.d("baihat", arrSong.get(mCurentSong).getName());
 //            mMusicService.setSongs(arrSong);
@@ -332,6 +332,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         tvTime.setText(mDateFormat.format(currentTime));
         //  if (!mTrackingSeekBar) {
         circularSeekBar.setProgress((int) currentTime);
+      //  Log.d("imePlay",totalTime+"");
         // }
     }
 

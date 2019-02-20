@@ -9,6 +9,7 @@ import android.content.Intent;
 
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.design.widget.TabLayout;
@@ -61,7 +62,7 @@ import static com.example.music_vinh.view.impl.ArtistFragment.artistList;
 import static com.example.music_vinh.view.impl.SongFragment.songAdapter;
 import static com.example.music_vinh.view.impl.SongFragment.songList;
 
-public class  MainActivity extends BaseActivity implements ServiceCallback, View.OnClickListener{
+public class  MainActivity extends BaseActivity implements  View.OnClickListener{
 
     @BindView(R.id.myTabLayout)
     TabLayout tabLayout;
@@ -85,7 +86,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     @BindView(R.id.imgButtonPlay)
     ImageButton imgBottomPlay;
 
-  //  @BindView(R.id.seekBarBottom)
+    //@BindView(R.id.seekBarBottom)
     SeekBar seekBar;
 
     MainView mainView;
@@ -96,7 +97,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     public Song song;
     private MusicService mMusicService;
     private boolean mIsBound;
-    private int totalTime;
+    private long totalTime, currentTime, currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +106,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         ButterKnife.bind(this);
         initTab();
         act();
-        seekBar = findViewById(R.id.bottomSeekbar);
+        seekBar = findViewById(R.id.seekBarBottom);
        // getDataBottom();
       /*  register_playAudio();
         register_stopAudio();
@@ -113,10 +114,54 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         register_preAudio();
         register_pauseAudio();*/
 
+        bindServiceMedia();
+
         loadAudioInfo();
         register_DataSongFragment();
-        bindServiceMedia();
-      //  connectService();
+        register_currentTimeAudio();
+       // imgPause.setOnClickListener(this);
+        eventClick();
+    }
+    public void eventClick(){
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mMusicService.seekTo(seekBar.getProgress());
+            }
+        });
+        imgPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               // Log.d("click","click");
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                imgPause.setVisibility(View.INVISIBLE);
+                imgBottomPlay.setVisibility(View.VISIBLE);
+              //  imgPause.setImageResource(R.drawable.ic_stop);
+            }
+        });
+        imgBottomPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                imgPause.setVisibility(View.VISIBLE);
+                imgBottomPlay.setVisibility(View.INVISIBLE);
+            }
+        });
 
     }
 
@@ -124,6 +169,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     protected void onResume() {
         super.onResume();
 
+     //   mMusicService.playSong();
     }
 
     @Override
@@ -153,25 +199,24 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     //Nhan du lieu tu SongFragment
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-//
-//            Log.d("aa", "aaa");
-//            StorageUtil storage = new StorageUtil(getApplicationContext());
-//            songList = storage.loadAudio();
-//            audioIndex = storage.loadAudioIndex();
-//            song = songList.get(audioIndex);
-
+        public void onReceive(Context context, final Intent intent) {
             songList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
             audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-             totalTime = intent.getIntExtra(Constants.KEY_PROGESS,0);
+            totalTime = intent.getIntExtra("duration",0);
+            currentPosition = intent.getIntExtra(Constants.KEY_PROGESS,0);
             song = songList.get(audioIndex);
-             Log.d("time", totalTime+"");
+            Log.d("songMain", songList.get(audioIndex).getName()+"");
+//                if (mProgess > 0) {
+//                    mMusicService.seekTo(mProgess);
+//                } else {
+           // mMusicService.playSong();
             tvNameSong.setText(song.getName());
             tvNameArtist.setText(song.getNameArtist());
-            seekBar.setMax(totalTime);
-
+            seekBar.setMax((int) totalTime);
+          //  mMusicService.playSong();
            imgPause.setVisibility(View.INVISIBLE);
            imgBottomPlay.setVisibility(View.VISIBLE);
+//            imgPause.setImageResource(R.drawable.ic_pause);
             getDataBottom();
         }
     };
@@ -187,23 +232,23 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         sendBroadcast(loadAudioIntent);
     }
 
-//    private BroadcastReceiver stopAudio = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            //Get the new media index form SharedPreferences
-//            tvNameSong.setText("");
-//            tvNameArtist.setText("");
-//            imgPause.setVisibility(View.VISIBLE);
-//            imgBottomPlay.setVisibility(View.INVISIBLE);
-//        }
-//    };
-//
-//    private void register_stopAudio() {
-//        //Register playNewMedia receiver
-//        IntentFilter filter = new IntentFilter("StopMusic");
-//        registerReceiver(stopAudio, filter);
-//    }
-//
+    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Get the new media index form SharedPreferences
+            currentTime = intent.getIntExtra("currentTime",0);
+            Log.d("timeMain", totalTime+"currentTime"+currentTime);
+            seekBar.setProgress((int) mMusicService.getCurrentPosition());
+           // seekBar.setProgress((int)currentTime);
+        }
+    };
+
+    private void register_currentTimeAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter("sendCurrent");
+        registerReceiver(currentTimeAudio, filter);
+    }
+
 //    private BroadcastReceiver playAudio = new BroadcastReceiver() {
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
@@ -297,7 +342,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
                     bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
                     bundle.putInt(Constants.KEY_POSITION,audioIndex);
                     intent.putExtra(Constants.KEY_BUNDLE,bundle);
-                  //  intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+                    intent.putExtra(Constants.KEY_PROGESS,currentPosition);
                     startActivity(intent);
                 }
             });
@@ -379,6 +424,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
     private void bindServiceMedia() {
         Intent intent = new Intent(this, MusicService.class);
         intent.setAction(Constants.ACTION_BIND_SERVICE);
+       // startService(intent);
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
 
@@ -386,7 +432,7 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-            mMusicService.setListener(MainActivity.this);
+           // mMusicService.setListener(MainActivity.this);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -400,71 +446,22 @@ public class  MainActivity extends BaseActivity implements ServiceCallback, View
         if (mSCon != null) {
             unbindService(mSCon);
         }
+        unregisterReceiver(dataSongFragment);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imgPlay:
+            case R.id.imgButtonPlay:
                 if (mMusicService.isPlay()) {
                     mMusicService.pauseSong();
                 } else {
                     mMusicService.continuesSong();
                 }
+                imgBottomPlay.setImageResource(R.drawable.ic_stop);
                 break;
         }
     }
 
-    @Override
-    public void postName(String songName, String author) {
-        tvNameSong.setText(songName);
-        tvNameArtist.setText(author);
-        Log.d("songMain",songName+"-"+author);
-    }
-    @Override
-    public void postTotalTime(long totalTime) {
-//        mTextTotalTime.setText(mDateFormat.format(totalTime));
-          seekBar.setMax((int) totalTime);
-          Log.d("timeMain",totalTime+"");
-    }
-    //
-    @Override
-    public void postCurentTime(long currentTime) {
-     //   tvTime.setText(mDateFormat.format(currentTime));
-        //  if (!mTrackingSeekBar) {
-      //  circularSeekBar.setProgress((int) currentTime);
-        // }
-    }
-
-    @Override
-    public void postPauseButon() {
-        imgPause.setImageResource(R.drawable.ic_stop_seekbar);
-    }
-
-    @Override
-    public void postStartButton() {
-        imgPause.setImageResource(R.drawable.ic_play_seekbar);
-    }
-
-
-    @Override
-    public void postShuffle(boolean isShuffle) {
-
-    }
-
-    @Override
-    public void postLoop(boolean isLoop) {
-
-    }
-
-    @Override
-    public void showError(String error) {
-
-    }
-
-    @Override
-    public void postAvatar(String url) {
-
-    }
 }
 

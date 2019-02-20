@@ -57,6 +57,7 @@ public class MusicService extends Service implements BaseMediaPlayer
         @Override
         public void run() {
             mServiceCallback.postCurentTime(getCurrentPosition());
+            sendAudioCurrentTimeBroadcast();
             if (isPlay()) {
                 mHandler.postDelayed(this, Constants.DELAY_MILLIS);
             }
@@ -76,6 +77,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 //        mIsShuffle = Utils.getState(getApplicationContext(), Constants.KEY_SHUFFLE);
 //        mIsLoop = Utils.getState(getApplicationContext(), Constants.KEY_LOOP);
         mMediaPlayer = new MediaPlayer();
+
         initMediaPlayer();
         register_loadAudio();
     }
@@ -143,6 +145,7 @@ public class MusicService extends Service implements BaseMediaPlayer
     @Override
     public void startSong() {
         mMediaPlayer.start();
+        sendAudioInfoBroadcast();
         mHandler.postDelayed(mTimeRunnable, Constants.DELAY_MILLIS);
     }
 
@@ -229,11 +232,8 @@ public class MusicService extends Service implements BaseMediaPlayer
         postTitle(mSongs.get(mCurrentPossition));
         mServiceCallback.postStartButton();
         Log.d("total",getDuration()+"");
-//        if (mSongs.get(mCurrentPossition).getAvatarUrl()!=null){
-//            mServiceCallback.postAvatar(mSongs.get(mCurrentPossition).getAvatarUrl());
-//        }
-        mMediaPlayer.start();
         sendAudioInfoBroadcast();
+        mMediaPlayer.start();
         postNotification();
     }
 
@@ -292,7 +292,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 
     private BroadcastReceiver loadAudio = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             sendAudioInfoBroadcast();
         }
     };
@@ -301,19 +301,21 @@ public class MusicService extends Service implements BaseMediaPlayer
         IntentFilter filter = new IntentFilter("load_audio");
         registerReceiver(loadAudio, filter);
     }
+    public void sendAudioCurrentTimeBroadcast(){
+        Intent intent1 = new Intent("sendCurrent");
+        intent1.putExtra("currentTime", getCurrentPosition());
+        //Log.d("aa", getCurrentPosition() + "");
+        sendBroadcast(intent1);
+    }
 
     public void sendAudioInfoBroadcast(){
-
         //Truyen đen mainActivity
-        Intent intent1 = new Intent("send");
+        final Intent intent1 = new Intent("send");
         intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
-        intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getDuration());
+        intent1.putExtra("duration",mMediaPlayer.getDuration());
+       // intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
         intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
-
-        Log.d("get", mMediaPlayer.getDuration()+"");
-//        StorageUtil storage = new StorageUtil(getApplicationContext());
-//        storage.storeAudio(mSongs);
-//        storage.storeAudioIndex(mCurrentPossition);
+       // Log.d("getService", mMediaPlayer.getDuration()+"");
         sendBroadcast(intent1);
     }
 
@@ -321,12 +323,12 @@ public class MusicService extends Service implements BaseMediaPlayer
 
         Intent intent = new Intent(this, PlayActivity.class);
       //  Intent intent = new Intent("send");
-     /*   Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.KEY_SONGS, mSongs);
         bundle.putInt(Constants.KEY_POSITION,mCurrentPossition);
         intent.putExtra(Constants.KEY_BUNDLE,bundle);
         intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);*/
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 //        //Truyen đen mainActivity
 //        Intent intent1 = new Intent("send");
@@ -340,13 +342,13 @@ public class MusicService extends Service implements BaseMediaPlayer
 //         storage.storeAudio(mSongs);
 //         storage.storeAudioIndex(mCurrentPossition);
 //
-//        sendBroadcast(intent1);
+//        sendBroadcast(intent1);new Intent(this, PlayActivity.class)
 
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
 //                intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-               new Intent(this, PlayActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+               intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseStartIntent = new Intent(this, MusicService.class);
         pauseStartIntent.setAction(Constants.ACTION_PLAY);

@@ -2,6 +2,8 @@ package com.example.music_vinh.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.text.SimpleDateFormat;
@@ -48,10 +51,18 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, PlayActivity.class);
-                intent.putExtra("song", songArrayList.get(position));
-                intent.putExtra("arrSong", (ArrayList) songArrayList);
-                context.startActivity(intent);
+//                Intent intent = new Intent(context, PlayActivity.class);
+////                intent.putExtra("song", songArrayList.get(position));
+////                intent.putExtra("arrSong", (ArrayList) songArrayList);
+////                context.startActivity(intent);
+
+//                Intent intent = new Intent(context, PlayActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songArrayList);
+//                bundle.putInt(Constants.KEY_POSITION,position);
+//                intent.putExtra(Constants.KEY_BUNDLE,bundle);
+//                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
+//                context.startActivity(intent);
             }
         });
     }

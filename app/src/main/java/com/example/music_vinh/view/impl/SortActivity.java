@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.music_vinh.R;
@@ -47,13 +48,14 @@ import butterknife.ButterKnife;
 
 import static com.example.music_vinh.service.MediaPlayerService.ACTION_PLAY;
 
-public class SortActivity extends BaseActivity implements SortView, ServiceCallback, View.OnClickListener {
+public class SortActivity extends BaseActivity implements SortView, View.OnClickListener {
 
     private static final String TAG = "SortActivity";
     @BindView(R.id.toolBarSortActivity)
     Toolbar toolbarSort;
     @BindView(R.id.recycleViewSortSong)
     RecyclerView sortSongRecycleview;
+
     @BindView(R.id.linearBottom)
     LinearLayout linearLayoutBottom;
 
@@ -73,46 +75,43 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
     public int audioIndex;
     private MusicService mMusicService;
     private int mProgess;
+    SeekBar seekBar;
+    private long totalTime, currentTime;
 
     @Inject
     SortPresenter sortPresenter;
 
     SortSongAdapter sortSongAdapter;
     MediaPlayer mediaPlayer;
-
    // private MediaPlayerService player;
     boolean serviceBound = false;
-    public static final String Broadcast_PLAY_NEW_AUDIO_Sort = "com.example.music_vinh.view.impl.playNewAudioSort";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sort);
-
+        seekBar = findViewById(R.id.seekBarBottom);
         bindServiceMedia();
         ButterKnife.bind(this);
         init();
         atc();
         loadAudioInfo();
         register_DataSong();
+        register_currentTimeAudio();
 
         sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
             @Override
             public void onClick(View view, int index) {
-//                playAudio(index);
-//                tvNameSongBottom.setText(songArrayList.get(index).getName());
-//                tvNameArtistBottom.setText(songArrayList.get(index).getNameArtist());
                 mMusicService.setSongs(songArrayList);
                 mMusicService.setCurrentSong(index);
                 Log.d("songSort", songArrayList.get(index).getName()+"");
-                if (mProgess > 0) {
-                    mMusicService.seekTo(mProgess);
-                } else {
+//                if (mProgess > 0) {
+//                    mMusicService.seekTo(mProgess);
+//                } else {
                     mMusicService.playSong();
-                }
+               // }
             }
         }));
-
     }
 
     private void bindServiceMedia() {
@@ -125,8 +124,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-            mMusicService.setListener(SortActivity.this);
-
+           // mMusicService.setListener(SortActivity.this);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -152,12 +150,10 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
             songArrayList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
             audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
             song = songArrayList.get(audioIndex);
+            Log.d("songSortRece", songArrayList.get(audioIndex).getName()+"");
+            totalTime = intent.getIntExtra("duration",0);
 
-//            Log.d("hh", "a");
-//            StorageUtil storage = new StorageUtil(getApplicationContext());
-//            songArrayList = storage.loadAudio();
-//            audioIndex = storage.loadAudioIndex();
-         //   song = songArrayList.get(audioIndex);
+            seekBar.setMax((int) totalTime);
 
             tvNameSong.setText(song.getName());
             tvNameArtist.setText(song.getNameArtist());
@@ -173,6 +169,21 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         IntentFilter filter = new IntentFilter("send");
         registerReceiver(dataSong, filter);
     }
+    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Get the new media index form SharedPreferences
+            currentTime = intent.getIntExtra("currentTime",0);
+//            Log.d("timeMain", totalTime+"currentTime"+currentTime);
+            seekBar.setProgress((int) mMusicService.getCurrentPosition());
+        }
+    };
+
+    private void register_currentTimeAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter("sendCurrent");
+        registerReceiver(currentTimeAudio, filter);
+    }
 
     private void getDataBottom() {
         linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +194,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
                 bundle.putParcelableArrayList(Constants.KEY_SONGS, songArrayList);
                 bundle.putInt(Constants.KEY_POSITION, audioIndex);
                 intent.putExtra(Constants.KEY_BUNDLE, bundle);
-                //   intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+               // intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
                 startActivity(intent);
             }
         });
@@ -205,6 +216,14 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         toolbarSort.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent intent = new Intent(SortActivity.this, PlayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.KEY_SONGS, songArrayList);
+                bundle.putInt(Constants.KEY_POSITION, audioIndex);
+                intent.putExtra(Constants.KEY_BUNDLE, bundle);
+                // intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+                startActivity(intent);
 
 //                Intent intent = new Intent(SortActivity.this, PlayActivity.class);
 //                intent.putExtra("dragSong",(ArrayList)songArrayList);
@@ -277,59 +296,6 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         }
     }
 
-    @Override
-    public void postName(String songName, String author) {
-        tvNameSong.setText(songName);
-        tvNameArtist.setText(author);
-        Log.d("songSo",songName+"-"+author);
-    }
-
-    @Override
-    public void postTotalTime(long totalTime) {
-//        mTextTotalTime.setText(mDateFormat.format(totalTime));
-        // seek.setMax((int) totalTime);
-    }
-
-    //
-    @Override
-    public void postCurentTime(long currentTime) {
-        //   tvTime.setText(mDateFormat.format(currentTime));
-        //  if (!mTrackingSeekBar) {
-        //  circularSeekBar.setProgress((int) currentTime);
-        // }
-    }
-
-    @Override
-    public void postPauseButon() {
-        imgPause.setImageResource(R.drawable.ic_stop_seekbar);
-    }
-
-    @Override
-    public void postStartButton() {
-        imgPause.setImageResource(R.drawable.ic_play_seekbar);
-    }
-
-
-    @Override
-    public void postShuffle(boolean isShuffle) {
-
-    }
-
-    @Override
-    public void postLoop(boolean isLoop) {
-
-    }
-
-    @Override
-    public void showError(String error) {
-
-    }
-
-    @Override
-    public void postAvatar(String url) {
-
-    }
-
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
@@ -390,6 +356,7 @@ public class SortActivity extends BaseActivity implements SortView, ServiceCallb
         if (mSCon != null) {
             unbindService(mSCon);
         }
+        unregisterReceiver(dataSong);
     }
 
 
