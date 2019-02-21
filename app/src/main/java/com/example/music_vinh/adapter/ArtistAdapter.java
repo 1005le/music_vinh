@@ -55,9 +55,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(context, ArtistInfoActivity.class);
                 intent.putExtra("artistArrayList",artistList.get(i));
                 context.startActivity(intent);
+
             }
         });
 

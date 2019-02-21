@@ -126,26 +126,19 @@ public class MusicService extends Service implements BaseMediaPlayer
     public void playSong() {
         Song song = mSongs.get(mCurrentPossition);
         Log.d("ten",song.getName());
-//        String uri = null;
-//        if (song.getId() == 0) {
-//          uri = song.getPath();
-//          } else {
-////           // uri = Utils.getUrlDownload(song.getUri());
-//           }
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
-            Log.d("path",song.getPath());
+            //Log.d("path",song.getPath());
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
-          //  mServiceCallback.showError(getString(R.string.message_error_path));
         }
     }
 
     @Override
     public void startSong() {
         mMediaPlayer.start();
-        sendAudioInfoBroadcast();
+        //sendAudioInfoBroadcast();
         mHandler.postDelayed(mTimeRunnable, Constants.DELAY_MILLIS);
     }
 
@@ -231,7 +224,7 @@ public class MusicService extends Service implements BaseMediaPlayer
         postCurrentTime();
         postTitle(mSongs.get(mCurrentPossition));
         mServiceCallback.postStartButton();
-        Log.d("total",getDuration()+"");
+       // Log.d("total",getDuration()+"");
         sendAudioInfoBroadcast();
         mMediaPlayer.start();
         postNotification();
@@ -298,21 +291,21 @@ public class MusicService extends Service implements BaseMediaPlayer
     };
 
     private void register_loadAudio() {
-        IntentFilter filter = new IntentFilter("load_audio");
+        IntentFilter filter = new IntentFilter(Constants.LOAD_AUDIO);
         registerReceiver(loadAudio, filter);
     }
     public void sendAudioCurrentTimeBroadcast(){
-        Intent intent1 = new Intent("sendCurrent");
-        intent1.putExtra("currentTime", getCurrentPosition());
+        Intent intent1 = new Intent(Constants.SEND_CURRENT);
+        intent1.putExtra(Constants.CURRENT_TIME, getCurrentPosition());
         //Log.d("aa", getCurrentPosition() + "");
         sendBroadcast(intent1);
     }
 
     public void sendAudioInfoBroadcast(){
         //Truyen đen mainActivity
-        final Intent intent1 = new Intent("send");
+        final Intent intent1 = new Intent(Constants.SEND);
         intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
-        intent1.putExtra("duration",mMediaPlayer.getDuration());
+        intent1.putExtra(Constants.DURATION,mMediaPlayer.getDuration());
        // intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
         intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
        // Log.d("getService", mMediaPlayer.getDuration()+"");

@@ -3,13 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
       android:id="@+id/menu_setting"
-      android:title="Setting" >
-    <menu>
-      <item android:id="@+id/list_view"
-          android:title="List" />
-      <item android:id="@+id/grid_view"
-          android:title="Grid" />
-    </menu>
+      android:title="Sắp xếp " >
+
   </item>
 
   <item android:id="@+id/menu_search"

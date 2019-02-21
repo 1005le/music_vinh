@@ -29,7 +29,6 @@ import com.example.music_vinh.injection.SortViewModule;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.SortPresenter;
 import com.example.music_vinh.presenter.impl.SortPresenterImpl;
-import com.example.music_vinh.service.MediaPlayerService;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.SortView;
@@ -45,8 +44,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.example.music_vinh.service.MediaPlayerService.ACTION_PLAY;
 
 public class SortActivity extends BaseActivity implements SortView, View.OnClickListener {
 
@@ -99,12 +96,13 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         register_DataSong();
         register_currentTimeAudio();
 
+        eventClick();
         sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
             @Override
             public void onClick(View view, int index) {
                 mMusicService.setSongs(songArrayList);
                 mMusicService.setCurrentSong(index);
-                Log.d("songSort", songArrayList.get(index).getName()+"");
+               // Log.d("songSort", songArrayList.get(index).getName()+"");
 //                if (mProgess > 0) {
 //                    mMusicService.seekTo(mProgess);
 //                } else {
@@ -139,7 +137,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     }
 
     private void loadAudioInfo() {
-        Intent loadAudioIntent = new Intent("load_audio");
+        Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
         sendBroadcast(loadAudioIntent);
     }
 
@@ -151,7 +149,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
             audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
             song = songArrayList.get(audioIndex);
             Log.d("songSortRece", songArrayList.get(audioIndex).getName()+"");
-            totalTime = intent.getIntExtra("duration",0);
+            totalTime = intent.getIntExtra(Constants.DURATION,0);
 
             seekBar.setMax((int) totalTime);
 
@@ -165,15 +163,14 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
 
     private void register_DataSong() {
         //Register playNewMedia receiver
-        Log.d(TAG, "REGISTER");
-        IntentFilter filter = new IntentFilter("send");
+        IntentFilter filter = new IntentFilter(Constants.SEND);
         registerReceiver(dataSong, filter);
     }
     private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra("currentTime",0);
+            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
 //            Log.d("timeMain", totalTime+"currentTime"+currentTime);
             seekBar.setProgress((int) mMusicService.getCurrentPosition());
         }
@@ -181,7 +178,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
 
     private void register_currentTimeAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter("sendCurrent");
+        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
         registerReceiver(currentTimeAudio, filter);
     }
 
@@ -233,6 +230,47 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
                 // songArrayList.clear();
             }
         });
+    }
+    public void eventClick(){
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mMusicService.seekTo(seekBar.getProgress());
+            }
+        });
+        imgPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Log.d("click","click");
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                imgPause.setVisibility(View.INVISIBLE);
+                imgBottomPlay.setVisibility(View.VISIBLE);
+                //  imgPause.setImageResource(R.drawable.ic_stop);
+            }
+        });
+        imgBottomPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                imgPause.setVisibility(View.VISIBLE);
+                imgBottomPlay.setVisibility(View.INVISIBLE);
+            }
+        });
+
     }
 
     private void init() {
@@ -295,60 +333,6 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
                 break;
         }
     }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putBoolean("serviceStatus", serviceBound);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        serviceBound = savedInstanceState.getBoolean("serviceStatus");
-//    }
-//
-//    //Binding this Client to the AudioPlayer Service
-//    private ServiceConnection serviceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            // We've bound to LocalService, cast the IBinder and get LocalService instance
-//            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-//            player = binder.getService();
-//            serviceBound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            serviceBound = false;
-//        }
-//    };
-//
-//    private void playAudio(int audioIndex) {
-//        //Check is service is active
-//        if (!serviceBound) {
-//            //Store Serializable audioList to SharedPreferences
-//            StorageUtil storage = new StorageUtil(getApplicationContext());
-//            storage.storeAudio(songArrayList);
-//            storage.storeAudioIndex(audioIndex);
-//
-//            Intent playerIntent = new Intent(this, MediaPlayerService.class);
-//            startService(playerIntent);
-//            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-//
-//            Intent broadcastIntent = new Intent("SortPlay");
-//            sendBroadcast(broadcastIntent);
-//        } else {
-//            //Store the new audioIndex to SharedPreferences
-//            StorageUtil storage = new StorageUtil(getApplicationContext());
-//            // storage.storeAudio(songArrayList);
-//            storage.storeAudioIndex(audioIndex);
-//            //Service is active
-//            //Send a broadcast to the service -> PLAY_NEW_AUDIO
-//            Intent broadcastIntent = new Intent("SortPlay");
-//            sendBroadcast(broadcastIntent);
-//        }
-//    }
 
     @Override
     protected void onDestroy() {

@@ -25,7 +25,7 @@ public class AlbumInfoInteractorImpl implements AlbumInfoInteractor{
         this.albumInfoInteractor = albumInfoInteractor;
     }
     private  ArrayList<Song> createArrayList() {
-        ArrayList<Song> songs = AlbumInfoActivity.songArrayList;
+        ArrayList<Song> songs = AlbumInfoActivity.songArrayListAlbum;
         return songs;
     }
 

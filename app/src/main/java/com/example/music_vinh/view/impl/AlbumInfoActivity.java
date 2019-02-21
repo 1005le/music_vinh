@@ -62,7 +62,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
+public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, ServiceCallback {
 
 
     @BindView(R.id.coordinator)
@@ -74,7 +74,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     @BindView(R.id.recyclerViewListSong)
     RecyclerView listSongrecyclerView;
      Album album ;
-   public static ArrayList<Song> songArrayList;
+   public static ArrayList<Song> songArrayListAlbum;
    SongInAlbumAdapter songInAlbumAdapter;
 
    @Inject
@@ -105,7 +105,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     private int mProgess;
     SeekBar seekBar;
     public Song song;
-    private long totalTime, currentTime;
+    private long totalTime, currentTime,currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +113,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         setContentView(R.layout.activity_album_infor);
         ButterKnife.bind(this);
         getDataIntent();
+
         getData();
         act();
         seekBar = findViewById(R.id.seekBarBottom);
@@ -129,24 +130,65 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         listSongrecyclerView.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
             @Override
             public void onClick(View view, int index) {
-//                mMusicService.setSongs(songArrayList);
-//                mMusicService.setCurrentSong(index);
-               // Log.d("songSort", songArrayList.get(index).getName()+"");
+
+                Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.KEY_SONGS,AlbumInfoActivity.songArrayListAlbum);
+                bundle.putInt(Constants.KEY_POSITION,index);
+                intent.putExtra(Constants.KEY_BUNDLE,bundle);
+
+                mMusicService.setSongs(songArrayListAlbum);
+                mMusicService.setCurrentSong(index);
+                // Log.d("songSort", songArrayList.get(index).getName()+"");
 //                if (mProgess > 0) {
 //                    mMusicService.seekTo(mProgess);
 //                } else {
-              //  mMusicService.playSong();
-                // }
-                Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.KEY_SONGS,AlbumInfoActivity.songArrayList);
-                bundle.putInt(Constants.KEY_POSITION,index);
-                intent.putExtra(Constants.KEY_BUNDLE,bundle);
-                Log.d("nameAl",songArrayList.get(index).getName());
+                mMusicService.playSong();
+                Log.d("nameAl",songArrayListAlbum.get(index).getName());
                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
                 startActivity(intent);
             }
         }));
+
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    mMusicService.seekTo(seekBar.getProgress());
+                }
+            });
+            imgPause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Log.d("click","click");
+                    if (mMusicService.isPlay()) {
+                        mMusicService.pauseSong();
+                    } else {
+                        mMusicService.continuesSong();
+                    }
+                    imgPause.setVisibility(View.INVISIBLE);
+                    imgBottomPlay.setVisibility(View.VISIBLE);
+                    //  imgPause.setImageResource(R.drawable.ic_stop);
+                }
+            });
+            imgBottomPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mMusicService.isPlay()) {
+                        mMusicService.pauseSong();
+                    } else {
+                        mMusicService.continuesSong();
+                    }
+                    imgPause.setVisibility(View.VISIBLE);
+                    imgBottomPlay.setVisibility(View.INVISIBLE);
+                }
+            });
+
     }
 
     private void bindServiceMedia() {
@@ -160,6 +202,8 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
+            mMusicService.setListener(AlbumInfoActivity.this);
+            // getDataIntent();
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -174,22 +218,21 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
             unbindService(mSCon);
         }
         unregisterReceiver(dataSongAlbum);
+        unregisterReceiver(currentTimeAudio);
     }
     private void loadAudioInfo() {
-        Intent loadAudioIntent = new Intent("load_audio");
+        Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
         sendBroadcast(loadAudioIntent);
     }
 
     private BroadcastReceiver dataSongAlbum = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // StorageUtil storage = new StorageUtil(getApplicationContext());
-            songArrayList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
+            songArrayListAlbum = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
             audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-            song = songArrayList.get(audioIndex);
-          //  Log.d("songSortRece", songArrayList.get(audioIndex).getName()+"");
-            totalTime = intent.getIntExtra("duration",0);
-            currentTime = intent.getIntExtra("currentTime",0);
+            song = songArrayListAlbum.get(audioIndex);
+            totalTime = intent.getIntExtra(Constants.DURATION,0);
+            currentPosition = intent.getIntExtra(Constants.KEY_PROGESS,0);
 
             seekBar.setMax((int) totalTime);
             seekBar.setProgress((int) currentTime);
@@ -204,22 +247,21 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     private void register_DataSong() {
         //Register playNewMedia receiver
        // Log.d("album", "REGISTER");
-        IntentFilter filter = new IntentFilter("send");
+        IntentFilter filter = new IntentFilter(Constants.SEND);
         registerReceiver(dataSongAlbum, filter);
     }
     private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra("currentTime",0);
-//            Log.d("timeMain", totalTime+"currentTime"+currentTime);
+            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
             seekBar.setProgress((int) mMusicService.getCurrentPosition());
         }
     };
 
     private void register_currentTimeAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter("sendCurrent");
+        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
         registerReceiver(currentTimeAudio, filter);
     }
 
@@ -229,7 +271,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
             public void onClick(View view) {
                 Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.KEY_SONGS, songArrayList);
+                bundle.putParcelableArrayList(Constants.KEY_SONGS, songArrayListAlbum);
                 bundle.putInt(Constants.KEY_POSITION, audioIndex);
                 intent.putExtra(Constants.KEY_BUNDLE, bundle);
                 // intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
@@ -263,7 +305,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
          imgIconAlbum.setImageDrawable(img);
         tvNameAlbumInfo.setText(album.getName());
-        tvamountSongA.setText(album.getAmountSong()+"songs");
+        tvamountSongA.setText(album.getAmountSong()+R.string.songs);
     }
     private void act() {
         setSupportActionBar(toolbar);
@@ -296,21 +338,19 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
     }
     private void doStuff() {
-        songArrayList= new ArrayList<>();
-        songArrayList = getSongAlbum();
+        songArrayListAlbum = new ArrayList<>();
+        songArrayListAlbum = getSongAlbum();
       //  albumInfoPresenter.onLoadSongSuccess(songArrayList);
         albumInfoPresenter.loadData();
     }
     public ArrayList<Song> getSongAlbum() {
         ContentResolver contentResolver = getContentResolver();
         Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Log.wtf("SKJDBKJ", mediaUri.toString());
         Cursor mediaCursor = contentResolver.query(mediaUri, null, null, null, null);
 
         // if the cursor is null.
         if(mediaCursor != null && mediaCursor.moveToFirst())
         {
-            Log.wtf("DSJK", "entered cursor");
             //get Columns
             int titleColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int idColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -331,17 +371,14 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
                 // Add the info to our array.
                 if(album.getId() == thisalbumId)
                 {
-                    Log.wtf("SAME2SAME", String.valueOf(thisalbumId));
-                    Log.wtf("SAME2SAME", String.valueOf(this.album.getId()));
-                    songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",Long.parseLong(thisDuration)));
+                    songArrayListAlbum.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",Long.parseLong(thisDuration)));
                 }
             }
             while (mediaCursor.moveToNext());
-
             // For best practices, close the cursor after use.
             mediaCursor.close();
         }
-        return songArrayList;
+        return songArrayListAlbum;
         }
 
     @Override
@@ -369,5 +406,50 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
             }
         });
         return true;
+    }
+
+    @Override
+    public void postName(String songName, String author) {
+
+    }
+
+    @Override
+    public void postTotalTime(long totalTime) {
+
+    }
+
+    @Override
+    public void postCurentTime(long currentTime) {
+
+    }
+
+    @Override
+    public void postPauseButon() {
+
+    }
+
+    @Override
+    public void postStartButton() {
+
+    }
+
+    @Override
+    public void postShuffle(boolean isShuffle) {
+
+    }
+
+    @Override
+    public void postLoop(boolean isLoop) {
+
+    }
+
+    @Override
+    public void showError(String error) {
+
+    }
+
+    @Override
+    public void postAvatar(String url) {
+
     }
 }

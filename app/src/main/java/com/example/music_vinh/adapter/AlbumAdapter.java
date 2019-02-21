@@ -52,9 +52,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(context, AlbumInfoActivity.class);
                 intent.putExtra("albumArrayList",albumList.get(i));
                 context.startActivity(intent);
+
             }
         });
 

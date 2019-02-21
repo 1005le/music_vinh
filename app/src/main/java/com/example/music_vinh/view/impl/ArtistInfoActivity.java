@@ -51,6 +51,8 @@ import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.ArtistInfoView;
 import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
 
@@ -91,18 +93,17 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     private int mProgess;
     SeekBar seekBar;
     public Song song;
-    private long totalTime, currentTime;
+    private long totalTime, currentTime,currentPosition;
 
     @Inject
     ArtistInfoPresenter artistInfoPresenter;
-
-    private static final int MY_PERMISSION_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_info);
         getDataIntent();
+        seekBar = findViewById(R.id.seekBarBottom);
         ButterKnife.bind(this);
         act();
        getData();
@@ -113,6 +114,64 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         loadAudioInfo();
         register_DataSong();
         register_currentTimeAudio();
+        eventClick();
+    }
+
+    public void eventClick(){
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mMusicService.seekTo(seekBar.getProgress());
+            }
+        });
+        imgPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Log.d("click","click");
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                imgPause.setVisibility(View.INVISIBLE);
+                imgBottomPlay.setVisibility(View.VISIBLE);
+                //  imgPause.setImageResource(R.drawable.ic_stop);
+            }
+        });
+        imgBottomPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mMusicService.isPlay()) {
+                    mMusicService.pauseSong();
+                } else {
+                    mMusicService.continuesSong();
+                }
+                imgPause.setVisibility(View.VISIBLE);
+                imgBottomPlay.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        songInArtistRecycleView.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
+            @Override
+            public void onClick(View view, int index) {
+
+                Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.KEY_SONGS,ArtistInfoActivity.songArrayList);
+                bundle.putInt(Constants.KEY_POSITION,index);
+                intent.putExtra(Constants.KEY_BUNDLE,bundle);
+                Log.d("nameArtist",ArtistInfoActivity.songArrayList.get(index).getName());
+                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
+                startActivity(intent);
+            }
+        }));
+
     }
     private void bindServiceMedia() {
         Intent intent = new Intent(this, MusicService.class);
@@ -125,7 +184,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-          //  mMusicService.setListener(ArtistInfoActivity.this);
+           // mMusicService.setListener(ArtistInfoActivity.this);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -142,7 +201,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         unregisterReceiver(dataSongAlbum);
     }
     private void loadAudioInfo() {
-        Intent loadAudioIntent = new Intent("load_audio");
+        Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
         sendBroadcast(loadAudioIntent);
     }
 
@@ -154,9 +213,9 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
             song = songArrayList.get(audioIndex);
             Log.d("songSortRece", songArrayList.get(audioIndex).getName()+"");
-            totalTime = intent.getIntExtra("duration",0);
-            currentTime = intent.getIntExtra("currentTime",0);
-            Log.d("timeSort", totalTime+"currentTime"+currentTime);
+            totalTime = intent.getIntExtra(Constants.DURATION,0);
+            currentPosition = intent.getIntExtra(Constants.KEY_PROGESS,0);
+           // Log.d("timeSort", totalTime+"currentTime"+currentTime);
 
             seekBar.setMax((int) totalTime);
             seekBar.setProgress((int) currentTime);
@@ -170,8 +229,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
     private void register_DataSong() {
         //Register playNewMedia receiver
-        Log.d("album", "REGISTER");
-        IntentFilter filter = new IntentFilter("send");
+        IntentFilter filter = new IntentFilter(Constants.SEND);
         registerReceiver(dataSongAlbum, filter);
     }
 
@@ -179,7 +237,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra("currentTime",0);
+            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
 //            Log.d("timeMain", totalTime+"currentTime"+currentTime);
             seekBar.setProgress((int) mMusicService.getCurrentPosition());
         }
@@ -187,7 +245,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
     private void register_currentTimeAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter("sendCurrent");
+        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
         registerReceiver(currentTimeAudio, filter);
     }
 
@@ -230,7 +288,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     private void getDataIntent() {
         Intent intent = getIntent();
         artist = (Artist) intent.getParcelableExtra("artistArrayList");
-
     }
     private void act() {
         setSupportActionBar(toolbarArtist);
@@ -272,13 +329,11 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     public ArrayList<Song> getSongArtist() {
         ContentResolver contentResolver = getContentResolver();
         Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Log.wtf("SKJDBKJ", mediaUri.toString());
         Cursor mediaCursor = contentResolver.query(mediaUri, null, null, null, null);
 
         // if the cursor is null.
         if(mediaCursor != null && mediaCursor.moveToFirst())
         {
-            Log.wtf("DSJK", "entered cursor");
             //get Columns
             int titleColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int idColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -299,9 +354,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 // Add the info to our array.
                 if(artist.getId() == thisArtistId)
                 {
-                    Log.wtf("SAME2SAME", String.valueOf(thisArtistId));
-                    Log.wtf("SAME2SAME", String.valueOf(this.artist.getId()));
-
                     songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",Long.parseLong(thisDuration)));
                 }
             }

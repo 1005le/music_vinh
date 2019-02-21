@@ -24,4 +24,9 @@ public class Constants {
     public static final String KEY_LOOP = "KEY_LOOP";
     public static final String KEY_SHUFFLE = "KEY_SHUFFLE";
     public static final String KEY_PROGESS = "KEY_PROGESS";
+    public static final String SEND = "SEND";
+    public static final String LOAD_AUDIO = "LOAD_AUDIO";
+    public static final String SEND_CURRENT = "SEND_CURRENT";
+    public static final String DURATION = "DURATION";
+    public static final String CURRENT_TIME = "CURRENT_TIME";
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,22 +17,28 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
+import com.example.music_vinh.adapter.SongSearchAdapter;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
-import com.example.music_vinh.service.MediaPlayerService;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.MainView;
@@ -54,11 +61,8 @@ import static com.example.music_vinh.view.impl.PlayActivity.arrSong;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SongFragment extends Fragment implements MainView, ServiceCallback {
+public class SongFragment extends Fragment implements MainView {
     View view;
-    public static final String Broadcast_PLAY_NEW_AUDIO = "com.example.music_vinh.view.service.PlayNewAudio";
-
-    private MediaPlayerService player;
     boolean serviceBound = false;
 
     @BindView(R.id.recycleViewSong)
@@ -96,35 +100,34 @@ public class SongFragment extends Fragment implements MainView, ServiceCallback 
         ButterKnife.bind(this,view);
         initPresenter();
         doStuff();
-                songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+              /*  songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
                     @Override
                     public void onClick(View view, final int index) {
                       //  playAudio(index);
                       //  connectService(index);
-
                         Intent intent = new Intent(getActivity(), PlayActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
                         bundle.putInt(Constants.KEY_POSITION, index);
-
                         intent.putExtra(Constants.KEY_BUNDLE, bundle);
                         startActivity(intent);
 
 //                  Intent intent = new Intent(getContext(), PlayActivity.class);
 //                  intent.putExtra("index", index);
 //                  intent.putParcelableArrayListExtra("arrSong",songList);
+//                  Log.d("song",songList.get(index).getName());
 //                  getContext().startActivity(intent);
-                    }
-                }));
 
+                    }
+                }));*/
     }
 
-    private void connectService(final int index) {
+  /* private void connectService(final int index) {
         mSCon = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder iBinder) {
                 mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-                mMusicService.setListener(SongFragment.this);
+               // mMusicService.setListener(SongFragment.this);
                 mIsBound = true;
 //                getDataIntent();
                 mMusicService.setSongs(songList);
@@ -144,7 +147,7 @@ public class SongFragment extends Fragment implements MainView, ServiceCallback 
         intent.setAction(Constants.ACTION_BIND_SERVICE);
         getContext().startService(intent);
         getContext().bindService(intent, mSCon, BIND_AUTO_CREATE);
-    }
+    }*/
 
 
     private void initPresenter(){
@@ -178,7 +181,7 @@ public class SongFragment extends Fragment implements MainView, ServiceCallback 
     public ArrayList<Song> getMusicSongArr() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Log.d("uri",songUri+"");
+       // Log.d("uri",songUri+"");
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
             int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -218,50 +221,5 @@ public class SongFragment extends Fragment implements MainView, ServiceCallback 
                 return super.onOptionsItemSelected(item);
 
         }
-    }
-
-    @Override
-    public void postName(String songName, String author) {
-
-    }
-
-    @Override
-    public void postTotalTime(long totalTime) {
-
-    }
-
-    @Override
-    public void postCurentTime(long currentTime) {
-
-    }
-
-    @Override
-    public void postPauseButon() {
-
-    }
-
-    @Override
-    public void postStartButton() {
-
-    }
-
-    @Override
-    public void postShuffle(boolean isShuffle) {
-
-    }
-
-    @Override
-    public void postLoop(boolean isLoop) {
-
-    }
-
-    @Override
-    public void showError(String error) {
-
-    }
-
-    @Override
-    public void postAvatar(String url) {
-
     }
 }

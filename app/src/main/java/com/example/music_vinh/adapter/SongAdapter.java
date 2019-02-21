@@ -2,6 +2,8 @@ package com.example.music_vinh.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -10,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.util.ArrayList;
@@ -52,17 +56,23 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
 
-//        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 //                Intent intent = new Intent(context, PlayActivity.class);
 //                intent.putExtra("song", songList.get(i));
 //                intent.putExtra("arrSong",(ArrayList) songList);
+//                Log.d("song",songList.get(i).getName());
 //                context.startActivity(intent);
-//
-//
-//            }
-//        });
+
+                Intent intent = new Intent(context, PlayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songList);
+                bundle.putInt(Constants.KEY_POSITION, i);
+                intent.putExtra(Constants.KEY_BUNDLE, bundle);
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -97,4 +107,5 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         songList.addAll(listItem);
         notifyDataSetChanged();
     }
+
 }
