@@ -271,18 +271,17 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 .build()
                 .inject(this);
     }
-
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, ArtistInfoActivity.class);
+        return intent;
+    }
 
     private void getData() {
         Drawable img = Drawable.createFromPath(artist.getImages());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             collapsingToolbarLayoutArtist.setBackground(img);
         }
-        // collapsingToolbarLayout.setBackground(img);
         imgViewArtist.setImageDrawable(img);
-//        imgIconAlbum.setImageDrawable(img);
-//        tvNameAlbumInfo.setText(album.getName());
-//        tvamountSongA.setText(album.getAmountSong()+"songs");
     }
 
     private void getDataIntent() {

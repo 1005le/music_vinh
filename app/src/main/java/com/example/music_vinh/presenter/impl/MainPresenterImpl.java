@@ -34,19 +34,10 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
         mainView.showSong(songs);
     }
 
-    @Override
-    public void onLoadSongGrid(ArrayList<Song> songs) {
-        mainView.showSongGrid(songs);
-    }
 
     @Override
     public void loadData() {
         mainInteractorImpl.getSongCategories(this);
-    }
-
-    @Override
-    public void loadDataGid() {
-        mainInteractorImpl.getSongGrid(this);
     }
 
 }

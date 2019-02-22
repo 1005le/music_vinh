@@ -56,6 +56,7 @@ import com.example.music_vinh.view.custom.CustomTouchListener;
 import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -106,6 +107,10 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
     SeekBar seekBar;
     public Song song;
     private long totalTime, currentTime,currentPosition;
+   // int indexAlbum;
+    Long idAlbum;
+    String indexAlbum;
+    List<Album> albumList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,14 +142,15 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
                 bundle.putInt(Constants.KEY_POSITION,index);
                 intent.putExtra(Constants.KEY_BUNDLE,bundle);
 
-                mMusicService.setSongs(songArrayListAlbum);
+        /*        mMusicService.setSongs(songArrayListAlbum);
                 mMusicService.setCurrentSong(index);
                 // Log.d("songSort", songArrayList.get(index).getName()+"");
 //                if (mProgess > 0) {
 //                    mMusicService.seekTo(mProgess);
 //                } else {
                 mMusicService.playSong();
-                Log.d("nameAl",songArrayListAlbum.get(index).getName());
+
+                Log.d("nameAl",songArrayListAlbum.get(index).getName());  */
                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
                 startActivity(intent);
             }
@@ -188,7 +194,11 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
                     imgBottomPlay.setVisibility(View.INVISIBLE);
                 }
             });
+    }
 
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, AlbumInfoActivity.class);
+        return intent;
     }
 
     private void bindServiceMedia() {
@@ -292,9 +302,24 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
 
     private void getDataIntent() {
         Intent intent = getIntent();
-        album = (Album) intent.getParcelableExtra("albumArrayList");
-
+        if (intent.hasExtra("albumArrayList")) {
+           // album = (Album) intent.getParcelableExtra("albumArrayList");
+            albumList = intent.getParcelableArrayListExtra("albumArrayList");
+        }
+        if (intent.hasExtra("album_ID")) {
+           // albumInfoPresenter.getAlbumInfo(this, getIntent().getStringExtra("ALBUM_ID"));
+            idAlbum= intent.getLongExtra("album_ID",0);
+            Log.d("nhan",idAlbum+"");
+        }
+        if (intent.hasExtra("album_index")) {
+           // indexAlbum = intent.getIntExtra("album_index",0);
+            indexAlbum = intent.getStringExtra("album_index");
+            Log.d("nhanID", indexAlbum+"");
+        }
+        albumList = AlbumFragment.albumList;
+        album = albumList.get(Integer.parseInt(indexAlbum));
     }
+
     private void getData() {
 
         Drawable img = Drawable.createFromPath(album.getImages());
@@ -307,6 +332,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
         tvNameAlbumInfo.setText(album.getName());
         tvamountSongA.setText(album.getAmountSong()+R.string.songs);
     }
+
     private void act() {
         setSupportActionBar(toolbar);
         //getSupportActionBar().setTitle(album.getName());
@@ -370,9 +396,11 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
 
                 // Add the info to our array.
                 if(album.getId() == thisalbumId)
+                //if( (idAlbum) == thisalbumId)
                 {
                     songArrayListAlbum.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",Long.parseLong(thisDuration)));
                 }
+
             }
             while (mediaCursor.moveToNext());
             // For best practices, close the cursor after use.

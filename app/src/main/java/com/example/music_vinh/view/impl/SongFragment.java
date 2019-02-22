@@ -35,7 +35,6 @@ import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
-import com.example.music_vinh.adapter.SongSearchAdapter;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
@@ -100,6 +99,7 @@ public class SongFragment extends Fragment implements MainView {
         ButterKnife.bind(this,view);
         initPresenter();
         doStuff();
+        setHasOptionsMenu(true);
               /*  songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
                     @Override
                     public void onClick(View view, final int index) {
@@ -120,35 +120,8 @@ public class SongFragment extends Fragment implements MainView {
 
                     }
                 }));*/
+
     }
-
-  /* private void connectService(final int index) {
-        mSCon = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder iBinder) {
-                mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-               // mMusicService.setListener(SongFragment.this);
-                mIsBound = true;
-//                getDataIntent();
-                mMusicService.setSongs(songList);
-                mMusicService.setCurrentSong(index);
-                // mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
-//                if (mProgess > 0) {
-//                    mMusicService.seekTo(mProgess);
-//                } else {
-                mMusicService.playSong();
-                //}
-            }
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-            }
-        };
-        Intent intent = new Intent(getContext(), MusicService.class);
-        intent.setAction(Constants.ACTION_BIND_SERVICE);
-        getContext().startService(intent);
-        getContext().bindService(intent, mSCon, BIND_AUTO_CREATE);
-    }*/
-
 
     private void initPresenter(){
         mainPresenter = new MainPresenterImpl(this);
@@ -162,16 +135,6 @@ public class SongFragment extends Fragment implements MainView {
         songRecyclerView.setLayoutManager(linearLayoutManager);
         songRecyclerView.setAdapter(songAdapter);
     }
-
-    @Override
-    public void showSongGrid(ArrayList<Song> songs) {
-        songAdapter = new SongAdapter(getActivity(),songs);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-        songRecyclerView.setLayoutManager(gridLayoutManager);
-        songRecyclerView.setAdapter(songAdapter);
-    }
-
     private void doStuff() {
         songList = new ArrayList<>();
         songList = getMusicSongArr();
@@ -181,7 +144,6 @@ public class SongFragment extends Fragment implements MainView {
     public ArrayList<Song> getMusicSongArr() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-       // Log.d("uri",songUri+"");
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
         if (songCursor != null && songCursor.moveToFirst()) {
             int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
@@ -210,16 +172,30 @@ public class SongFragment extends Fragment implements MainView {
         switch (item.getItemId()) {
 
             case R.id.list_view:
-                songList = getMusicSongArr();
-                mainPresenter.loadData();
+                disPlayViewList();
                 return true;
             case R.id.grid_view:
-                songList = getMusicSongArr();
-                mainPresenter.loadDataGid();
+                disPlayViewGrid();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+    private void disPlayViewList() {
+        songAdapter.setViewType(Constants.VIEW_LIST);
+        songAdapter = new SongAdapter(getActivity(),songList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        songRecyclerView.setLayoutManager(linearLayoutManager);
+        songRecyclerView.setAdapter(songAdapter);
+    }
+
+    private void disPlayViewGrid() {
+        songAdapter = new SongAdapter(getActivity(),songList);
+        songAdapter.setViewType(Constants.VIEW_GRID);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        songRecyclerView.setLayoutManager(gridLayoutManager);
+        songRecyclerView.setAdapter(songAdapter);
     }
 }

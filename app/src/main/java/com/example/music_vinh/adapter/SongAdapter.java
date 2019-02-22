@@ -32,20 +32,48 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     Context context;
     List<Song> songList;
 
+    private int type;
     private AdapterView.OnItemClickListener itemClickListener;
 
     public SongAdapter(Context context, List<Song> songList) {
         this.context = context;
         this.songList = songList;
+        this.type = Constants.VIEW_LIST;
+    }
+
+    public int getViewType() {
+        return type;
+    }
+
+    public void setViewType(int mViewType) {
+        this.type = mViewType;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-        View view = layoutInflater.inflate(R.layout.item_song, viewGroup,false);
+//        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
+//        View view = layoutInflater.inflate(R.layout.item_song, viewGroup,false);
+//        return new SongViewHolder(view);
+        switch (getViewType()) {
+            case Constants.VIEW_GRID:
+                return new SongViewHolder(
+                        LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_song_grid, viewGroup, false));
+            case Constants.VIEW_LIST:
+            default:
+                return new SongViewHolder(
+                        LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_song, viewGroup, false));
+        }
+    }
 
-        return new SongViewHolder(view);
+    @Override
+    public int getItemViewType(int position) {
+        if (type == Constants.VIEW_LIST) {
+            return Constants.VIEW_LIST;
+        } else {
+            return Constants.VIEW_GRID;
+        }
     }
 
     @Override
@@ -64,7 +92,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 //                intent.putExtra("arrSong",(ArrayList) songList);
 //                Log.d("song",songList.get(i).getName());
 //                context.startActivity(intent);
-
                 Intent intent = new Intent(context, PlayActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songList);
@@ -91,7 +118,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
         @BindView(R.id.imgSong)
         ImageView imgSong;
-
        // ImageButton imgPlay, imgPause;
         public SongViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,12 +126,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     }
     public interface OnItemClickListener{
         void onItemClick(int position);
-    }
-
-    public void getFilte(List<Song> listItem){
-        songList = new ArrayList<>();
-        songList.addAll(listItem);
-        notifyDataSetChanged();
     }
 
 }

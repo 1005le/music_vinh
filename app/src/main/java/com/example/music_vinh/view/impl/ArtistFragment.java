@@ -14,18 +14,22 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.music_vinh.R;
+import com.example.music_vinh.adapter.AlbumAdapter;
 import com.example.music_vinh.adapter.ArtistAdapter;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.presenter.ArtistPresenter;
 import com.example.music_vinh.presenter.impl.ArtistPresenterImpl;
 import com.example.music_vinh.view.ArtistView;
+import com.example.music_vinh.view.custom.Constants;
 
 import java.util.ArrayList;
 
@@ -67,6 +71,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         ButterKnife.bind(this,view);
         initPresenter();
         doStuff();
+        setHasOptionsMenu(true);
     }
 
     private void initPresenter(){
@@ -76,7 +81,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
     @Override
     public void showArtist(ArrayList<Artist> artists) {
         artistAdapter = new ArtistAdapter(getActivity(),artists);
-
+        artistAdapter.setViewType(Constants.VIEW_GRID);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
       //  gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         artistRecyclerView.setLayoutManager(gridLayoutManager);
@@ -114,6 +119,38 @@ public class ArtistFragment extends Fragment implements ArtistView {
             } while (songCursor.moveToNext());
         }
         return artistList;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.list_view:
+                disPlayViewList();
+                return true;
+            case R.id.grid_view:
+                disPlayViewGrid();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+    private void disPlayViewList() {
+        artistAdapter.setViewType(Constants.VIEW_LIST);
+        artistAdapter = new ArtistAdapter(getActivity(),artistList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        artistRecyclerView.setLayoutManager(linearLayoutManager);
+        artistRecyclerView.setAdapter(artistAdapter);
+    }
+
+    private void disPlayViewGrid() {
+        artistAdapter = new ArtistAdapter(getActivity(),artistList);
+        artistAdapter.setViewType(Constants.VIEW_GRID);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        artistRecyclerView.setLayoutManager(gridLayoutManager);
+        artistRecyclerView.setAdapter(artistAdapter);
     }
 
 }

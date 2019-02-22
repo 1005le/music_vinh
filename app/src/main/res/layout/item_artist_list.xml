@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="7dp"
+    android:layout_marginTop="2dp"
+    android:orientation="horizontal"
+    android:layout_marginRight="2dp"
+    android:layout_marginBottom="2dp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imgArtist"
+        android:background="@drawable/img_headphone"
+        android:scaleType="fitXY"
+        android:layout_width="70dp"
+        android:layout_height="70dp" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+    <TextView
+        android:id="@+id/tvNameArtist"
+        android:text="Name Artist"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_below="@+id/tvNameArtist"
+        android:layout_width="180dp"
+        android:layout_marginLeft="20dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tvAmountAlbum"
+            android:text="2 album"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="|"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tvAmountSong"
+            android:textSize="14sp"
+            android:text="2 song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout></LinearLayout>
+
+</LinearLayout>

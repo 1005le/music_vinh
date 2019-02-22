@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-  <item
-      android:id="@+id/menu_setting"
-      android:title="Sắp xếp " >
-
-  </item>
 
   <item android:id="@+id/menu_search"
       android:icon="@android:drawable/ic_menu_search"
@@ -13,5 +8,12 @@
       app:actionViewClass="android.support.v7.widget.SearchView"
       android:title="Search"
       ></item>
+
+      <item android:id="@+id/list_view"
+          android:title="Danh sách" />
+      <item android:id="@+id/grid_view"
+          android:title="Dạng Lưới" />
+
+
 
 </menu>

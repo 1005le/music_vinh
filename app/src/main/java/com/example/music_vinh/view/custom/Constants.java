@@ -2,11 +2,11 @@ package com.example.music_vinh.view.custom;
 
 public class Constants {
 
-    public static final String STRING_EMPTY = "";
-    public static final int NUMBER_TABS = 2;
-    public static final String ERROR_MESSAGE = "lỗi khi lấy danh sách bài hát";
-    public static final String ERROR_URL = "Lỗi đường dẫn URL";
-    public static final String ERROR_READFILE = "Lỗi khi đọc file";
+
+
+    public static final int VIEW_LIST = 1;
+    public static final int VIEW_GRID = 2;
+
     public static final String ACTION_PLAY = "ACTION_PLAY";
     public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
     public static final String ACTION_NEXT = "ACTION_NEXT";

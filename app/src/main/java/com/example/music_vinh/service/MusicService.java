@@ -297,7 +297,6 @@ public class MusicService extends Service implements BaseMediaPlayer
     public void sendAudioCurrentTimeBroadcast(){
         Intent intent1 = new Intent(Constants.SEND_CURRENT);
         intent1.putExtra(Constants.CURRENT_TIME, getCurrentPosition());
-        //Log.d("aa", getCurrentPosition() + "");
         sendBroadcast(intent1);
     }
 
@@ -306,7 +305,7 @@ public class MusicService extends Service implements BaseMediaPlayer
         final Intent intent1 = new Intent(Constants.SEND);
         intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
         intent1.putExtra(Constants.DURATION,mMediaPlayer.getDuration());
-       // intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+        intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
         intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
        // Log.d("getService", mMediaPlayer.getDuration()+"");
         sendBroadcast(intent1);
@@ -315,30 +314,12 @@ public class MusicService extends Service implements BaseMediaPlayer
    private void postNotification() {
 
         Intent intent = new Intent(this, PlayActivity.class);
-      //  Intent intent = new Intent("send");
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.KEY_SONGS, mSongs);
         bundle.putInt(Constants.KEY_POSITION,mCurrentPossition);
         intent.putExtra(Constants.KEY_BUNDLE,bundle);
         intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-//        //Truyen đen mainActivity
-//        Intent intent1 = new Intent("send");
-//        // intent1.putExtra(Constants.KEY_BUNDLE,bundle);
-////        intent1.putExtra(Constants.KEY_BUNDLE,bundle);
-//
-////        intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
-////        intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
-//
-//       StorageUtil storage = new StorageUtil(getApplicationContext());
-//         storage.storeAudio(mSongs);
-//         storage.storeAudioIndex(mCurrentPossition);
-//
-//        sendBroadcast(intent1);new Intent(this, PlayActivity.class)
-
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-//                intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                intent, PendingIntent.FLAG_UPDATE_CURRENT);

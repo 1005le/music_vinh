@@ -14,18 +14,22 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.AlbumAdapter;
+import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.presenter.AlbumPresenter;
 import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
 import com.example.music_vinh.view.AlbumView;
+import com.example.music_vinh.view.custom.Constants;
 
 import java.util.ArrayList;
 
@@ -60,7 +64,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        view = inflater.inflate(R.layout.fragment_album, container, false);
-
         return view;
     }
 
@@ -70,6 +73,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         ButterKnife.bind(this,view);
         initPresenter();
         doStuff();
+        setHasOptionsMenu(true);
     }
 
     private void initPresenter(){
@@ -78,6 +82,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public void showAlbum(ArrayList<Album> albums) {
         albumAdapter = new AlbumAdapter(getActivity(),albums);
+        albumAdapter.setViewType(Constants.VIEW_GRID);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
         albumRecyclerView.setLayoutManager(gridLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
@@ -113,5 +118,37 @@ public class AlbumFragment extends Fragment implements AlbumView {
             } while (songCursor.moveToNext());
         }
         return albumList;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.list_view:
+                disPlayViewList();
+                return true;
+            case R.id.grid_view:
+                disPlayViewGrid();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+    private void disPlayViewList() {
+        albumAdapter.setViewType(Constants.VIEW_LIST);
+        albumAdapter = new AlbumAdapter(getActivity(),albumList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+       albumRecyclerView.setLayoutManager(linearLayoutManager);
+        albumRecyclerView.setAdapter(albumAdapter);
+    }
+
+    private void disPlayViewGrid() {
+        albumAdapter = new AlbumAdapter(getActivity(),albumList);
+        albumAdapter.setViewType(Constants.VIEW_GRID);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+       albumRecyclerView.setLayoutManager(gridLayoutManager);
+       albumRecyclerView.setAdapter(albumAdapter);
     }
 }

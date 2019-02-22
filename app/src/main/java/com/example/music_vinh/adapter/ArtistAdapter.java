@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
 import com.example.music_vinh.view.impl.ArtistInfoActivity;
 
@@ -27,18 +28,41 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
 
     Context context;
     List<Artist> artistList;
+    private int type;
 
     public ArtistAdapter(Context context, List<Artist> artistList) {
         this.context = context;
         this.artistList = artistList;
     }
+    public int getViewType() {
+        return type;
+    }
+
+    public void setViewType(int mViewType) {
+        this.type = mViewType;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
     public ArtistViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-        View view = layoutInflater.inflate(R.layout.item_artist, viewGroup, false);
-        return new ArtistViewHolder(view);
+        switch (getViewType()) {
+            case Constants.VIEW_GRID:
+                return new ArtistViewHolder(
+                        LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_artist, viewGroup, false));
+            case Constants.VIEW_LIST:
+            default:
+                return new ArtistViewHolder(
+                        LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_artist_list, viewGroup, false));
+        }
+    }
+    @Override
+    public int getItemViewType(int position) {
+        if (type == Constants.VIEW_LIST) {
+            return Constants.VIEW_LIST;
+        } else {
+            return Constants.VIEW_GRID;
+        }
     }
 
     @Override
@@ -88,11 +112,5 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-    }
-
-    public void getFilte(List<Artist> listItem){
-        artistList = new ArrayList<>();
-        artistList.addAll(listItem);
-        notifyDataSetChanged();
     }
 }

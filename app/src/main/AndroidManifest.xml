@@ -7,12 +7,10 @@
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-
         android:name=".MusicApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,7 +18,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.impl.SortActivity"></activity>
+        <activity android:name=".view.search.SearchableActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity android:name=".view.impl.SortActivity" />
         <activity android:name=".view.impl.PlayActivity" />
         <activity android:name=".view.impl.ArtistInfoActivity" />
         <activity android:name=".view.impl.AlbumInfoActivity" />
@@ -33,6 +40,12 @@
         </activity>
 
         <service android:name=".service.MusicService" />
+
+        <provider
+            android:name=".view.search.SearchSuggestionProvider"
+            android:authorities="com.example.music_vinh.view.search.searchsuggestion"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

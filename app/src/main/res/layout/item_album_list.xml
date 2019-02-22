@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="7dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginRight="2dp"
+    android:orientation="horizontal"
+    android:layout_marginBottom="2dp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imgAlbum"
+        android:background="#00BCD4"
+        android:scaleType="fitXY"
+        android:layout_width="60dp"
+        android:layout_height="70dp" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+    <TextView
+        android:id="@+id/tvNameAlbum"
+        android:text="Name Artist"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@+id/tvNameAlbum"
+        android:id="@+id/tvNameArtist_A"
+        android:text="2 album"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" /></LinearLayout>
+
+</LinearLayout>

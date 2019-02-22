@@ -1,5 +1,6 @@
 package com.example.music_vinh.view.impl;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
@@ -44,6 +46,7 @@ import com.example.music_vinh.view.PlaySongView;
 import com.example.music_vinh.view.custom.CircularSeekBar;
 import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.StorageUtil;
+import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -184,27 +187,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         startService(intent);
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
-
-//    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // StorageUtil storage = new StorageUtil(getApplicationContext());
-//            Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
-//            songList = bundle.getParcelableArrayList(Constants.KEY_SONGS);
-//            audioIndex= bundle.getInt(Constants.KEY_POSITION, 0);
-//          //  Log.d("arrAlbum",songList.get(audioIndex).getName());
-////            songList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
-////            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-//            song = songList.get(audioIndex);
-//        }
-//    };
-//
-//    private void register_DataSongFragment() {
-//        //Register playNewMedia receiver
-//        IntentFilter filter = new IntentFilter(Constants.SEND);
-//        registerReceiver(dataSongFragment, filter);
-//    }
-
     private void act() {
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -213,8 +195,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
             @Override
             public void onClick(View v) {
                 finish();
-            // mediaPlayer.stop();
-              //  arrSong.clear();
             }
         });
     }
@@ -222,8 +202,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         playSong();
         act();
         getDataSong();
-       // UpdateTime();
-     //   eventClick();
     }
 
     private void getDataSong() {
@@ -258,13 +236,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        try {
-//            mediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        mediaPlayer.start();
-      //  UpdateTime();
     }
 
     private void initPresenter(){
@@ -298,11 +269,11 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 //            mMusicService.setCurrentSong(mCurentSong);
             mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
 
-            if (mProgess > 0) {
+         /*   if (mProgess > 0) {
                 mMusicService.seekTo(mProgess);
             } else {
               //  mMusicService.playSong();
-            }
+            }*/
         }
     }
 
@@ -420,11 +391,11 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     }
 
 
-    @Override
+ /*   @Override
     public boolean onCreateOptionsMenu( Menu menu) {
-        getMenuInflater().inflate( R.menu.search_view, menu);
+        getMenuInflater().inflate( R.menu.play_view, menu);
 
-       final MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
+       final MenuItem myActionMenuItem = menu.findItem( R.id.menu_search_sort);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -443,7 +414,39 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
             }
         });
         return true;
+    }*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.play_view, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_search_sort);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(
+                new ComponentName(this, SearchableActivity.class)));
+
+        return true;
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Toast.makeText(this, "Searching by: " + query, Toast.LENGTH_SHORT).show();
+
+        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            String uri = intent.getDataString();
+            Toast.makeText(this, "Suggestion: " + uri, Toast.LENGTH_SHORT).show();
+        }
+    }
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, PlayActivity.class);
+        return intent;
+    }
+
     private List<Song> filter(List<Song>listItem, String query){
         query = query.toLowerCase();
         final List<Song>filterModel = new ArrayList<>();
@@ -468,291 +471,18 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         playSongRecycleview.setAdapter(songAdapter);
     }
 
-///*    private void eventClick() {
-//        circularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-//                circularSeekBar.setMax(mediaPlayer.getDuration());
-//            }
-//            @Override
-//            public void onStopTrackingTouch(CircularSeekBar seekBar) {
-//                mediaPlayer.seekTo(circularSeekBar.getProgress());
-//            }
-//            @Override
-//            public void onStartTrackingTouch(CircularSeekBar seekBar) {
-//
-//            }
-//        });
-//
-//        imgPlay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Handler handler1 = new Handler();
-//                handler1.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent broadcastIntent = new Intent("StopMusic");
-//                        sendBroadcast(broadcastIntent);
-//                    }
-//                },1000);
-//                imgPlay.setImageResource(R.drawable.ic_stop_seekbar);
-////                if(mediaPlayer.isPlaying()){
-////                    mediaPlayer.pause();
-////                    imgPlay.setImageResource(R.drawable.ic_stop_seekbar);
-////                }else{
-////                    mediaPlayer.start();
-////                    imgPlay.setImageResource(R.drawable.ic_play_seekbar);
-////                }
-//            }
-//        });
-//
-//        imgRepeat.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if( repeat == false){
-//                    if(checkrandom == true){
-//                        checkrandom = false;
-//                        imgRepeat.setImageResource(R.drawable.ic_repeat_one);
-//                        imgShuttle.setImageResource(R.drawable.ic_shuttle);
-//                    }
-//                    imgRepeat.setImageResource(R.drawable.ic_repeat_one);
-//                    repeat = true;
-//                }else{
-//                    imgRepeat.setImageResource(R.drawable.ic_repeat);
-//                    repeat= false;
-//                }
-//            }
-//        });
-//
-//        imgShuttle.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(checkrandom == false){
-//                    if(repeat == true){
-//                        repeat = false;
-//                        imgShuttle.setImageResource(R.drawable.ic_shuttled);
-//                        imgRepeat.setImageResource(R.drawable.ic_repeat);
-//                    }
-//                    imgShuttle.setImageResource(R.drawable.ic_shuttled);
-//                    checkrandom = true;
-//                }else{
-//                    imgShuttle.setImageResource(R.drawable.ic_shuttle);
-//                    checkrandom = false;
-//                }
-//            }
-//        });
-//
-//        imgNext.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if( arrSong.size() > 0){
-//                    //nếu có ca khúc đang phát
-////                    if(mediaPlayer.isPlaying() || mediaPlayer != null){
-////                        mediaPlayer.stop();
-////                        //dong bo lại
-////                        mediaPlayer.release();
-////                        mediaPlayer = null;
-////                    }
-//                    StorageUtil storage = new StorageUtil(getApplicationContext());
-//                    //storage.storeAudio(songList);
-//                    storage.storeAudioIndex(audioIndex);
-//                    Intent broadcastIntent = new Intent("NextMusic");
-//                    sendBroadcast(broadcastIntent);
-//
-//                    //gia tri phai nho hon kich thuoc cua mang thi cho next, ban dau position
-//                    if(audioIndex < (arrSong.size())){
-//                        //position++;
-//                        audioIndex++;
-//                        if(repeat == true){
-//                            if(audioIndex == 0){
-//                               // position= SongFragment.songList.size();
-//                                position= arrSong.size();
-//                            }
-//                            audioIndex -=1;
-//                        }
-//                        if(checkrandom == true){
-//                             random = new Random();
-//                            int index = random.nextInt(arrSong.size());
-//                            if( index == audioIndex){
-//                                audioIndex = index -1;
-//                            }
-//                            audioIndex = index;
-//                        }
-//                        if( audioIndex > (arrSong.size()-1)){
-//                            audioIndex = 0;
-//                        }
-//                       //  playSong(arrSong.get(position).getId());
-//                       // audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
-//                        tvNameArtistPlay.setText(arrSong.get(audioIndex).getNameArtist());
-//                        getSupportActionBar().setTitle(arrSong.get(audioIndex).getName());
-//                        UpdateTime();
-//                    }
-//                }
-//                imgPre.setClickable(false);
-//                imgNext.setClickable(false);
-//                //delay mot khoang thoi gian
-//                Handler handler1 = new Handler();
-//                handler1.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        imgPre.setClickable(true);
-//                        imgNext.setClickable(true);
-//                    }
-//                },5000);
-//            }
-//        });
-//        imgPre.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if( arrSong.size() > 0){
-////                    if(mediaPlayer.isPlaying() || mediaPlayer != null){
-////                        mediaPlayer.stop();
-////                        //dong bo lại
-////                        mediaPlayer.release();
-////                        mediaPlayer = null;
-////                    }
-//                    StorageUtil storage = new StorageUtil(getApplicationContext());
-//                    //storage.storeAudio(songList);
-//                    storage.storeAudioIndex(audioIndex);
-//                    Intent broadcastIntent = new Intent("PreMusic");
-//                    sendBroadcast(broadcastIntent);
-//                    //gia tri phai nho hon kich thuoc cua mang thi cho next
-//                    if(audioIndex < (arrSong.size())){
-//
-//                        audioIndex--;
-//                        if(audioIndex < 0){
-//                            audioIndex = arrSong.size() -1;
-//                        }
-//                        if(repeat == true){
-//                            audioIndex +=1;
-//                        }
-//                        if(checkrandom == true){
-//                            random = new Random();
-//                            int index = random.nextInt(arrSong.size());
-//                            if( index == position){
-//                                audioIndex = index -1;
-//                            }
-//                            audioIndex = index;
-//                        }
-//                      //  playSong(arrSong.get(position).getId());
-//                        //audioIndex = new StorageUtil(getApplicationContext()).loadAudioIndex();
-//                        tvNameArtistPlay.setText(arrSong.get(audioIndex).getNameArtist());
-//                        getSupportActionBar().setTitle(arrSong.get(audioIndex).getName());
-//                        UpdateTime();
-//                    }
-//                }
-//                imgPre.setClickable(false);
-//                imgNext.setClickable(false);
-//                //delay mot khoang thoi gian
-//                Handler handler1 = new Handler();
-//                handler1.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        imgPre.setClickable(true);
-//                        imgNext.setClickable(true);
-//                    }
-//                },1000);
-//            }
-//        });
-//
-//    }*/
-//
-//    private void UpdateTime(){
-//        final Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if( mediaPlayer != null){
-//                  //  seekBar.setProgress(mediaPlayer.getCurrentPosition());
-//                    circularSeekBar.setProgress(mediaPlayer.getCurrentPosition());
-//
-//                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-//                    tvTime.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
-//                    //Thoi gian duoc cap nhat lien tuc
-//                    handler.postDelayed(this,300);
-//                    //lăng nghe khi media da chay xong hoan tat
-//                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                        @Override
-//                        public void onCompletion(MediaPlayer mp) {
-//                            next = true;
-//                            try {
-//                                Thread.sleep(1000);
-//
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//        },300);
-//        //lang nghe khi chuyen bai hat thi se lam cai gi
-//        final Handler handler1 = new Handler();
-//        handler1.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(next == true){
-//                    if(position < (arrSong.size())){
-//
-//                        position++;
-//                        if(repeat == true){
-//                            if(position == 0){
-//                                position= arrSong.size();
-//                            }
-//                            position -=1;
-//                        }
-//                        if(checkrandom == true){
-//                           random = new Random();
-//                            int index = random.nextInt(arrSong.size());
-//                            if( index == position){
-//                                position = index -1;
-//                            }
-//                            position = index;
-//                        }
-//                        if( position > (arrSong.size()-1)){
-//                            position = 0;
-//                        }
-//                        tvNameArtistPlay.setText(arrSong.get(position).getNameArtist());
-//                       // playSong(arrSong.get(position).getId());
-//                        getSupportActionBar().setTitle(arrSong.get(position).getName());
-//                    }
-//
-//                    imgPre.setClickable(false);
-//                    imgNext.setClickable(false);
-//                    //delay mot khoang thoi gian
-//                    Handler handler1 = new Handler();
-//                    handler1.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            imgPre.setClickable(true);
-//                            imgNext.setClickable(true);
-//                        }
-//                    },5000);
-//                    //khi chuyen duoc bai hat roi
-//                    next = false;
-//                    handler1.removeCallbacks(this);
-//                }else{
-//                    handler1.postDelayed(this, 1000);
-//                }
-//            }
-//        },1000);
-//    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_setting :
+            case R.id.menu_setting_sort:
                 Collections.sort(arrSong, new Comparator<Song>() {
                     @Override
                     public int compare(Song song, Song t1) {
                         return (song.getName().compareTo(t1.getName()));
                     }
                 });
-
               Intent intent =  new Intent(PlayActivity.this, SortActivity.class);
-               //intent.putExtra("song",arrSong.get(audioIndex));
                intent.putExtra("listSong",arrSong);
               startActivity(intent);
                 return true;

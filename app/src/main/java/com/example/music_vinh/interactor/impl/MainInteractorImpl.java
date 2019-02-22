@@ -49,17 +49,9 @@ public class MainInteractorImpl implements MainInteractor {
     public void getSongCategories(final MainInteractor mainInteractor) {
                 mainInteractor.onLoadSongSuccess(createArrayList());
     }
-    public void getSongGrid(final MainInteractor mainInteractor) {
-        mainInteractor.onLoadSongGrid(createArrayList());
-    }
 
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
-
-    }
-
-    @Override
-    public void onLoadSongGrid(ArrayList<Song> songs) {
 
     }
 }
