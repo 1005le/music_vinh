@@ -23,6 +23,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -35,6 +36,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ import com.example.music_vinh.adapter.SongInAlbumAdapter;
 import com.example.music_vinh.injection.AlbumInfoViewModule;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.DaggerAlbumInfoViewComponent;
+import com.example.music_vinh.interactor.AlbumInfoInteractor;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.AlbumInfoPresenter;
@@ -53,6 +56,7 @@ import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.AlbumInfoView;
 import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
@@ -63,7 +67,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, ServiceCallback {
+public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
 
     @BindView(R.id.coordinator)
@@ -91,7 +95,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
 
 
     @BindView(R.id.linearBottom)
-    LinearLayout linearLayoutBottom;
+    RelativeLayout linearLayoutBottom;
     @BindView(R.id.tvNameSongBottom)
     TextView tvNameSong;
     @BindView(R.id.tvNameArtistBottom)
@@ -106,7 +110,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
     private int mProgess;
     SeekBar seekBar;
     public Song song;
-    private long totalTime, currentTime,currentPosition;
+    private int totalTime, currentTime,currentPosition;
    // int indexAlbum;
     Long idAlbum;
     String indexAlbum;
@@ -125,9 +129,11 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
         //lay bai hat
         initPresenter();
         doStuff();
+
         bindServiceMedia();
         loadAudioInfo();
-        register_DataSong();
+       register_DataSongFragment();
+       register_durationAudio();
         register_currentTimeAudio();
         evenClick();
     }
@@ -137,12 +143,17 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
             public void onClick(View view, int index) {
 
                 Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.KEY_SONGS,AlbumInfoActivity.songArrayListAlbum);
-                bundle.putInt(Constants.KEY_POSITION,index);
-                intent.putExtra(Constants.KEY_BUNDLE,bundle);
 
-        /*        mMusicService.setSongs(songArrayListAlbum);
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(Constants.KEY_SONGS,AlbumInfoActivity.songArrayListAlbum);
+//                bundle.putInt(Constants.KEY_POSITION,index);
+//                intent.putExtra(Constants.KEY_BUNDLE,bundle);
+
+                StorageUtil storage = new StorageUtil(getApplicationContext());
+                storage.storeAudio(songArrayListAlbum);
+                storage.storeAudioIndex(index);
+
+                mMusicService.setSongs(songArrayListAlbum);
                 mMusicService.setCurrentSong(index);
                 // Log.d("songSort", songArrayList.get(index).getName()+"");
 //                if (mProgess > 0) {
@@ -150,7 +161,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
 //                } else {
                 mMusicService.playSong();
 
-                Log.d("nameAl",songArrayListAlbum.get(index).getName());  */
+                Log.d("nameAl",songArrayListAlbum.get(index).getName());
                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
                 startActivity(intent);
             }
@@ -204,7 +215,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
     private void bindServiceMedia() {
         Intent intent = new Intent(this, MusicService.class);
         intent.setAction(Constants.ACTION_BIND_SERVICE);
-        // startService(intent);
+         startService(intent);
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
 
@@ -212,8 +223,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-            mMusicService.setListener(AlbumInfoActivity.this);
-            // getDataIntent();
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -227,52 +236,70 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
         if (mSCon != null) {
             unbindService(mSCon);
         }
-        unregisterReceiver(dataSongAlbum);
+        unregisterReceiver(dataSongFragment);
         unregisterReceiver(currentTimeAudio);
+        unregisterReceiver(durationAudio);
     }
     private void loadAudioInfo() {
         Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
         sendBroadcast(loadAudioIntent);
     }
 
-    private BroadcastReceiver dataSongAlbum = new BroadcastReceiver() {
+    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            songArrayListAlbum = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
-            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-            song = songArrayListAlbum.get(audioIndex);
-            totalTime = intent.getIntExtra(Constants.DURATION,0);
-            currentPosition = intent.getIntExtra(Constants.KEY_PROGESS,0);
+        public void onReceive(Context context, final Intent intent) {
 
-            seekBar.setMax((int) totalTime);
-            seekBar.setProgress((int) currentTime);
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.INVISIBLE);
-            imgBottomPlay.setVisibility(View.VISIBLE);
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songArrayListAlbum= storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
+
+            tvNameSong.setText(songArrayListAlbum.get(audioIndex).getName());
+            tvNameArtist.setText(songArrayListAlbum.get(audioIndex).getNameArtist());
             getDataBottom();
         }
     };
 
-    private void register_DataSong() {
+    private void register_DataSongFragment() {
         //Register playNewMedia receiver
-       // Log.d("album", "REGISTER");
         IntentFilter filter = new IntentFilter(Constants.SEND);
-        registerReceiver(dataSongAlbum, filter);
+        LocalBroadcastManager.getInstance(AlbumInfoActivity.this).registerReceiver(dataSongFragment, filter);
     }
-    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+
+    private BroadcastReceiver durationAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
-            seekBar.setProgress((int) mMusicService.getCurrentPosition());
+            totalTime = intent.getIntExtra(Constants.DURATION,0);
+            seekBar.setMax( totalTime );
         }
     };
 
-    private void register_currentTimeAudio() {
+    private void register_durationAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
-        registerReceiver(currentTimeAudio, filter);
+        IntentFilter filter = new IntentFilter(Constants.SEND_DURATION);
+        LocalBroadcastManager.getInstance(AlbumInfoActivity.this).registerReceiver(durationAudio, filter);
+    }
+
+    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
+            //Log.d("curent", current+"");
+            seekBar.setProgress(current);
+            statusAudio();
+        }
+    };
+    public void register_currentTimeAudio() {
+        LocalBroadcastManager.getInstance(AlbumInfoActivity.this).registerReceiver(
+                currentTimeAudio, new IntentFilter(Constants.SEND_CURRENT));
+    }
+    private void statusAudio(){
+        if (mMusicService.isPlay()) {
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        } else {
+            imgPause.setVisibility(View.VISIBLE);
+            imgBottomPlay.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void getDataBottom() {
@@ -306,18 +333,21 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
            // album = (Album) intent.getParcelableExtra("albumArrayList");
             albumList = intent.getParcelableArrayListExtra("albumArrayList");
         }
-        if (intent.hasExtra("album_ID")) {
+        if (intent.hasExtra("index")) {
            // albumInfoPresenter.getAlbumInfo(this, getIntent().getStringExtra("ALBUM_ID"));
-            idAlbum= intent.getLongExtra("album_ID",0);
-            Log.d("nhan",idAlbum+"");
+            //idAlbum= intent.getLongExtra("album_ID",0);
+            int index = intent.getIntExtra("index",0);
+            album = albumList.get(index);
+            //Log.d("nhan",idAlbum+"");
         }
+        /*nhân tu search
+        * */
         if (intent.hasExtra("album_index")) {
-           // indexAlbum = intent.getIntExtra("album_index",0);
+            albumList = AlbumFragment.albumList;
             indexAlbum = intent.getStringExtra("album_index");
+            album = albumList.get(Integer.parseInt(indexAlbum));
             Log.d("nhanID", indexAlbum+"");
         }
-        albumList = AlbumFragment.albumList;
-        album = albumList.get(Integer.parseInt(indexAlbum));
     }
 
     private void getData() {
@@ -436,48 +466,5 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView, Se
         return true;
     }
 
-    @Override
-    public void postName(String songName, String author) {
 
-    }
-
-    @Override
-    public void postTotalTime(long totalTime) {
-
-    }
-
-    @Override
-    public void postCurentTime(long currentTime) {
-
-    }
-
-    @Override
-    public void postPauseButon() {
-
-    }
-
-    @Override
-    public void postStartButton() {
-
-    }
-
-    @Override
-    public void postShuffle(boolean isShuffle) {
-
-    }
-
-    @Override
-    public void postLoop(boolean isLoop) {
-
-    }
-
-    @Override
-    public void showError(String error) {
-
-    }
-
-    @Override
-    public void postAvatar(String url) {
-
-    }
 }

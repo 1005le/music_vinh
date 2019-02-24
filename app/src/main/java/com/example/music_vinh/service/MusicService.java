@@ -17,6 +17,7 @@ import android.os.Parcelable;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -57,7 +58,8 @@ public class MusicService extends Service implements BaseMediaPlayer
         @Override
         public void run() {
             mServiceCallback.postCurentTime(getCurrentPosition());
-            sendAudioCurrentTimeBroadcast();
+            //sendAudioCurrentTimeBroadcast();
+            sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition()/1000);
             if (isPlay()) {
                 mHandler.postDelayed(this, Constants.DELAY_MILLIS);
             }
@@ -102,6 +104,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         if (intent != null) {
             handlerIntent(intent);
         }
@@ -138,7 +141,6 @@ public class MusicService extends Service implements BaseMediaPlayer
     @Override
     public void startSong() {
         mMediaPlayer.start();
-        //sendAudioInfoBroadcast();
         mHandler.postDelayed(mTimeRunnable, Constants.DELAY_MILLIS);
     }
 
@@ -223,6 +225,7 @@ public class MusicService extends Service implements BaseMediaPlayer
         mServiceCallback.postTotalTime(getDuration());
         postCurrentTime();
         postTitle(mSongs.get(mCurrentPossition));
+
         mServiceCallback.postStartButton();
        // Log.d("total",getDuration()+"");
         sendAudioInfoBroadcast();
@@ -287,6 +290,8 @@ public class MusicService extends Service implements BaseMediaPlayer
         @Override
         public void onReceive(Context context, final Intent intent) {
             sendAudioInfoBroadcast();
+            sendAudioDuraionBroadcast();
+            sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition()/1000);
         }
     };
 
@@ -294,31 +299,48 @@ public class MusicService extends Service implements BaseMediaPlayer
         IntentFilter filter = new IntentFilter(Constants.LOAD_AUDIO);
         registerReceiver(loadAudio, filter);
     }
-    public void sendAudioCurrentTimeBroadcast(){
-        Intent intent1 = new Intent(Constants.SEND_CURRENT);
-        intent1.putExtra(Constants.CURRENT_TIME, getCurrentPosition());
-        sendBroadcast(intent1);
+
+    public void sendAudioDuraionBroadcast(){
+        Intent intent1 = new Intent(Constants.SEND_DURATION);
+        intent1.putExtra(Constants.DURATION, mMediaPlayer.getDuration()/1000);
+        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent1);
+    }
+
+    private void sendAudioCurrentTimeBroadcast(int current) {
+        Intent intent = new Intent(Constants.SEND_CURRENT);
+        intent.putExtra(Constants.CURRENT_TIME, current);
+        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
     }
 
     public void sendAudioInfoBroadcast(){
         //Truyen đen mainActivity
         final Intent intent1 = new Intent(Constants.SEND);
-        intent1.putExtra(Constants.KEY_POSITION,mCurrentPossition);
-        intent1.putExtra(Constants.DURATION,mMediaPlayer.getDuration());
-        intent1.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
-        intent1.putParcelableArrayListExtra(Constants.KEY_SONGS, mSongs);
-       // Log.d("getService", mMediaPlayer.getDuration()+"");
-        sendBroadcast(intent1);
+
+        StorageUtil storage = new StorageUtil(getApplicationContext());
+        storage.storeAudio( mSongs);
+        storage.storeAudioIndex(mCurrentPossition);
+
+        LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent1);
     }
 
    private void postNotification() {
 
         Intent intent = new Intent(this, PlayActivity.class);
-        Bundle bundle = new Bundle();
+    /*    Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.KEY_SONGS, mSongs);
         bundle.putInt(Constants.KEY_POSITION,mCurrentPossition);
-        intent.putExtra(Constants.KEY_BUNDLE,bundle);
-        intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+        intent.putExtra(Constants.KEY_BUNDLE,bundle); */
+       intent.putExtra(Constants.KEY_PROGESS, mMediaPlayer.getCurrentPosition());
+         Log.d("dayKey1", mMediaPlayer.getCurrentPosition()+"");
+       intent.putExtra(Constants.KEY_PROGESS, getCurrentPosition());
+         Log.d("dayKey2", getCurrentPosition()+"");
+//       StorageUtil storage = new StorageUtil(getApplicationContext());
+//       mSongs = storage.loadAudio();
+//       mCurrentPossition = storage.loadAudioIndex();
+//                 //   intent.putExtra("duration", mMusicService.getDuration());
+//       intent.putExtra("current", mMediaPlayer.getCurrentPosition());
+//       Log.d("currentMain:+",mMediaPlayer.getCurrentPosition()+"");
+
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,

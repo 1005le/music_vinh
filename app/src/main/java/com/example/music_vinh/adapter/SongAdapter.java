@@ -84,7 +84,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+   /*     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                Intent intent = new Intent(context, PlayActivity.class);
@@ -99,7 +99,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 intent.putExtra(Constants.KEY_BUNDLE, bundle);
                 context.startActivity(intent);
             }
-        });
+        });  */
 
     }
 

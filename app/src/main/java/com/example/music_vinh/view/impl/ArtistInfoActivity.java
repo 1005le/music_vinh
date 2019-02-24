@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,7 +79,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     ImageView imgViewArtist;
 
     @BindView(R.id.linearBottom)
-    LinearLayout linearLayoutBottom;
+    RelativeLayout linearLayoutBottom;
     @BindView(R.id.tvNameSongBottom)
     TextView tvNameSong;
     @BindView(R.id.tvNameArtistBottom)
@@ -240,6 +241,14 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
 //            Log.d("timeMain", totalTime+"currentTime"+currentTime);
             seekBar.setProgress((int) mMusicService.getCurrentPosition());
+
+            if (mMusicService.isPlay()) {
+                imgPause.setVisibility(View.INVISIBLE);
+                imgBottomPlay.setVisibility(View.VISIBLE);
+            } else {
+                imgPause.setVisibility(View.VISIBLE);
+                imgBottomPlay.setVisibility(View.INVISIBLE);
+            }
         }
     };
 

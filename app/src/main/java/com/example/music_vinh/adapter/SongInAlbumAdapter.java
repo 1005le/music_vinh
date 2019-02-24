@@ -18,6 +18,7 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
 import com.example.music_vinh.view.impl.MainActivity;
 import com.example.music_vinh.view.impl.PlayActivity;
@@ -57,10 +58,14 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
             @Override
             public void onClick(View view) {
 
-//                Intent intent = new Intent(context, PlayActivity.class);
+                Intent intent = new Intent(context, PlayActivity.class);
 //                intent.putExtra("song", songArrayList.get(position));
 //                intent.putExtra("arrSong",(ArrayList) songArrayList);
-//                context.startActivity(intent);
+                 StorageUtil storage = new StorageUtil(context);
+                 storage.storeAudio((ArrayList)songArrayList);
+                 storage.storeAudioIndex(position);
+                 Log.d("name",songArrayList.get(position).getName());
+                 context.startActivity(intent);
 
 //                Intent intent = new Intent(context, PlayActivity.class);
 //                Bundle bundle = new Bundle();

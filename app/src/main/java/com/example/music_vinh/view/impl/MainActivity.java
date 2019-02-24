@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +67,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class  MainActivity extends BaseActivity implements  View.OnClickListener{
+public class  MainActivity extends BaseActivity  {
 
     @BindView(R.id.myTabLayout)
     TabLayout tabLayout;
@@ -75,8 +77,10 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
     DrawerLayout drawerLayout;
     @BindView(R.id.toolBarMainActivity)
     Toolbar toolbarMainActivity;
+
     @BindView(R.id.linearBottom)
-    LinearLayout linearLayoutBottom;
+    RelativeLayout linearLayoutBottom;
+    //LinearLayout linearLayoutBottom;
 
     @BindView(R.id.tvNameSongBottom)
     TextView tvNameSong;
@@ -99,7 +103,7 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
     public Song song;
     private MusicService mMusicService;
     private boolean mIsBound;
-    private long totalTime, currentTime, currentPosition;
+    private int totalTime, currentTime, currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,13 +113,19 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
         initTab();
         act();
         seekBar = findViewById(R.id.seekBarBottom);
+
         bindServiceMedia();
-
-        loadAudioInfo();
         register_DataSongFragment();
+      //  loadAudioInfo();
+        register_durationAudio();
         register_currentTimeAudio();
-
         eventClick();
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAudioInfo();
     }
 
     public void eventClick(){
@@ -128,7 +138,7 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mMusicService.seekTo(seekBar.getProgress());
+                mMusicService.seekTo(seekBar.getProgress() *1000);
             }
         });
         imgPause.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +151,7 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
                 }
                 imgPause.setVisibility(View.INVISIBLE);
                 imgBottomPlay.setVisibility(View.VISIBLE);
+
             }
         });
         imgBottomPlay.setOnClickListener(new View.OnClickListener() {
@@ -155,11 +166,6 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
                 imgBottomPlay.setVisibility(View.INVISIBLE);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -190,18 +196,13 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-            songList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
-            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-            totalTime = intent.getIntExtra(Constants.DURATION,0);
-            currentPosition = intent.getIntExtra(Constants.KEY_PROGESS,0);
-            song = songList.get(audioIndex);
 
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            seekBar.setMax((int) totalTime);
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songList= storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
 
-           imgPause.setVisibility(View.INVISIBLE);
-           imgBottomPlay.setVisibility(View.VISIBLE);
+            tvNameSong.setText(songList.get(audioIndex).getName());
+            tvNameArtist.setText(songList.get(audioIndex).getNameArtist());
             getDataBottom();
         }
     };
@@ -209,38 +210,71 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
     private void register_DataSongFragment() {
         //Register playNewMedia receiver
         IntentFilter filter = new IntentFilter(Constants.SEND);
-        registerReceiver(dataSongFragment, filter);
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(dataSongFragment, filter);
     }
 
     private void loadAudioInfo() {
         Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
-        sendBroadcast(loadAudioIntent);
+        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(loadAudioIntent);
+    }
+
+    private BroadcastReceiver durationAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           totalTime = intent.getIntExtra(Constants.DURATION,0);
+              seekBar.setMax( totalTime );
+        }
+    };
+
+    private void register_durationAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(Constants.SEND_DURATION);
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(durationAudio, filter);
     }
 
     private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
-            seekBar.setProgress((int) mMusicService.getCurrentPosition());
+            int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
+            //Log.d("curent", current+"");
+
+            seekBar.setProgress(current);
+            statusAudio();
         }
     };
-
-    private void register_currentTimeAudio() {
-        //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
-        registerReceiver(currentTimeAudio, filter);
+    public void register_currentTimeAudio() {
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(
+                currentTimeAudio, new IntentFilter(Constants.SEND_CURRENT));
     }
+    private void statusAudio(){
+        if (mMusicService.isPlay()) {
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        } else {
+            imgPause.setVisibility(View.VISIBLE);
+            imgBottomPlay.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void getDataBottom() {
             linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
-                    bundle.putInt(Constants.KEY_POSITION,audioIndex);
-                    intent.putExtra(Constants.KEY_BUNDLE,bundle);
-                    intent.putExtra(Constants.KEY_PROGESS,currentPosition);
+
+                 /*   StorageUtil storage = new StorageUtil(getApplicationContext());
+                    songList= storage.loadAudio();
+                    audioIndex = storage.loadAudioIndex();
+
+//                 //   intent.putExtra("duration", mMusicService.getDuration());
+                    intent.putExtra("current", mMusicService.getCurrentPosition());
+                    Log.d("total",mMusicService.getDuration()+"-"+"currentMain:+"+mMusicService.getCurrentPosition()+"");    */
+//                    Bundle bundle = new Bundle();
+//                    bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
+//                    bundle.putInt(Constants.KEY_POSITION,audioIndex);
+//                    intent.putExtra(Constants.KEY_BUNDLE,bundle);
+                   // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
+
                     startActivity(intent);
                 }
             });
@@ -273,19 +307,6 @@ public class  MainActivity extends BaseActivity implements  View.OnClickListener
         unregisterReceiver(dataSongFragment);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imgButtonPlay:
-                if (mMusicService.isPlay()) {
-                    mMusicService.pauseSong();
-                } else {
-                    mMusicService.continuesSong();
-                }
-                imgBottomPlay.setImageResource(R.drawable.ic_stop);
-                break;
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

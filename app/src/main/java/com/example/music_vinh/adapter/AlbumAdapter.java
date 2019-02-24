@@ -82,7 +82,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
 
                 Intent intent = new Intent(context, AlbumInfoActivity.class);
 
-                intent.putExtra("album_index",i);
+                intent.putExtra("index",i);
                 intent.putExtra("album_ID",albumList.get(i).getId());
                 Log.d("truyen",albumList.get(i).getId()+"");
 

@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -89,7 +90,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     TextView tvNameArtistPlay;
     private int mProgess;
 
-    public int audioIndex = -1;
+  //  public int audioIndex =-1;
+    public int audioIndex ;
   //  public static ArrayList<Song> arrSong = new ArrayList<Song>();
     public static ArrayList<Song> arrSong;
     SongAdapter songAdapter;
@@ -102,10 +104,12 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     CircularSeekBar circularSeekBar;
     private MusicService mMusicService;
    // boolean serviceBound = false;
+   private boolean mTrackingSeekBar = false;
     private ServiceConnection mSCon;
     private int mCurentSong;
     private SimpleDateFormat mDateFormat;
     private boolean mIsBound;
+    int current, totalTime;
 
     @Inject
     PlaySongPresenter playSongPresenter;
@@ -122,23 +126,33 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         mIsBound = false;
         mDateFormat = new SimpleDateFormat(getString(R.string.date_time));
         connectService();
-       // getSongService();
-        //register_DataSongFragment();
         doStuff();
-       // init();
         act();
         registerListener();
+
+//        register_DataSongFragment();
+//        register_currentTimeAudio();
+//        register_durationAudio();
+//        loadAudioInfo();
       //  eventClick();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     private void registerListener() {
         circularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+
             }
             @Override
             public void onStopTrackingTouch(CircularSeekBar seekBar) {
-                mMusicService.seekTo(seekBar.getProgress());
+              //  mMusicService.seekTo(seekBar.getProgress() *1000);
+               mMusicService.seekTo(seekBar.getProgress());
             }
             @Override
             public void onStartTrackingTouch(CircularSeekBar seekBar) {
@@ -167,15 +181,25 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
                 mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
                 mMusicService.setListener(PlayActivity.this);
                 mIsBound = true;
-               // getDataIntent();
+
+              //  getDataIntent();
                 mMusicService.setSongs(arrSong);
                 mMusicService.setCurrentSong(mCurentSong);
                 Log.d("arrAlbum",arrSong.get(mCurentSong).getName());
+
                 if (mProgess > 0) {
-                    mMusicService.seekTo(mProgess);
+                    Log.d("mProgress",mProgess+"");
+                   // mMusicService.seekTo(mProgess);
+                    mMusicService.seekTo((int)mMusicService.getCurrentPosition());
                 } else {
-                    mMusicService.playSong();
+                     mMusicService.playSong();
                 }
+
+//                if (current > 0) {
+//                    mMusicService.seekTo(current);
+//                } else {
+//                    mMusicService.playSong();
+//                }
             }
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -199,7 +223,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         });
     }
     private void init() {
-        playSong();
         act();
         getDataSong();
     }
@@ -226,18 +249,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
        // songArrayList = intent.getParcelableArrayListExtra("listSong");
     }
 
-    private void playSong() {
-       // Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        try {
-            mediaPlayer.setDataSource(song.getPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void initPresenter(){
        playSongPresenter = new PlaySongPresenterImpl(this);
     }
@@ -260,21 +271,103 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
    public void getDataIntent() {
         Intent intent = getIntent();
-          if (intent != null) {
+
+       StorageUtil storage = new StorageUtil(getApplicationContext());
+       arrSong= storage.loadAudio();
+       mCurentSong = storage.loadAudioIndex();
+       Log.d("progresssStore",mProgess+"");
+       if(intent.hasExtra(Constants.KEY_PROGESS)) {
+          // intent.putExtra("duration", totalTime);
+//           int total = intent.getIntExtra("duration", 0);
+//           Log.d("nhanTotal",total+"");
+//           circularSeekBar.setMax(total);
+           Log.d("progresssIntent",mProgess+"");
+         mProgess= intent.getIntExtra(Constants.KEY_PROGESS, 0);
+       }
+
+      /* Log.d("intent", intent+"");
+       if(intent !=null){
+           if(intent.hasExtra("current")) {
+           //intent.putExtra("current", currentPosition);
+           int current = intent.getIntExtra("current", 0);
+           mProgess = intent.getIntExtra("current", 0);
+           Log.d("nhanCurr", current + "");
+           // circularSeekBar.setProgress(current);
+           //Log.d("musicCurrent1", mMusicService.getCurrentPosition() + "");
+          // mMusicService.seekTo((int) mMusicService.getCurrentPosition());
+         //  Log.d("musicCurrent2", mMusicService.getCurrentPosition() + "");   */
+//           if (mProgess > 0) {
+//               mMusicService.seekTo(mProgess);
+//           } else {
+//               mMusicService.playSong();
+//           }
+     //  }
+      // }
+
+  /*     if (intent != null) {
             Bundle bundle = intent.getBundleExtra(Constants.KEY_BUNDLE);
             arrSong = bundle.getParcelableArrayList(Constants.KEY_SONGS);
             mCurentSong = bundle.getInt(Constants.KEY_POSITION, 0);
              Log.d("albumPlay", arrSong.get(mCurentSong).getName());
 //            mMusicService.setSongs(arrSong);
-//            mMusicService.setCurrentSong(mCurentSong);
-            mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
+//            mMusicService.setCurrentSong(mCurentSong);      */
+           // mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
+             // mProgess = bundle.getInt(Constants.KEY_PROGESS, 0);
 
-         /*   if (mProgess > 0) {
-                mMusicService.seekTo(mProgess);
-            } else {
-              //  mMusicService.playSong();
-            }*/
+      //  }     */
+    }
+
+    private void loadAudioInfo() {
+        Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
+        LocalBroadcastManager.getInstance(PlayActivity.this).sendBroadcast(loadAudioIntent);
+    }
+
+    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            arrSong= storage.loadAudio();
+            mCurentSong = storage.loadAudioIndex();
+
+            getSupportActionBar().setTitle(arrSong.get(mCurentSong).getName());
+            tvNameArtistPlay.setText(arrSong.get(mCurentSong).getNameArtist());
         }
+    };
+
+    private void register_DataSongFragment() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(Constants.SEND);
+        LocalBroadcastManager.getInstance(PlayActivity.this).registerReceiver(dataSongFragment, filter);
+    }
+
+    private BroadcastReceiver durationAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          totalTime = intent.getIntExtra(Constants.DURATION,0);
+            circularSeekBar.setMax((int) totalTime );
+        }
+    };
+
+    private void register_durationAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(Constants.SEND_DURATION);
+        LocalBroadcastManager.getInstance(PlayActivity.this).registerReceiver(durationAudio, filter);
+    }
+
+    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
+
+            Log.d("nhancurent", current+"");
+            circularSeekBar.setProgress(current);
+            tvTime.setText(mDateFormat.format(current *1000));
+        }
+    };
+    public void register_currentTimeAudio() {
+        LocalBroadcastManager.getInstance(PlayActivity.this).registerReceiver(
+                currentTimeAudio, new IntentFilter(Constants.SEND_CURRENT));
     }
 
     @Override
@@ -284,17 +377,17 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         tvNameArtistPlay.setText(author);
     }
     @Override
-    public void postTotalTime(long totalTime) {
-        circularSeekBar.setMax((int) totalTime);
+    public void postTotalTime(long totalTime)
+    {
+       circularSeekBar.setMax((int) totalTime);
     }
     //
     @Override
     public void postCurentTime(long currentTime) {
         tvTime.setText(mDateFormat.format(currentTime));
-        //  if (!mTrackingSeekBar) {
-        circularSeekBar.setProgress((int) currentTime);
-      //  Log.d("imePlay",totalTime+"");
-        // }
+        if(!mTrackingSeekBar) {
+            circularSeekBar.setProgress((int) currentTime);
+        }
     }
 
     @Override
@@ -311,9 +404,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     public void postShuffle(boolean isShuffle) {
         mIsShuffle = isShuffle;
         if (mIsShuffle) {
-            imgShuttle.setImageResource(R.drawable.ic_shuttle);
-        } else {
             imgShuttle.setImageResource(R.drawable.ic_shuttled);
+        } else {
+            imgShuttle.setImageResource(R.drawable.ic_shuttle);
         }
     }
 
@@ -321,9 +414,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     public void postLoop(boolean isLoop) {
         mIsRepeat = isLoop;
         if (mIsRepeat) {
-            imgRepeat.setImageResource(R.drawable.ic_repeat);
-        } else {
             imgRepeat.setImageResource(R.drawable.ic_repeat_one);
+        } else {
+            imgRepeat.setImageResource(R.drawable.ic_repeat);
         }
     }
 

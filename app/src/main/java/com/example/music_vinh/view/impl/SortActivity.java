@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -54,7 +56,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     RecyclerView sortSongRecycleview;
 
     @BindView(R.id.linearBottom)
-    LinearLayout linearLayoutBottom;
+    RelativeLayout linearLayoutBottom;
 
     @BindView(R.id.tvNameSongBottom)
     TextView tvNameSong;
@@ -73,7 +75,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     private MusicService mMusicService;
     private int mProgess;
     SeekBar seekBar;
-    private long totalTime, currentTime;
+    private int totalTime, currentTime;
 
     @Inject
     SortPresenter sortPresenter;
@@ -93,8 +95,9 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         init();
         atc();
         loadAudioInfo();
-        register_DataSong();
         register_currentTimeAudio();
+        register_DataSongFragment();
+        register_durationAudio();
 
         eventClick();
         sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
@@ -141,45 +144,59 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         sendBroadcast(loadAudioIntent);
     }
 
-    private BroadcastReceiver dataSong = new BroadcastReceiver() {
+    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            // StorageUtil storage = new StorageUtil(getApplicationContext());
-            songArrayList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
-            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-            song = songArrayList.get(audioIndex);
-            Log.d("songSortRece", songArrayList.get(audioIndex).getName()+"");
-            totalTime = intent.getIntExtra(Constants.DURATION,0);
+        public void onReceive(Context context, final Intent intent) {
 
-            seekBar.setMax((int) totalTime);
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            songArrayList= storage.loadAudio();
+            audioIndex = storage.loadAudioIndex();
 
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.INVISIBLE);
-            imgBottomPlay.setVisibility(View.VISIBLE);
+            tvNameSong.setText(songArrayList.get(audioIndex).getName());
+            tvNameArtist.setText(songArrayList.get(audioIndex).getNameArtist());
             getDataBottom();
         }
     };
 
-    private void register_DataSong() {
+    private void register_DataSongFragment() {
         //Register playNewMedia receiver
         IntentFilter filter = new IntentFilter(Constants.SEND);
-        registerReceiver(dataSong, filter);
+        registerReceiver(dataSongFragment, filter);
     }
-    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+
+    private BroadcastReceiver durationAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
-//            Log.d("timeMain", totalTime+"currentTime"+currentTime);
-            seekBar.setProgress((int) mMusicService.getCurrentPosition());
+            totalTime = intent.getIntExtra(Constants.DURATION,0);
+            seekBar.setMax(totalTime *1000);
         }
     };
 
-    private void register_currentTimeAudio() {
+    private void register_durationAudio() {
         //Register playNewMedia receiver
-        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
-        registerReceiver(currentTimeAudio, filter);
+        IntentFilter filter = new IntentFilter(Constants.SEND_DURATION);
+        registerReceiver(durationAudio, filter);
+    }
+
+    private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
+            seekBar.setProgress(current *1000);
+            statusAudio();
+        }
+    };
+    public void register_currentTimeAudio() {
+        LocalBroadcastManager.getInstance(SortActivity.this).registerReceiver(currentTimeAudio, new IntentFilter(Constants.SEND_CURRENT));
+    }
+    private void statusAudio(){
+        if (mMusicService.isPlay()) {
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        } else {
+            imgPause.setVisibility(View.VISIBLE);
+            imgBottomPlay.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void getDataBottom() {
@@ -340,7 +357,9 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         if (mSCon != null) {
             unbindService(mSCon);
         }
-        unregisterReceiver(dataSong);
+        unregisterReceiver(dataSongFragment);
+        unregisterReceiver(currentTimeAudio);
+        unregisterReceiver(durationAudio);
     }
 
 
