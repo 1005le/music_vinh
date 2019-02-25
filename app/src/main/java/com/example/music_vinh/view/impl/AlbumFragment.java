@@ -123,7 +123,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.list_view:
                 disPlayViewList();
                 return true;
@@ -132,7 +131,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
     private void disPlayViewList() {

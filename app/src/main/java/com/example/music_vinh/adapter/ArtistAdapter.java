@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
             public void onClick(View view) {
 
                 Intent intent = new Intent(context, ArtistInfoActivity.class);
-                intent.putExtra("artistArrayList",artistList.get(i));
+                intent.putExtra("index",i);
+               // intent.putExtra("album_ID",artistList.get(i).getId());
+//                Log.d("truyen",artistList.get(i).getId()+"");
+                intent.putExtra("artistArrayList",(ArrayList) artistList);
                 context.startActivity(intent);
 
             }

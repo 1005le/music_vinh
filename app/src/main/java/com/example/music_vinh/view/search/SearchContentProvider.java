@@ -21,11 +21,12 @@ public class SearchContentProvider extends ContentProvider {
     private static final String AUTHORITY = "vinh.com.example.music_vinh.contentsuggestion";
     private static final int TYPE_ALL_SUGGESTIONS = 1;
     private static final int TYPE_SINGLE_SUGGESTION = 2;
-    private static final String TAG = "BeautyMusic";
+    private static final String TAG = "Music_vinh";
 
     private UriMatcher mUriMatcher;
     private List<String> contents;
     private List<Integer> contentTypes;
+
 
     @Override
     public boolean onCreate() {
@@ -133,7 +134,7 @@ public class SearchContentProvider extends ContentProvider {
             while (albumCursor.moveToNext()) {
                 String albumName = albumCursor.getString(1);
                 contents.add(albumName);
-                contentTypes.add(R.drawable.img_album);
+                contentTypes.add(R.drawable.ic_album);
             }
             albumCursor.close();
             Log.d(TAG, "contents:" + contents.size());
@@ -160,7 +161,7 @@ public class SearchContentProvider extends ContentProvider {
             while (artistCursor.moveToNext()) {
                 String artistName = artistCursor.getString(1);
                 contents.add(artistName);
-                contentTypes.add(R.drawable.img_headphone);
+                contentTypes.add(R.drawable.ic_artist);
             }
             artistCursor.close();
             Log.d(TAG, "contents: " + contents.size());

@@ -102,7 +102,7 @@ public class SongFragment extends Fragment implements MainView {
         setHasOptionsMenu(true);
                songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
                     @Override
-                    public void onClick(View view, final int index) {
+                    public void onClick(View view, int index) {
                       //  playAudio(index);
                       //  connectService(index);
                         StorageUtil storage = new StorageUtil(getContext());
@@ -110,6 +110,7 @@ public class SongFragment extends Fragment implements MainView {
                         storage.storeAudioIndex(index);
 
                        Intent intent = new Intent(getActivity(), PlayActivity.class);
+                        intent.putExtra("PLAY_TYPE", "PLAY");
                     /*     Bundle bundle = new Bundle();
                         bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
                         bundle.putInt(Constants.KEY_POSITION, index);

@@ -54,7 +54,7 @@ public class SearchableActivity extends AppCompatActivity {
                 Log.d(TAG, "playIntent");
                 storeAudioIndex(data);
                 Intent playIntent = PlayActivity.getStartIntent(this);
-               // playIntent.putExtra(AppConstants.PLAY_TYPE, PlaybackStatus.PLAYING);
+                playIntent.putExtra("PLAY_TYPE", "PLAY");
                 startActivity(playIntent);
                 finish();
                 break;
@@ -70,8 +70,8 @@ public class SearchableActivity extends AppCompatActivity {
             case "ARTIST":
                 Log.d(TAG, "artistDetailIntent");
                 Intent artistDetailIntent = ArtistInfoActivity.getStartIntent(this);
-                artistDetailIntent.putExtra("ARTIST_ID", data);
-
+                artistDetailIntent.putExtra("artist_index", data);
+                Log.d("dataArtist",data);
                 startActivity(artistDetailIntent);
                 finish();
                 break;
@@ -118,7 +118,6 @@ public class SearchableActivity extends AppCompatActivity {
             cursor.close();
 
             if (activity.get() != null) {
-//                activity.get().updateText("onQueryComplete: " + id + " / " + text + " / " + data_id + " / " + contentType + " / " + data);
                 activity.get().prepareIntent(contentType, data);
             }
         }

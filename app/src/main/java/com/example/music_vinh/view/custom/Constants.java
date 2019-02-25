@@ -30,4 +30,6 @@ public class Constants {
     public static final String SEND_DURATION = "SEND_DURATION";
     public static final String DURATION = "DURATION";
     public static final String CURRENT_TIME = "CURRENT_TIME";
+    public static final String PLAY_NEW_AUDIO = "PLAY_NEW_AUDIO";
+    public static final String RESUME_AUDIO = "RESUME_AUDIO";
 }

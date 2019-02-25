@@ -22,7 +22,7 @@ public class SearchSuggestionProvider extends ContentProvider {
 
     private static final int TYPE_ALL_SUGGESTIONS = 1;
     private static final int TYPE_SINGLE_SUGGESTION = 2;
-    private static final String TAG = "BeautyMusic";
+    private static final String TAG = "Music_vinh";
 
     private UriMatcher mUriMatcher;
     private List<String> contents;
@@ -210,9 +210,9 @@ public class SearchSuggestionProvider extends ContentProvider {
             case SONG:
                 return R.drawable.ic_song;
             case ALBUM:
-                return R.drawable.img_album;
+                return R.drawable.ic_album;
             case ARTIST:
-                return R.drawable.img_headphone;
+                return R.drawable.ic_artist;
             default:
                 return R.drawable.ic_song;
         }

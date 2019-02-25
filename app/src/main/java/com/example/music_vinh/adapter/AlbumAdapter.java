@@ -83,11 +83,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
                 Intent intent = new Intent(context, AlbumInfoActivity.class);
 
                 intent.putExtra("index",i);
-                intent.putExtra("album_ID",albumList.get(i).getId());
-                Log.d("truyen",albumList.get(i).getId()+"");
-
+                 intent.putExtra("album_ID",albumList.get(i).getId());
+                 Log.d("truyen",albumList.get(i).getId()+"");
                 intent.putExtra("albumArrayList",(ArrayList) albumList);
-               // intent.putExtra("albumArrayList",albumList.get(i));
                 context.startActivity(intent);
             }
         });

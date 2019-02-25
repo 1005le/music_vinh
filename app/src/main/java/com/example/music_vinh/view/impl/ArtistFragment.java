@@ -52,6 +52,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
   public static ArtistAdapter artistAdapter;
   public static ArrayList<Artist> artistList;
+
     private static final int MY_PERMISSION_REQUEST = 1;
 
     public ArtistFragment() {

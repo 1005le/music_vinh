@@ -22,6 +22,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -44,6 +45,7 @@ import com.example.music_vinh.adapter.SongInArtistAdapter;
 import com.example.music_vinh.injection.AppComponent;
 import com.example.music_vinh.injection.ArtistInfoViewModule;
 import com.example.music_vinh.injection.DaggerArtistInfoViewComponent;
+import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.ArtistInfoPresenter;
@@ -53,9 +55,11 @@ import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.ArtistInfoView;
 import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -94,7 +98,9 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     private int mProgess;
     SeekBar seekBar;
     public Song song;
-    private long totalTime, currentTime,currentPosition;
+    private int totalTime, currentTime,currentPosition;
+    ArrayList<Artist> artistListInfo;
+    String indexArtist;
 
     @Inject
     ArtistInfoPresenter artistInfoPresenter;
@@ -113,7 +119,9 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
         bindServiceMedia();
         loadAudioInfo();
-        register_DataSong();
+
+        register_DataSongFragment();
+        register_durationAudio();
         register_currentTimeAudio();
         eventClick();
     }
@@ -163,12 +171,10 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             public void onClick(View view, int index) {
 
                 Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.KEY_SONGS,ArtistInfoActivity.songArrayList);
-                bundle.putInt(Constants.KEY_POSITION,index);
-                intent.putExtra(Constants.KEY_BUNDLE,bundle);
-                Log.d("nameArtist",ArtistInfoActivity.songArrayList.get(index).getName());
-                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
+                StorageUtil storage = new StorageUtil(getApplicationContext());
+                storage.storeAudio(songArrayList);
+                storage.storeAudioIndex(index);
+                intent.putExtra("PLAY_TYPE", "PLAY");
                 startActivity(intent);
             }
         }));
@@ -199,75 +205,79 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         if (mSCon != null) {
             unbindService(mSCon);
         }
-        unregisterReceiver(dataSongAlbum);
+        LocalBroadcastManager.getInstance(ArtistInfoActivity.this).unregisterReceiver(dataSongFragment);
+        LocalBroadcastManager.getInstance(ArtistInfoActivity.this).unregisterReceiver(durationAudio);
+        LocalBroadcastManager.getInstance(ArtistInfoActivity.this).unregisterReceiver(currentTimeAudio);
     }
     private void loadAudioInfo() {
         Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
         sendBroadcast(loadAudioIntent);
     }
 
-    private BroadcastReceiver dataSongAlbum = new BroadcastReceiver() {
+    private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            // StorageUtil storage = new StorageUtil(getApplicationContext());
-            songArrayList = intent.getParcelableArrayListExtra(Constants.KEY_SONGS);
-            audioIndex = intent.getIntExtra(Constants.KEY_POSITION,0);
-            song = songArrayList.get(audioIndex);
-            Log.d("songSortRece", songArrayList.get(audioIndex).getName()+"");
-            totalTime = intent.getIntExtra(Constants.DURATION,0);
-            currentPosition = intent.getIntExtra(Constants.KEY_PROGESS,0);
-           // Log.d("timeSort", totalTime+"currentTime"+currentTime);
-
-            seekBar.setMax((int) totalTime);
-            seekBar.setProgress((int) currentTime);
-            tvNameSong.setText(song.getName());
-            tvNameArtist.setText(song.getNameArtist());
-            imgPause.setVisibility(View.INVISIBLE);
-            imgBottomPlay.setVisibility(View.VISIBLE);
-            getDataBottom();
+        public void onReceive(Context context, final Intent intent) {
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            if (storage.loadAudio() != null && storage.loadAudioIndex() > -1) {
+                audioIndex = storage.loadAudioIndex();
+                tvNameSong.setText(storage.loadAudio().get(audioIndex).getName());
+                tvNameArtist.setText(storage.loadAudio().get(audioIndex).getNameArtist());
+                getDataBottom();
+            }
         }
     };
 
-    private void register_DataSong() {
+    private void register_DataSongFragment() {
         //Register playNewMedia receiver
         IntentFilter filter = new IntentFilter(Constants.SEND);
-        registerReceiver(dataSongAlbum, filter);
+        LocalBroadcastManager.getInstance(ArtistInfoActivity.this).registerReceiver(dataSongFragment, filter);
+    }
+
+    private BroadcastReceiver durationAudio = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            totalTime = intent.getIntExtra(Constants.DURATION, 0);
+            seekBar.setMax(totalTime);
+        }
+    };
+
+    private void register_durationAudio() {
+        //Register playNewMedia receiver
+        IntentFilter filter = new IntentFilter(Constants.SEND_DURATION);
+        LocalBroadcastManager.getInstance(ArtistInfoActivity.this).registerReceiver(durationAudio, filter);
     }
 
     private BroadcastReceiver currentTimeAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Get the new media index form SharedPreferences
-            currentTime = intent.getIntExtra(Constants.CURRENT_TIME,0);
-//            Log.d("timeMain", totalTime+"currentTime"+currentTime);
-            seekBar.setProgress((int) mMusicService.getCurrentPosition());
-
-            if (mMusicService.isPlay()) {
-                imgPause.setVisibility(View.INVISIBLE);
-                imgBottomPlay.setVisibility(View.VISIBLE);
-            } else {
-                imgPause.setVisibility(View.VISIBLE);
-                imgBottomPlay.setVisibility(View.INVISIBLE);
-            }
+            int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
+            //Log.d("curent", current+"");
+            seekBar.setProgress(current);
+            statusAudio();
         }
     };
 
-    private void register_currentTimeAudio() {
-        //Register playNewMedia receiver
+    public void register_currentTimeAudio() {
         IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
-        registerReceiver(currentTimeAudio, filter);
+        LocalBroadcastManager.getInstance(ArtistInfoActivity.this).registerReceiver(
+                currentTimeAudio, filter);
     }
 
+    private void statusAudio() {
+        if (mMusicService.isPlay()) {
+            imgPause.setVisibility(View.INVISIBLE);
+            imgBottomPlay.setVisibility(View.VISIBLE);
+        } else {
+            imgPause.setVisibility(View.VISIBLE);
+            imgBottomPlay.setVisibility(View.INVISIBLE);
+        }
+    }
     private void getDataBottom() {
         linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.KEY_SONGS, songArrayList);
-                bundle.putInt(Constants.KEY_POSITION, audioIndex);
-                intent.putExtra(Constants.KEY_BUNDLE, bundle);
-                // intent.putExtra(Constants.KEY_PROGESS,mMediaPlayer.getCurrentPosition());
+                intent.putExtra("PLAY_TYPE", "RESUME");
                 startActivity(intent);
             }
         });
@@ -295,7 +305,22 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
     private void getDataIntent() {
         Intent intent = getIntent();
-        artist = (Artist) intent.getParcelableExtra("artistArrayList");
+        if (intent.hasExtra("artistArrayList")) {
+            artistListInfo = intent.getParcelableArrayListExtra("artistArrayList");
+        }
+        if (intent.hasExtra("index")) {
+            int index = intent.getIntExtra("index", 0);
+            artist = artistListInfo.get(index);
+        }
+        /*nhân tu search
+         * */
+        if (intent.hasExtra("artist_index")) {
+            artistListInfo = ArtistFragment.artistList;
+            Log.d("arrtistA",ArtistFragment.artistList.get(0).getName());
+            indexArtist = intent.getStringExtra("artist_index");
+            Log.d("nhanIDArtist", indexArtist + "");
+            artist = artistListInfo.get(Integer.parseInt(indexArtist));
+        }
     }
     private void act() {
         setSupportActionBar(toolbarArtist);
@@ -330,7 +355,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     private void doStuff() {
         songArrayList= new ArrayList<>();
          songArrayList = getSongArtist();
-
         artistInfoPresenter.loadData();
     }
 
@@ -348,6 +372,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             int artistColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int artistId = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID);
             int albumName = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+            int artistSong = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
             int durationColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             // Store the title, id and artist name in Song Array list.
             do
@@ -357,12 +382,13 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 String thisTitle = mediaCursor.getString(titleColumn);
                 String thisArtist = mediaCursor.getString(artistColumn);
                 String thisAlbumName = mediaCursor.getString(albumName);
+                String thisPath = mediaCursor.getString(artistSong);
                 String thisDuration = mediaCursor.getString(durationColumn);
 
                 // Add the info to our array.
                 if(artist.getId() == thisArtistId)
                 {
-                    songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,"",Long.parseLong(thisDuration)));
+                    songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,thisPath,Long.parseLong(thisDuration)));
                 }
             }
             while (mediaCursor.moveToNext());

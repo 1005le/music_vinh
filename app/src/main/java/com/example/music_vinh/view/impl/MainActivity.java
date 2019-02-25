@@ -1,7 +1,6 @@
 package com.example.music_vinh.view.impl;
 
 
-
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -67,31 +66,22 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class  MainActivity extends BaseActivity  {
+public class MainActivity extends BaseActivity {
 
-    @BindView(R.id.myTabLayout)
-    TabLayout tabLayout;
-    @BindView(R.id.myViewPager)
-    ViewPager viewPager;
-    @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
-    @BindView(R.id.toolBarMainActivity)
-    Toolbar toolbarMainActivity;
+    @BindView(R.id.myTabLayout) TabLayout tabLayout;
+    @BindView(R.id.myViewPager) ViewPager viewPager;
+    @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
+    @BindView(R.id.toolBarMainActivity) Toolbar toolbarMainActivity;
 
-    @BindView(R.id.linearBottom)
-    RelativeLayout linearLayoutBottom;
+    @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
     //LinearLayout linearLayoutBottom;
 
-    @BindView(R.id.tvNameSongBottom)
-    TextView tvNameSong;
-    @BindView(R.id.tvNameArtistBottom)
-    TextView tvNameArtist;
+    @BindView(R.id.tvNameSongBottom) TextView tvNameSong;
+    @BindView(R.id.tvNameArtistBottom) TextView tvNameArtist;
 
-    @BindView(R.id.imgButtonPause)
-    ImageButton imgPause;
+    @BindView(R.id.imgButtonPause) ImageButton imgPause;
 
-    @BindView(R.id.imgButtonPlay)
-    ImageButton imgBottomPlay;
+    @BindView(R.id.imgButtonPlay) ImageButton imgBottomPlay;
 
     //@BindView(R.id.seekBarBottom)
     SeekBar seekBar;
@@ -99,7 +89,7 @@ public class  MainActivity extends BaseActivity  {
     MainView mainView;
 
     public ArrayList<Song> songList;
-    public int audioIndex ;
+    public int audioIndex;
     public Song song;
     private MusicService mMusicService;
     private boolean mIsBound;
@@ -116,29 +106,31 @@ public class  MainActivity extends BaseActivity  {
 
         bindServiceMedia();
         register_DataSongFragment();
-      //  loadAudioInfo();
+        //  loadAudioInfo();
         register_durationAudio();
         register_currentTimeAudio();
         eventClick();
-
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         loadAudioInfo();
     }
 
-    public void eventClick(){
+    public void eventClick() {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mMusicService.seekTo(seekBar.getProgress() *1000);
+                mMusicService.seekTo(seekBar.getProgress() * 1000);
             }
         });
         imgPause.setOnClickListener(new View.OnClickListener() {
@@ -181,13 +173,14 @@ public class  MainActivity extends BaseActivity  {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
     }
+
     /**
      * Khai báo các Tab
      */
     private void initTab() {
         MainViewAdapter mainViewAdapter = new MainViewAdapter(getSupportFragmentManager());
-        mainViewAdapter.addFragment(new SongFragment(),getString(R.string.song));
-        mainViewAdapter.addFragment(new AlbumFragment(),getString(R.string.album));
+        mainViewAdapter.addFragment(new SongFragment(), getString(R.string.song));
+        mainViewAdapter.addFragment(new AlbumFragment(), getString(R.string.album));
         mainViewAdapter.addFragment(new ArtistFragment(), getString(R.string.artist));
         viewPager.setAdapter(mainViewAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -198,12 +191,15 @@ public class  MainActivity extends BaseActivity  {
         public void onReceive(Context context, final Intent intent) {
 
             StorageUtil storage = new StorageUtil(getApplicationContext());
-            songList= storage.loadAudio();
+            songList = storage.loadAudio();
             audioIndex = storage.loadAudioIndex();
 
-            tvNameSong.setText(songList.get(audioIndex).getName());
-            tvNameArtist.setText(songList.get(audioIndex).getNameArtist());
-            getDataBottom();
+            if (songList != null && audioIndex > -1) {
+                tvNameSong.setText(songList.get(audioIndex).getName());
+                tvNameArtist.setText(songList.get(audioIndex).getNameArtist());
+                getDataBottom();
+            }
+
         }
     };
 
@@ -215,14 +211,14 @@ public class  MainActivity extends BaseActivity  {
 
     private void loadAudioInfo() {
         Intent loadAudioIntent = new Intent(Constants.LOAD_AUDIO);
-        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(loadAudioIntent);
+        sendBroadcast(loadAudioIntent);
     }
 
     private BroadcastReceiver durationAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           totalTime = intent.getIntExtra(Constants.DURATION,0);
-              seekBar.setMax( totalTime );
+            totalTime = intent.getIntExtra(Constants.DURATION, 0);
+            seekBar.setMax(totalTime);
         }
     };
 
@@ -236,17 +232,18 @@ public class  MainActivity extends BaseActivity  {
         @Override
         public void onReceive(Context context, Intent intent) {
             int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
-            //Log.d("curent", current+"");
-
             seekBar.setProgress(current);
             statusAudio();
         }
     };
+
     public void register_currentTimeAudio() {
+        IntentFilter filter = new IntentFilter(Constants.SEND_CURRENT);
         LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(
-                currentTimeAudio, new IntentFilter(Constants.SEND_CURRENT));
+                currentTimeAudio, filter);
     }
-    private void statusAudio(){
+
+    private void statusAudio() {
         if (mMusicService.isPlay()) {
             imgPause.setVisibility(View.INVISIBLE);
             imgBottomPlay.setVisibility(View.VISIBLE);
@@ -257,31 +254,18 @@ public class  MainActivity extends BaseActivity  {
     }
 
     private void getDataBottom() {
-            linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-
-                 /*   StorageUtil storage = new StorageUtil(getApplicationContext());
-                    songList= storage.loadAudio();
-                    audioIndex = storage.loadAudioIndex();
-
-//                 //   intent.putExtra("duration", mMusicService.getDuration());
-                    intent.putExtra("current", mMusicService.getCurrentPosition());
-                    Log.d("total",mMusicService.getDuration()+"-"+"currentMain:+"+mMusicService.getCurrentPosition()+"");    */
-//                    Bundle bundle = new Bundle();
-//                    bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
-//                    bundle.putInt(Constants.KEY_POSITION,audioIndex);
-//                    intent.putExtra(Constants.KEY_BUNDLE,bundle);
-                   // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
-
-                    startActivity(intent);
-                }
-            });
+        linearLayoutBottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                intent.putExtra("PLAY_TYPE", "RESUME");
+                startActivity(intent);
+            }
+        });
     }
 
     private void bindServiceMedia() {
-        Intent intent = new Intent(this, MusicService.class);
+        Intent intent = new Intent(MainActivity.this, MusicService.class);
         intent.setAction(Constants.ACTION_BIND_SERVICE);
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
@@ -292,6 +276,7 @@ public class  MainActivity extends BaseActivity  {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
             // mMusicService.setListener(MainActivity.this);
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mSCon = null;
@@ -304,7 +289,9 @@ public class  MainActivity extends BaseActivity  {
         if (mSCon != null) {
             unbindService(mSCon);
         }
-        unregisterReceiver(dataSongFragment);
+        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(dataSongFragment);
+        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(durationAudio);
+        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(currentTimeAudio);
     }
 
 

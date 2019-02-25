@@ -42,6 +42,7 @@ import static com.example.music_vinh.view.custom.Constants.ACTION_PREVIOUS;
 public class MusicService extends Service implements BaseMediaPlayer
         , MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener
         , MediaPlayer.OnErrorListener {
+    private static final String TAG = "MusicService";
     private MyBinder mMyBinder = new MyBinder();
     private MediaPlayer mMediaPlayer;
     private ArrayList<Song> mSongs;
@@ -58,8 +59,7 @@ public class MusicService extends Service implements BaseMediaPlayer
         @Override
         public void run() {
             mServiceCallback.postCurentTime(getCurrentPosition());
-            //sendAudioCurrentTimeBroadcast();
-            sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition()/1000);
+            sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition() / 1000);
             if (isPlay()) {
                 mHandler.postDelayed(this, Constants.DELAY_MILLIS);
             }
@@ -72,6 +72,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate");
         super.onCreate();
         mRandom = new Random();
         mCurrentPossition = 0;
@@ -82,6 +83,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 
         initMediaPlayer();
         register_loadAudio();
+
     }
 
     private void initMediaPlayer() {
@@ -104,7 +106,7 @@ public class MusicService extends Service implements BaseMediaPlayer
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        // Log.d("music", mSongs.get(mCurrentPossition).getName());
         if (intent != null) {
             handlerIntent(intent);
         }
@@ -128,13 +130,15 @@ public class MusicService extends Service implements BaseMediaPlayer
     @Override
     public void playSong() {
         Song song = mSongs.get(mCurrentPossition);
-        Log.d("ten",song.getName());
+//        Log.d(TAG, song.getName());
+//        Log.d(TAG, song.getPath());
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
-            //Log.d("path",song.getPath());
+            Log.d("path", song.getPath());
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -222,13 +226,18 @@ public class MusicService extends Service implements BaseMediaPlayer
     @Override
     public void onPrepared(MediaPlayer mp) {
 
-        mServiceCallback.postTotalTime(getDuration());
-        postCurrentTime();
-        postTitle(mSongs.get(mCurrentPossition));
+        Log.d(TAG, "Prepared");
+//        mServiceCallback.postTotalTime(getDuration());
+//        postCurrentTime();
+//        postTitle(mSongs.get(mCurrentPossition));
 
         mServiceCallback.postStartButton();
-       // Log.d("total",getDuration()+"");
+        // Log.d("total",getDuration()+"");
         sendAudioInfoBroadcast();
+        sendAudioDuraionBroadcast(mMediaPlayer.getDuration() / 1000);
+        postCurrentTime();
+        // sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition()/1000);
+
         mMediaPlayer.start();
         postNotification();
     }
@@ -259,9 +268,11 @@ public class MusicService extends Service implements BaseMediaPlayer
     }
 
     public void continuesSong() {
-        mMediaPlayer.seekTo(getProgess());
+        mMediaPlayer.seekTo(mMediaPlayer.getCurrentPosition());
         mMediaPlayer.start();
         mServiceCallback.postStartButton();
+        sendAudioInfoBroadcast();
+        sendAudioDuraionBroadcast(mMediaPlayer.getDuration() / 1000);
         postCurrentTime();
         postNotification();
     }
@@ -289,9 +300,10 @@ public class MusicService extends Service implements BaseMediaPlayer
     private BroadcastReceiver loadAudio = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
+            Log.d(TAG, "loadAudio");
             sendAudioInfoBroadcast();
-            sendAudioDuraionBroadcast();
-            sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition()/1000);
+            sendAudioDuraionBroadcast(mMediaPlayer.getDuration() / 1000);
+            sendAudioCurrentTimeBroadcast(mMediaPlayer.getCurrentPosition() / 1000);
         }
     };
 
@@ -300,9 +312,10 @@ public class MusicService extends Service implements BaseMediaPlayer
         registerReceiver(loadAudio, filter);
     }
 
-    public void sendAudioDuraionBroadcast(){
+    public void sendAudioDuraionBroadcast(int total) {
         Intent intent1 = new Intent(Constants.SEND_DURATION);
-        intent1.putExtra(Constants.DURATION, mMediaPlayer.getDuration()/1000);
+        // intent1.putExtra(Constants.DURATION, mMediaPlayer.getDuration()/1000);
+        intent1.putExtra(Constants.DURATION, total);
         LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent1);
     }
 
@@ -312,28 +325,28 @@ public class MusicService extends Service implements BaseMediaPlayer
         LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent);
     }
 
-    public void sendAudioInfoBroadcast(){
+    public void sendAudioInfoBroadcast() {
         //Truyen đen mainActivity
-        final Intent intent1 = new Intent(Constants.SEND);
+        Intent intent1 = new Intent(Constants.SEND);
 
         StorageUtil storage = new StorageUtil(getApplicationContext());
-        storage.storeAudio( mSongs);
+        storage.storeAudio(mSongs);
         storage.storeAudioIndex(mCurrentPossition);
 
         LocalBroadcastManager.getInstance(MusicService.this).sendBroadcast(intent1);
     }
 
-   private void postNotification() {
+    private void postNotification() {
 
         Intent intent = new Intent(this, PlayActivity.class);
     /*    Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(Constants.KEY_SONGS, mSongs);
         bundle.putInt(Constants.KEY_POSITION,mCurrentPossition);
         intent.putExtra(Constants.KEY_BUNDLE,bundle); */
-       intent.putExtra(Constants.KEY_PROGESS, mMediaPlayer.getCurrentPosition());
-         Log.d("dayKey1", mMediaPlayer.getCurrentPosition()+"");
-       intent.putExtra(Constants.KEY_PROGESS, getCurrentPosition());
-         Log.d("dayKey2", getCurrentPosition()+"");
+        intent.putExtra(Constants.KEY_PROGESS, mMediaPlayer.getCurrentPosition());
+        Log.d("dayKey1", mMediaPlayer.getCurrentPosition() + "");
+        intent.putExtra(Constants.KEY_PROGESS, getCurrentPosition());
+        Log.d("dayKey2", getCurrentPosition() + "");
 //       StorageUtil storage = new StorageUtil(getApplicationContext());
 //       mSongs = storage.loadAudio();
 //       mCurrentPossition = storage.loadAudioIndex();
@@ -343,8 +356,8 @@ public class MusicService extends Service implements BaseMediaPlayer
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-       PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-               intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseStartIntent = new Intent(this, MusicService.class);
         pauseStartIntent.setAction(Constants.ACTION_PLAY);
