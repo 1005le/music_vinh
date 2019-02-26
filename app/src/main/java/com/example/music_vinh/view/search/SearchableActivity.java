@@ -84,10 +84,12 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void storeAudioIndex(String data) {
         StorageUtil storage = new StorageUtil(getApplicationContext());
-        List<Song> songList = storage.loadAudio();
-        for (Song song : songList) {
-            if (String.valueOf(song.getId()).equals(data)) {
-                storage.storeAudioIndex(songList.indexOf(song));
+        List<Song> songList = null;
+        if(songList == storage.loadAudio() || songList == SongFragment.songList) {
+            for (Song song : songList) {
+                if (String.valueOf(song.getId()).equals(data)) {
+                    storage.storeAudioIndex(songList.indexOf(song));
+                }
             }
         }
     }
