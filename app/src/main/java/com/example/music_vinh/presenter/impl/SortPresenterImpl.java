@@ -12,11 +12,17 @@ import com.example.music_vinh.view.SortView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class SortPresenterImpl implements SortPresenter, SortInteractor {
 
     private SortInteractorImpl sortInteractorImpl;
     private SortView sortView;
 
+    @Inject
+    public SortPresenterImpl() {
+
+    }
     public SortPresenterImpl(SortInteractorImpl sortInteractorImpl, SortView sortView) {
         this.sortInteractorImpl = sortInteractorImpl;
         this.sortView = sortView;

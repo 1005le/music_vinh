@@ -8,6 +8,5 @@ import dagger.Component;
 @ActivityScope
 @Component(dependencies = AppComponent.class, modules = AlbumInfoViewModule.class)
 public interface AlbumInfoViewComponent {
-
     void inject(AlbumInfoActivity albumInfoActivity);
 }

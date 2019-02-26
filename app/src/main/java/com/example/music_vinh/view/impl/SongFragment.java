@@ -66,10 +66,17 @@ public class SongFragment extends Fragment implements MainView {
 
     @BindView(R.id.recycleViewSong)
     RecyclerView songRecyclerView;
+    @Inject
+   SongAdapter songAdapter;
+    //Presenter
+    @Inject
+    MainPresenter mainPresenter;
+    @Inject
+    LinearLayoutManager linearLayoutManager;
+    @Inject
+    GridLayoutManager gridLayoutManager;
 
-   public static SongAdapter songAdapter;
-
-   public static ArrayList<Song> songList;
+    public static ArrayList<Song> songList;
     private MusicService mMusicService;
     // boolean serviceBound = false;
     private ServiceConnection mSCon;
@@ -77,9 +84,7 @@ public class SongFragment extends Fragment implements MainView {
     private boolean mIsBound;
 
 
-    //Presenter
-   @Inject
-   MainPresenter mainPresenter;
+
 
     public SongFragment() {
         // Required empty public constructor
@@ -100,36 +105,30 @@ public class SongFragment extends Fragment implements MainView {
         initPresenter();
         doStuff();
         setHasOptionsMenu(true);
-               songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
-                    @Override
-                    public void onClick(View view, int index) {
-                      //  playAudio(index);
-                      //  connectService(index);
-                        StorageUtil storage = new StorageUtil(getContext());
-                        storage.storeAudio(songList);
-                        storage.storeAudioIndex(index);
+        evenClick();
+    }
 
-                       Intent intent = new Intent(getActivity(), PlayActivity.class);
-                        intent.putExtra("PLAY_TYPE", "PLAY");
-                    /*     Bundle bundle = new Bundle();
-                        bundle.putParcelableArrayList(Constants.KEY_SONGS, songList);
-                        bundle.putInt(Constants.KEY_POSITION, index);
-                        intent.putExtra(Constants.KEY_BUNDLE, bundle);  */
-                        startActivity(intent);
+    private void evenClick() {
+        songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+            @Override
+            public void onClick(View view, int index) {
+                StorageUtil storage = new StorageUtil(getContext());
+                storage.storeAudio(songList);
+                storage.storeAudioIndex(index);
+                Log.d("idSong",songList.get(index).getId()+"");
 
-//                  Intent intent = new Intent(getContext(), PlayActivity.class);
-//                  intent.putExtra("index", index);
-//                  intent.putParcelableArrayListExtra("arrSong",songList);
-//                  Log.d("song",songList.get(index).getName());
-//                  getContext().startActivity(intent);
+                Intent intent = new Intent(getActivity(), PlayActivity.class);
+                intent.putExtra("PLAY_TYPE", "PLAY");
+                startActivity(intent);
 
-                    }
-                }));
+            }
+        }));
 
     }
 
     private void initPresenter(){
         mainPresenter = new MainPresenterImpl(this);
+       // mainPresenter = new MainPresenterImpl();
      }
 
     @Override
@@ -188,9 +187,9 @@ public class SongFragment extends Fragment implements MainView {
         }
     }
     private void disPlayViewList() {
-        songAdapter.setViewType(Constants.VIEW_LIST);
+        songAdapter.setType(Constants.VIEW_LIST);
         songAdapter = new SongAdapter(getActivity(),songList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+       linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         songRecyclerView.setLayoutManager(linearLayoutManager);
         songRecyclerView.setAdapter(songAdapter);
@@ -198,8 +197,8 @@ public class SongFragment extends Fragment implements MainView {
 
     private void disPlayViewGrid() {
         songAdapter = new SongAdapter(getActivity(),songList);
-        songAdapter.setViewType(Constants.VIEW_GRID);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        songAdapter.setType(Constants.VIEW_GRID);
+        gridLayoutManager = new GridLayoutManager(getActivity(),2);
         songRecyclerView.setLayoutManager(gridLayoutManager);
         songRecyclerView.setAdapter(songAdapter);
     }

@@ -1,6 +1,7 @@
 package com.example.music_vinh.view.impl;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -57,6 +58,7 @@ import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.CustomTouchListener;
 import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
+import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,30 +70,19 @@ import butterknife.ButterKnife;
 
 public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
-    @BindView(R.id.coordinatorArtist)
-    CoordinatorLayout coordinatorLayoutArtist;
-    @BindView(R.id.collapsingToolbarArtist)
-    CollapsingToolbarLayout collapsingToolbarLayoutArtist;
-    @BindView(R.id.toolbarArtistInfo)
-    Toolbar toolbarArtist;
-    @BindView(R.id.SongInArtistrecyclerView)
-    RecyclerView songInArtistRecycleView;
+    @BindView(R.id.coordinatorArtist) CoordinatorLayout coordinatorLayoutArtist;
+    @BindView(R.id.collapsingToolbarArtist) CollapsingToolbarLayout collapsingToolbarLayoutArtist;
+    @BindView(R.id.toolbarArtistInfo) Toolbar toolbarArtist;
+    @BindView(R.id.SongInArtistrecyclerView) RecyclerView songInArtistRecycleView;
     Artist artist;
    public static ArrayList<Song> songArrayList;
-    SongInArtistAdapter songInArtistAdapter;
-    @BindView(R.id.imgViewArtist)
-    ImageView imgViewArtist;
+    @BindView(R.id.imgViewArtist) ImageView imgViewArtist;
 
-    @BindView(R.id.linearBottom)
-    RelativeLayout linearLayoutBottom;
-    @BindView(R.id.tvNameSongBottom)
-    TextView tvNameSong;
-    @BindView(R.id.tvNameArtistBottom)
-    TextView tvNameArtist;
-    @BindView(R.id.imgButtonPause)
-    ImageButton imgPause;
-    @BindView(R.id.imgButtonPlay)
-    ImageButton imgBottomPlay;
+    @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
+    @BindView(R.id.tvNameSongBottom) TextView tvNameSong;
+    @BindView(R.id.tvNameArtistBottom) TextView tvNameArtist;
+    @BindView(R.id.imgButtonPause) ImageButton imgPause;
+    @BindView(R.id.imgButtonPlay) ImageButton imgBottomPlay;
 
     public int audioIndex;
     private MusicService mMusicService;
@@ -99,11 +90,18 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     SeekBar seekBar;
     public Song song;
     private int totalTime, currentTime,currentPosition;
-    ArrayList<Artist> artistListInfo;
+     ArrayList<Artist> artistListInfo;
+   //  List<Artist> artistListInfo;
     String indexArtist;
+    long idArtist;
+    private SearchView mSearchView;
 
     @Inject
     ArtistInfoPresenter artistInfoPresenter;
+     @Inject
+    SongInArtistAdapter songInArtistAdapter;
+     @Inject
+    LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +111,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         seekBar = findViewById(R.id.seekBarBottom);
         ButterKnife.bind(this);
         act();
-       getData();
+       // getData();
         initPresenter();
         doStuff();
 
@@ -174,7 +172,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 StorageUtil storage = new StorageUtil(getApplicationContext());
                 storage.storeAudio(songArrayList);
                 storage.storeAudioIndex(index);
-                intent.putExtra("PLAY_TYPE", "PLAY");
+                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
             }
         }));
@@ -277,7 +275,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
-                intent.putExtra("PLAY_TYPE", "RESUME");
+                intent.putExtra(Constants.PLAY_TYPE, Constants.RESUME);
                 startActivity(intent);
             }
         });
@@ -296,6 +294,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     }
 
     private void getData() {
+
         Drawable img = Drawable.createFromPath(artist.getImages());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             collapsingToolbarLayoutArtist.setBackground(img);
@@ -305,22 +304,20 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
 
     private void getDataIntent() {
         Intent intent = getIntent();
-        if (intent.hasExtra("artistArrayList")) {
-            artistListInfo = intent.getParcelableArrayListExtra("artistArrayList");
-        }
-        if (intent.hasExtra("index")) {
-            int index = intent.getIntExtra("index", 0);
-            artist = artistListInfo.get(index);
+        if (intent.hasExtra("artist")) {
+            artist= intent.getParcelableExtra("artist");
+            idArtist = artist.getId();
         }
         /*nhân tu search
          * */
-        if (intent.hasExtra("artist_index")) {
+
+        if (intent.hasExtra("artist_ID")) {
             artistListInfo = ArtistFragment.artistList;
-            Log.d("arrtistA",ArtistFragment.artistList.get(0).getName());
-            indexArtist = intent.getStringExtra("artist_index");
-            Log.d("nhanIDArtist", indexArtist + "");
-            artist = artistListInfo.get(Integer.parseInt(indexArtist));
+            indexArtist = intent.getStringExtra("artist_ID");
+            idArtist= Long.parseLong(indexArtist);
+          //  artist = artistListInfo.get(Integer.parseInt(indexArtist));
         }
+
     }
     private void act() {
         setSupportActionBar(toolbarArtist);
@@ -332,12 +329,10 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 finish();
             }
         });
-
-       // collapsingToolbarLayoutArtist.setTitle(artist.getName());
+        //collapsingToolbarLayoutArtist.setTitle(artist.getName());
         collapsingToolbarLayoutArtist.setExpandedTitleColor(Color.WHITE);
         collapsingToolbarLayoutArtist.setCollapsedTitleTextColor(Color.WHITE);
     }
-
 
     private void initPresenter(){
         artistInfoPresenter = new ArtistInfoPresenterImpl(this);
@@ -346,7 +341,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     public void showSong(ArrayList<Song> songs) {
         songInArtistAdapter = new SongInArtistAdapter(ArtistInfoActivity.this, songs);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ArtistInfoActivity.this);
+        linearLayoutManager = new LinearLayoutManager(ArtistInfoActivity.this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         songInArtistRecycleView.setLayoutManager(linearLayoutManager);
         songInArtistRecycleView.setAdapter(songInArtistAdapter);
@@ -386,9 +381,11 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 String thisDuration = mediaCursor.getString(durationColumn);
 
                 // Add the info to our array.
-                if(artist.getId() == thisArtistId)
+               // if(artist.getId() == thisArtistId)
+                if(idArtist == thisArtistId)
                 {
                     songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,thisPath,Long.parseLong(thisDuration)));
+                    collapsingToolbarLayoutArtist.setTitle(thisArtist);
                 }
             }
             while (mediaCursor.moveToNext());
@@ -397,23 +394,18 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         }
         return songArrayList;
     }
-
     @Override
-    public boolean onCreateOptionsMenu( Menu menu) {
-        getMenuInflater().inflate( R.menu.search_view, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_view, menu);
 
-        MenuItem myActionMenuItem = menu.findItem( R.id.menu_search);
-        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return true;
-            }
-        });
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) searchItem.getActionView();
+
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(
+                new ComponentName(this, SearchableActivity.class)));
+        mSearchView.setIconifiedByDefault(true);
+
         return true;
     }
 }

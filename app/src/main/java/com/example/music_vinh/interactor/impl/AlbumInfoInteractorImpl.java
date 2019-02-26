@@ -15,24 +15,16 @@ import javax.inject.Inject;
 
 public class AlbumInfoInteractorImpl implements AlbumInfoInteractor{
 
-    private AlbumInfoInteractor albumInfoInteractor;
-
      @Inject
-     public AlbumInfoInteractorImpl(){
-
-     }
     public AlbumInfoInteractorImpl(AlbumInfoInteractor albumInfoInteractor){
-        this.albumInfoInteractor = albumInfoInteractor;
     }
     private  ArrayList<Song> createArrayList() {
         ArrayList<Song> songs = AlbumInfoActivity.songArrayListAlbum;
         return songs;
     }
-
     public void getSongCategories(final AlbumInfoInteractor albumInfoInteractor) {
         albumInfoInteractor.onLoadSongSuccess(createArrayList());
     }
-
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
 

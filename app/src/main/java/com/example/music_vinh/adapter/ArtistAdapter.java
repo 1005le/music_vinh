@@ -30,16 +30,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
     Context context;
     List<Artist> artistList;
     private int type;
+    private  OnItemClickListener mOnItemClickLister;
 
     public ArtistAdapter(Context context, List<Artist> artistList) {
         this.context = context;
         this.artistList = artistList;
     }
-    public int getViewType() {
+    public int getType() {
         return type;
     }
 
-    public void setViewType(int mViewType) {
+    public void setType(int mViewType) {
         this.type = mViewType;
         notifyDataSetChanged();
     }
@@ -47,7 +48,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
     @NonNull
     @Override
     public ArtistViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        switch (getViewType()) {
+        switch (getType()) {
             case Constants.VIEW_GRID:
                 return new ArtistViewHolder(
                         LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_artist, viewGroup, false));
@@ -76,26 +77,18 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
 
         Drawable img = Drawable.createFromPath(artist.getImages());
         viewHolder.imgArtist.setImageDrawable(img);
-
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(context, ArtistInfoActivity.class);
-                intent.putExtra("index",i);
-               // intent.putExtra("album_ID",artistList.get(i).getId());
-//                Log.d("truyen",artistList.get(i).getId()+"");
-                intent.putExtra("artistArrayList",(ArrayList) artistList);
-                context.startActivity(intent);
-
-            }
-        });
-
     }
-
     @Override
     public int getItemCount() {
         return artistList.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClicked(View view, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mOnItemClickLister = listener;
     }
 
     public class ArtistViewHolder extends RecyclerView.ViewHolder {

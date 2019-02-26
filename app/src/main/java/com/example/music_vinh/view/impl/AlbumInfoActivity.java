@@ -1,6 +1,7 @@
 package com.example.music_vinh.view.impl;
 
 import android.Manifest;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -24,6 +25,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -58,6 +60,7 @@ import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.CustomTouchListener;
 import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.custom.onItemClickListener;
+import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,41 +72,31 @@ import butterknife.ButterKnife;
 
 public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
-
-    @BindView(R.id.coordinator)
-    CoordinatorLayout coordinatorLayout;
-    @BindView(R.id.collapsingToolbar)
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    @BindView(R.id.toolbarDanhSach)
-    Toolbar toolbar;
-    @BindView(R.id.recyclerViewListSong)
-    RecyclerView listSongrecyclerView;
+    @BindView(R.id.coordinator) CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.collapsingToolbar) CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.toolbarDanhSach) Toolbar toolbar;
+    @BindView(R.id.recyclerViewListSong) RecyclerView listSongrecyclerView;
     Album album;
     public static ArrayList<Song> songArrayListAlbum;
-    SongInAlbumAdapter songInAlbumAdapter;
 
     @Inject
+    SongInAlbumAdapter songInAlbumAdapter;
+    @Inject
     AlbumInfoPresenter albumInfoPresenter;
-    @BindView(R.id.imgAlbumInfo)
-    ImageView imgAlbumInfo;
-    @BindView(R.id.imgIconAlbum)
-    ImageView imgIconAlbum;
-    @BindView(R.id.tvNameAlbumInfo)
-    TextView tvNameAlbumInfo;
-    @BindView(R.id.tvamountSongA)
-    TextView tvamountSongA;
+    @Inject
+    LinearLayoutManager linearLayoutManager;
+
+    @BindView(R.id.imgAlbumInfo) ImageView imgAlbumInfo;
+    @BindView(R.id.imgIconAlbum) ImageView imgIconAlbum;
+    @BindView(R.id.tvNameAlbumInfo) TextView tvNameAlbumInfo;
+    @BindView(R.id.tvamountSongA) TextView tvamountSongA;
 
 
-    @BindView(R.id.linearBottom)
-    RelativeLayout linearLayoutBottom;
-    @BindView(R.id.tvNameSongBottom)
-    TextView tvNameSong;
-    @BindView(R.id.tvNameArtistBottom)
-    TextView tvNameArtist;
-    @BindView(R.id.imgButtonPause)
-    ImageButton imgPause;
-    @BindView(R.id.imgButtonPlay)
-    ImageButton imgBottomPlay;
+    @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
+    @BindView(R.id.tvNameSongBottom) TextView tvNameSong;
+    @BindView(R.id.tvNameArtistBottom) TextView tvNameArtist;
+    @BindView(R.id.imgButtonPause) ImageButton imgPause;
+    @BindView(R.id.imgButtonPlay) ImageButton imgBottomPlay;
 
     public int audioIndex;
     private MusicService mMusicService;
@@ -115,6 +108,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     Long idAlbum;
     String indexAlbum;
     List<Album> albumList;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +147,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
                 StorageUtil storage = new StorageUtil(getApplicationContext());
                 storage.storeAudio(songArrayListAlbum);
                 storage.storeAudioIndex(index);
-                intent.putExtra("PLAY_TYPE", "PLAY");
+                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
             }
         }));
@@ -301,7 +295,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
-                intent.putExtra("PLAY_TYPE", "RESUME");
+                intent.putExtra(Constants.PLAY_TYPE, Constants.RESUME);
                 startActivity(intent);
             }
         });
@@ -319,36 +313,26 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
     private void getDataIntent() {
         Intent intent = getIntent();
-        if (intent.hasExtra("albumArrayList")) {
-            albumList = intent.getParcelableArrayListExtra("albumArrayList");
-        }
-        if (intent.hasExtra("index")) {
-            int index = intent.getIntExtra("index", 0);
-            album = albumList.get(index);
-        }
-        if (intent.hasExtra("album_ID")) {
-            idAlbum = intent.getLongExtra("album_ID", 0);
-          //  album = albumList.get(index);
+        if (intent.hasExtra("album")) {
+            album = intent.getParcelableExtra("album");
+            idAlbum = album.getId();
         }
         /*nhân tu search
          * */
-        if (intent.hasExtra("album_index")) {
+        if (intent.hasExtra("album_ID")) {
             albumList = AlbumFragment.albumList;
-             indexAlbum = intent.getStringExtra("album_index");
+            indexAlbum = intent.getStringExtra("album_ID");
             album = albumList.get(Integer.parseInt(indexAlbum) -1);
             idAlbum = Long.parseLong(indexAlbum);
-            Log.d("nhanID", indexAlbum + "");
         }
     }
 
     private void getData() {
-
         Drawable img = Drawable.createFromPath(album.getImages());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             collapsingToolbarLayout.setBackground(img);
         }
         imgAlbumInfo.setImageDrawable(img);
-
         imgIconAlbum.setImageDrawable(img);
         tvNameAlbumInfo.setText(album.getName());
         tvamountSongA.setText(album.getAmountSong() + R.string.songs);
@@ -365,7 +349,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
                 finish();
             }
         });
-        collapsingToolbarLayout.setTitle(album.getNameArtist());
+        collapsingToolbarLayout.setTitle(album.getName());
         collapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
     }
@@ -378,7 +362,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     public void showSong(ArrayList<Song> songs) {
         songInAlbumAdapter = new SongInAlbumAdapter(AlbumInfoActivity.this, songs);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(AlbumInfoActivity.this);
+        linearLayoutManager = new LinearLayoutManager(AlbumInfoActivity.this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listSongrecyclerView.setLayoutManager(linearLayoutManager);
         listSongrecyclerView.setAdapter(songInAlbumAdapter);
@@ -419,8 +403,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
                 // Add the info to our array.
                // if (album.getId() == thisalbumId)
-                if( (idAlbum) == thisalbumId)
-                {
+                if( (idAlbum) == thisalbumId) {
                     songArrayListAlbum.add(new Song(thisId, thisTitle, thisArtist, thisAlbumName, thisPath, Long.parseLong(thisDuration)));
                 }
 
@@ -436,27 +419,14 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_view, menu);
 
-        MenuItem myActionMenuItem = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) searchItem.getActionView();
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
-//                    adapter.filter("");
-//                    listView.clearTextFilter();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(
+                new ComponentName(this, SearchableActivity.class)));
+        mSearchView.setIconifiedByDefault(true);
 
-
-                } else {
-                    // adapter.filter(newText);
-                }
-                return true;
-            }
-        });
         return true;
     }
 

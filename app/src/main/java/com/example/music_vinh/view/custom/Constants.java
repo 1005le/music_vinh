@@ -32,4 +32,8 @@ public class Constants {
     public static final String CURRENT_TIME = "CURRENT_TIME";
     public static final String PLAY_NEW_AUDIO = "PLAY_NEW_AUDIO";
     public static final String RESUME_AUDIO = "RESUME_AUDIO";
+    public static final String PLAY_TYPE = "PLAY_TYPE";
+    public static final String RESUME = "RESUME";
+    public static final String PLAY = "PLAY";
+
 }

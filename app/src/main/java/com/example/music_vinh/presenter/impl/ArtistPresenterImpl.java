@@ -10,6 +10,8 @@ import com.example.music_vinh.view.ArtistView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
 
     private ArtistInteractorImpl artistInteractorImpl;
@@ -19,7 +21,10 @@ public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
         this.artistInteractorImpl = artistInteractorImpl;
         this.artistView = artistView;
     }
+    @Inject
+    public ArtistPresenterImpl() {
 
+    }
     public ArtistPresenterImpl(ArtistView artistView) {
         this.artistView = artistView;
         artistInteractorImpl = new ArtistInteractorImpl(this);

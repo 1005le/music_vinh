@@ -46,7 +46,6 @@ import android.widget.Toast;
 import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.MainViewAdapter;
 import com.example.music_vinh.injection.AppComponent;
-
 import com.example.music_vinh.injection.DaggerMainViewComponent;
 import com.example.music_vinh.injection.MainViewModule;
 import com.example.music_vinh.model.Album;
@@ -63,6 +62,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -74,7 +75,6 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.toolBarMainActivity) Toolbar toolbarMainActivity;
 
     @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
-    //LinearLayout linearLayoutBottom;
 
     @BindView(R.id.tvNameSongBottom) TextView tvNameSong;
     @BindView(R.id.tvNameArtistBottom) TextView tvNameArtist;
@@ -83,7 +83,8 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.imgButtonPlay) ImageButton imgBottomPlay;
 
-    //@BindView(R.id.seekBarBottom)
+    MainViewAdapter mainViewAdapter;
+
     SeekBar seekBar;
     private SearchView mSearchView;
     MainView mainView;
@@ -164,7 +165,7 @@ public class MainActivity extends BaseActivity {
     protected void setupComponent(AppComponent appComponent) {
         DaggerMainViewComponent.builder()
                 .appComponent(appComponent)
-                .mainViewModule(new MainViewModule(mainView))
+                .mainViewModule(new MainViewModule(this))
                 .build()
                 .inject(this);
     }
@@ -178,7 +179,7 @@ public class MainActivity extends BaseActivity {
      * Khai báo các Tab
      */
     private void initTab() {
-        MainViewAdapter mainViewAdapter = new MainViewAdapter(getSupportFragmentManager());
+         mainViewAdapter = new MainViewAdapter(getSupportFragmentManager());
         mainViewAdapter.addFragment(new SongFragment(), getString(R.string.song));
         mainViewAdapter.addFragment(new AlbumFragment(), getString(R.string.album));
         mainViewAdapter.addFragment(new ArtistFragment(), getString(R.string.artist));
@@ -258,7 +259,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                intent.putExtra("PLAY_TYPE", "RESUME");
+                intent.putExtra(Constants.PLAY_TYPE, Constants.RESUME);
                 startActivity(intent);
             }
         });
@@ -274,7 +275,6 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-            // mMusicService.setListener(MainActivity.this);
         }
 
         @Override

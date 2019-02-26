@@ -29,25 +29,26 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
     Context context;
     List<Album> albumList;
     private int type;
+    private OnItemClickListener mOnItemClickLister;
 
     public AlbumAdapter(Context context, List<Album> albumList) {
         this.context = context;
         this.albumList = albumList;
     }
 
-    public int getViewType() {
+    public int getType() {
         return type;
     }
 
-    public void setViewType(int mViewType) {
-        this.type = mViewType;
+    public void setType(int mType) {
+        this.type = mType;
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public AlbumViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        switch (getViewType()) {
+        switch (getType()) {
             case Constants.VIEW_GRID:
                 return new AlbumViewHolder(
                         LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_album, viewGroup, false));
@@ -76,37 +77,24 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
 
         Drawable img = Drawable.createFromPath(album.getImages());
         viewHolder.imgAlbum.setImageDrawable(img);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(context, AlbumInfoActivity.class);
-
-                intent.putExtra("index",i);
-                 intent.putExtra("album_ID",albumList.get(i).getId());
-                 Log.d("truyen",albumList.get(i).getId()+"");
-                intent.putExtra("albumArrayList",(ArrayList) albumList);
-                context.startActivity(intent);
-            }
-        });
-
     }
 
     @Override
     public int getItemCount() {
         return albumList.size();
     }
+    public interface OnItemClickListener {
+        void onItemClicked(View view, int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mOnItemClickLister = listener;
+    }
 
     public class AlbumViewHolder extends RecyclerView.ViewHolder {
 
-         @BindView(R.id.imgAlbum)
-         ImageView imgAlbum;
-
-        @BindView(R.id.tvNameAlbum)
-         TextView tvName;
-
-        @BindView(R.id.tvNameArtist_A)
-         TextView tvNameArtist;
+        @BindView(R.id.imgAlbum) ImageView imgAlbum;
+        @BindView(R.id.tvNameAlbum) TextView tvName;
+        @BindView(R.id.tvNameArtist_A) TextView tvNameArtist;
 
         public AlbumViewHolder(@NonNull View itemView) {
             super(itemView);

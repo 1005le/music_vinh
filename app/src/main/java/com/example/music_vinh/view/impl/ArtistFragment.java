@@ -3,6 +3,7 @@ package com.example.music_vinh.view.impl;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +32,8 @@ import com.example.music_vinh.presenter.ArtistPresenter;
 import com.example.music_vinh.presenter.impl.ArtistPresenterImpl;
 import com.example.music_vinh.view.ArtistView;
 import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
 
@@ -49,8 +53,13 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     @Inject
     ArtistPresenter artistPresenter;
+    @Inject
+    LinearLayoutManager linearLayoutManager;
+    @Inject
+    GridLayoutManager gridLayoutManager;
+      @Inject
+     ArtistAdapter artistAdapter;
 
-  public static ArtistAdapter artistAdapter;
   public static ArrayList<Artist> artistList;
 
     private static final int MY_PERMISSION_REQUEST = 1;
@@ -73,6 +82,18 @@ public class ArtistFragment extends Fragment implements ArtistView {
         initPresenter();
         doStuff();
         setHasOptionsMenu(true);
+        evenClick();
+    }
+
+    private void evenClick() {
+        artistRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+            @Override
+            public void onClick(View view, int index) {
+                Intent intent = new Intent(getContext(), ArtistInfoActivity.class);
+                intent.putExtra("artist",artistList.get(index));
+                getContext().startActivity(intent);
+            }
+        }));
     }
 
     private void initPresenter(){
@@ -82,7 +103,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
     @Override
     public void showArtist(ArrayList<Artist> artists) {
         artistAdapter = new ArtistAdapter(getActivity(),artists);
-        artistAdapter.setViewType(Constants.VIEW_GRID);
+        artistAdapter.setType(Constants.VIEW_GRID);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
       //  gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         artistRecyclerView.setLayoutManager(gridLayoutManager);
@@ -138,9 +159,9 @@ public class ArtistFragment extends Fragment implements ArtistView {
         }
     }
     private void disPlayViewList() {
-        artistAdapter.setViewType(Constants.VIEW_LIST);
+        artistAdapter.setType(Constants.VIEW_LIST);
         artistAdapter = new ArtistAdapter(getActivity(),artistList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         artistRecyclerView.setLayoutManager(linearLayoutManager);
         artistRecyclerView.setAdapter(artistAdapter);
@@ -148,8 +169,8 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     private void disPlayViewGrid() {
         artistAdapter = new ArtistAdapter(getActivity(),artistList);
-        artistAdapter.setViewType(Constants.VIEW_GRID);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        artistAdapter.setType(Constants.VIEW_GRID);
+        gridLayoutManager = new GridLayoutManager(getActivity(),2);
         artistRecyclerView.setLayoutManager(gridLayoutManager);
         artistRecyclerView.setAdapter(artistAdapter);
     }

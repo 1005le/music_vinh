@@ -9,5 +9,4 @@ import dagger.Component;
 @Component(dependencies = AppComponent.class, modules = PlaySongViewModule.class)
 public interface PlaySongViewComponent {
     void inject(PlayActivity playActivity);
-    // void inject(PlayActivity playActivity);
 }

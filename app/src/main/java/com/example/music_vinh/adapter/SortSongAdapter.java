@@ -30,15 +30,7 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
 
     static Context context;
     static List<Song> songList;
-    static MediaPlayer mediaPlayer;
-
-    @BindView(R.id.tvNameSong)
-    TextView tvNameSongBottom ;
-    @BindView(R.id.tvNameArtist)
-    TextView tvNameArtistBottom;
-    @BindView(R.id.imgButtonPause)
-    ImageButton imgButtonPauseBottom;
-
+    private OnSongInSortItemClickListener onSongInArtistItemClickListener;
 
     public SortSongAdapter(Context context, List<Song> songList) {
         this.context = context;
@@ -58,51 +50,21 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
     public void onBindViewHolder(final SortSongViewHolder holder, final int position) {
 
         Song song = songList.get(position);
-        //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         holder.tvNameSort.setText(song.getName());
         holder.tvNameArtistSort.setText(song.getNameArtist());
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // holder.tvNameSort.setTextColor(R.color.colorAccent);
-//                tvNameSongBottom.setText(songList.get(position).getName());
-//                tvNameArtistBottom.setText(songList.get(position).getNameArtist());
-//                imgButtonPauseBottom.setImageResource(R.drawable.ic_pause);
-
-//                imgButtonPauseBottom.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        imgButtonPauseBottom.setImageResource(R.drawable.ic_stop);
-//                        mediaPlayer.stop();
-//                    }
-//                });
-
-//                Uri contentUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-//                        songList.get(position).getId());
-//
-//                mediaPlayer = new MediaPlayer();
-//                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//
-//                try {
-//                    mediaPlayer.setDataSource(context, contentUri);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    mediaPlayer.prepare();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                mediaPlayer.start();
-           }
-        });
     }
 
     @Override
     public int getItemCount() {
         return songList.size();
+    }
+
+    public interface OnSongInSortItemClickListener {
+        void onItemClicked(View view, int position);
+    }
+
+    public void setOnSongInArtistItemClickListener(OnSongInSortItemClickListener onSongInArtistItemClickListener) {
+        this.onSongInArtistItemClickListener = onSongInArtistItemClickListener;
     }
 
     public class SortSongViewHolder extends RecyclerView.ViewHolder {

@@ -25,31 +25,17 @@ import javax.inject.Inject;
 
 public class MainInteractorImpl implements MainInteractor {
 
-    private MainInteractor mainInteractor;
-         Context context;
-
     @Inject
-    public MainInteractorImpl() {
-    }
-
-    public MainInteractorImpl(MainInteractor mainInteractor, Context context) {
-        this.mainInteractor = mainInteractor;
-        this.context = context;
-    }
-
     public MainInteractorImpl(MainInteractor mainInteractor){
-        this.mainInteractor = mainInteractor;
     }
 
     private  ArrayList<Song> createArrayList() {
         ArrayList<Song> songs = SongFragment.songList;
        return songs;
     }
-
-    public void getSongCategories(final MainInteractor mainInteractor) {
+    public void getSongCategories(MainInteractor mainInteractor) {
                 mainInteractor.onLoadSongSuccess(createArrayList());
     }
-
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
 

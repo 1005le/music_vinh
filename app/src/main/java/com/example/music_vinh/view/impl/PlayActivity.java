@@ -35,7 +35,6 @@ import com.example.music_vinh.R;
 import com.example.music_vinh.adapter.SongAdapter;
 
 import com.example.music_vinh.injection.AppComponent;
-
 import com.example.music_vinh.injection.DaggerPlaySongViewComponent;
 import com.example.music_vinh.injection.PlaySongViewModule;
 import com.example.music_vinh.model.Song;
@@ -46,7 +45,9 @@ import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.view.PlaySongView;
 import com.example.music_vinh.view.custom.CircularSeekBar;
 import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.view.custom.CustomTouchListener;
 import com.example.music_vinh.view.custom.StorageUtil;
+import com.example.music_vinh.view.custom.onItemClickListener;
 import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.io.IOException;
@@ -83,7 +84,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     //  public int audioIndex =-1;
     public int audioIndex;
     public static ArrayList<Song> arrSong;
-    SongAdapter songAdapter;
     public static Song song;
     MediaPlayer mediaPlayer;
 
@@ -102,6 +102,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
     @Inject
     PlaySongPresenter playSongPresenter;
+    @Inject
+    SongAdapter songAdapter;
+    @Inject
+    LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,9 +126,20 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         register_DataSongFragment();
         register_currentTimeAudio();
         register_durationAudio();
+        evenClick();
 
-//        loadAudioInfo();
-        //  eventClick();
+    }
+
+    private void evenClick() {
+
+        playSongRecycleview.addOnItemTouchListener(new CustomTouchListener(getApplicationContext(), new onItemClickListener() {
+            @Override
+            public void onClick(View view, int index) {
+                mMusicService.setSongs(arrSong);
+                mMusicService.setCurrentSong(index);
+                mMusicService.playSong();
+            }
+        }));
     }
 
     @Override
@@ -137,13 +152,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         circularSeekBar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-
             }
-
             @Override
             public void onStopTrackingTouch(CircularSeekBar seekBar) {
                 mMusicService.seekTo(seekBar.getProgress() * 1000);
-                //  mMusicService.seekTo(seekBar.getProgress());
             }
 
             @Override
@@ -180,9 +192,8 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
                 mMusicService.setCurrentSong(mCurentSong);
 
                 if (getIntent() != null) {
-                    if (getIntent().getStringExtra("PLAY_TYPE") != null) {
-                        Log.d(TAG, "PLAY_TYPE: " + getIntent().getStringExtra("PLAY_TYPE"));
-                        if (getIntent().getStringExtra("PLAY_TYPE").equals("PLAY")) {
+                    if (getIntent().getStringExtra(Constants.PLAY_TYPE) != null) {
+                        if (getIntent().getStringExtra(Constants.PLAY_TYPE).equals(Constants.PLAY)) {
                             mMusicService.playSong();
                         } else {
                             mMusicService.continuesSong();
@@ -302,23 +313,15 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
     @Override
     public void postName(String songName, String author) {
-//        getSupportActionBar().setTitle(songName);
-//        Log.d("album",songName);
-//        tvNameArtistPlay.setText(author);
     }
 
     @Override
     public void postTotalTime(long totalTime) {
-        //  circularSeekBar.setMax((int) totalTime);
     }
 
     //
     @Override
     public void postCurentTime(long currentTime) {
-//        tvTime.setText(mDateFormat.format(currentTime));
-//        if(!mTrackingSeekBar) {
-//            circularSeekBar.setProgress((int) currentTime);
-//        }
     }
 
     @Override
@@ -450,7 +453,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     public void showSong(ArrayList<Song> songs) {
 
         songAdapter = new SongAdapter(PlayActivity.this, songs);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(PlayActivity.this);
+        linearLayoutManager = new LinearLayoutManager(PlayActivity.this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         playSongRecycleview.setLayoutManager(linearLayoutManager);
         playSongRecycleview.setAdapter(songAdapter);

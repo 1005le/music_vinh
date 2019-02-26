@@ -10,11 +10,17 @@ import com.example.music_vinh.view.PlaySongView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class PlaySongPresenterImpl implements PlaySongPresenter, PlaySongInteractor {
 
     private PlaySongInteractorImpl playSongInteractorImpl;
     private PlaySongView playSongView;
 
+    @Inject
+    public PlaySongPresenterImpl() {
+
+    }
     public PlaySongPresenterImpl(PlaySongInteractorImpl playSongInteractorImpl, PlaySongView playSongView) {
         this.playSongInteractorImpl = playSongInteractorImpl;
         this.playSongView = playSongView;

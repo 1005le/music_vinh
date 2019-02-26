@@ -22,4 +22,5 @@ public class AppModule {
     public Application provideApplication() {
         return musicApplication;
     }
+
 }

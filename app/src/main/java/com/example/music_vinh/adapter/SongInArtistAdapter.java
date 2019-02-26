@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapter.SongInArtistViewHolder> {
     Context context;
     List<Song> songArrayList;
+    private OnSongInArtistItemClickListener onSongInArtistItemClickListener;
 
     public SongInArtistAdapter(Context context, List<Song> songArrayList) {
         this.context = context;
@@ -47,24 +48,13 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
        holder.tvNameSongInArtist.setText(song.getName());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
        holder.tvDuration.setText(simpleDateFormat.format(song.getDuration()));
+    }
+    public interface OnSongInArtistItemClickListener {
+        void onItemClicked(View view, int position);
+    }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(context, PlayActivity.class);
-////                intent.putExtra("song", songArrayList.get(position));
-////                intent.putExtra("arrSong", (ArrayList) songArrayList);
-////                context.startActivity(intent);
-
-//                Intent intent = new Intent(context, PlayActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songArrayList);
-//                bundle.putInt(Constants.KEY_POSITION,position);
-//                intent.putExtra(Constants.KEY_BUNDLE,bundle);
-//                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
-//                context.startActivity(intent);
-            }
-        });
+    public void setOnSongInArtistItemClickListener(OnSongInArtistItemClickListener onSongInArtistItemClickListener) {
+        this.onSongInArtistItemClickListener = onSongInArtistItemClickListener;
     }
 
     @Override

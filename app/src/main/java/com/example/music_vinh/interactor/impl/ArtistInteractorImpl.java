@@ -17,19 +17,8 @@ import javax.inject.Inject;
 
 public class ArtistInteractorImpl implements ArtistInteractor{
 
-    private ArtistInteractor artistInteractor;
-    Context context;
-
     @Inject
-    public ArtistInteractorImpl() {
-    }
-
     public ArtistInteractorImpl(ArtistInteractor artistInteractor){
-        this.artistInteractor = artistInteractor;
-    }
-    public void createArtist(){
-        ArrayList<Artist> artists = new ArrayList<>();
-        artistInteractor.onLoadArtistSuccess(artists);
     }
 
     private  ArrayList<Artist> createArrayList() {
@@ -37,10 +26,9 @@ public class ArtistInteractorImpl implements ArtistInteractor{
         return artists;
     }
 
-    public void getArtistCategories(final ArtistInteractor artistInteractor) {
+    public void getArtistCategories(ArtistInteractor artistInteractor) {
                 artistInteractor.onLoadArtistSuccess(createArrayList());
     }
-
     @Override
     public void onLoadArtistSuccess(ArrayList<Artist> songs) {
 

@@ -11,14 +11,9 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 public class ArtistInfoInteractorImpl implements ArtistInfoInteractor {
-    private ArtistInfoInteractor artistInfoInteractor;
 
     @Inject
-    public ArtistInfoInteractorImpl() {
-    }
-
     public ArtistInfoInteractorImpl(ArtistInfoInteractor artistInfoInteractor){
-        this.artistInfoInteractor = artistInfoInteractor;
     }
 
     private  ArrayList<Song> createArrayList() {
@@ -28,10 +23,6 @@ public class ArtistInfoInteractorImpl implements ArtistInfoInteractor {
 
     public void getSongCategories(final ArtistInfoInteractor artistInfoInteractor) {
         artistInfoInteractor.onLoadSongSuccess(createArrayList());
-    }
-    public void createSong(){
-        ArrayList<Song> songArrayList= new ArrayList<>();
-        artistInfoInteractor.onLoadSongSuccess(songArrayList);
     }
 
     @Override

@@ -19,7 +19,6 @@ public class AlbumInteractorImpl implements AlbumInteractor{
     @Inject
     public AlbumInteractorImpl() {
     }
-
     public AlbumInteractorImpl(AlbumInteractor albumInteractor){
         this.albumInteractor = albumInteractor;
     }
@@ -28,11 +27,9 @@ public class AlbumInteractorImpl implements AlbumInteractor{
 
         return albums;
     }
-
     public void getAlbumCategories(final AlbumInteractor albumInteractor) {
                 albumInteractor.onLoadAlbumSuccess(createArrayList());
     }
-
     @Override
     public void onLoadAlbumSuccess(ArrayList<Album> albums) {
 

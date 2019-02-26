@@ -10,5 +10,6 @@ import dagger.Component;
 public interface MainViewComponent {
 
      void inject(MainActivity activity);
-    // void inject(SongFragment songFragment);
+     void inject(SongFragment songFragment);
+
 }

@@ -10,6 +10,8 @@ import com.example.music_vinh.view.MainView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
   * - Presenter: xử lý logic từ dữ liệu nhận được.
   * - Nhận dữ liệu từ lớp Model
@@ -19,16 +21,14 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     private MainInteractorImpl mainInteractorImpl;
     private MainView mainView;
 
-    public MainPresenterImpl(MainInteractorImpl mainInteractorImpl, MainView mainView) {
-        this.mainInteractorImpl = mainInteractorImpl;
-        this.mainView = mainView;
-    }
-
     public MainPresenterImpl(MainView mainView) {
         this.mainView = mainView;
         mainInteractorImpl = new MainInteractorImpl(this);
     }
 
+    @Inject
+    public MainPresenterImpl() {
+    }
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
         mainView.showSong(songs);

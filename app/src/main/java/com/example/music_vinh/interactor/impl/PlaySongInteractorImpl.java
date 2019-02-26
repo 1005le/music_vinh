@@ -13,20 +13,13 @@ import javax.inject.Inject;
 
 public class PlaySongInteractorImpl implements PlaySongInteractor{
 
-    private PlaySongInteractor playSongInteractor;
-
     @Inject
-    public PlaySongInteractorImpl(){
-
-    }
     public PlaySongInteractorImpl(PlaySongInteractor playSongInteractor){
-        this.playSongInteractor = playSongInteractor;
     }
     private  ArrayList<Song> createArrayList() {
         ArrayList<Song> songs = PlayActivity.arrSong;
         return songs;
     }
-
     public void getSongCategories(final PlaySongInteractor playSongInteractor) {
         playSongInteractor.onLoadSongSuccess(createArrayList());
     }

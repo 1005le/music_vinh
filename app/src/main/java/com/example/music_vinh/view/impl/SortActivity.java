@@ -79,8 +79,11 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
 
     @Inject
     SortPresenter sortPresenter;
-
+    @Inject
     SortSongAdapter sortSongAdapter;
+    @Inject
+    LinearLayoutManager linearLayoutManager;
+
     MediaPlayer mediaPlayer;
     // private MediaPlayerService player;
     boolean serviceBound = false;
@@ -104,12 +107,8 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
             @Override
             public void onClick(View view, int index) {
 
-//                StorageUtil storage = new StorageUtil(getApplicationContext());
-//                storage.storeAudio(songArrayList);
-//                storage.storeAudioIndex(audioIndex);
                 mMusicService.setSongs(songArrayList);
                 mMusicService.setCurrentSong(index);
-                Log.d("song", songArrayList.get(index).getName());
                 mMusicService.playSong();
             }
         }));
@@ -329,7 +328,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     public void showSong(ArrayList<Song> songs) {
 
         sortSongAdapter = new SortSongAdapter(SortActivity.this, songs);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(SortActivity.this);
+        linearLayoutManager = new LinearLayoutManager(SortActivity.this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         sortSongRecycleview.setLayoutManager(linearLayoutManager);
         sortSongRecycleview.setAdapter(sortSongAdapter);

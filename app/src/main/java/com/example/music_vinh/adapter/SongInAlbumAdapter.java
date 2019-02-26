@@ -33,6 +33,7 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
     Context context;
     List<Song> songArrayList;
     Album album;
+    private OnSongInAlbumItemClickListener onSongInAlbumItemClickListener;
 
     public SongInAlbumAdapter(Context context, List<Song> songArrayList) {
         this.context = context;
@@ -54,36 +55,25 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
          holder.tvNameAlbumInSong.setText(song.getNameAlbum());
          holder.imgSongA.setImageResource(R.drawable.ic_song);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(context, PlayActivity.class);
-//                intent.putExtra("song", songArrayList.get(position));
-//                intent.putExtra("arrSong",(ArrayList) songArrayList);
-                 StorageUtil storage = new StorageUtil(context);
-                 storage.storeAudio((ArrayList)songArrayList);
-                 storage.storeAudioIndex(position);
-                 Log.d("name",songArrayList.get(position).getName());
-                 context.startActivity(intent);
-
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
 //                Intent intent = new Intent(context, PlayActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songArrayList);
-//                bundle.putInt(Constants.KEY_POSITION,position);
-//                // intent.putExtra(Constants.KEY_PROGESS,currentPosition);
-//                intent.putExtra(Constants.KEY_BUNDLE,bundle);
+//                 StorageUtil storage = new StorageUtil(context);
+//                 storage.storeAudio((ArrayList)songArrayList);
+//                 storage.storeAudioIndex(position);
+//                 context.startActivity(intent);
+//            }
+//        });
+    }
 
-//                Intent intent = new Intent(context, PlayActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songArrayList);
-//                bundle.putInt(Constants.KEY_POSITION, position);
-//                Log.d("albumA", songArrayList.get(position).getName());
-//                intent.putExtra(Constants.KEY_BUNDLE, bundle);
-//                context.startActivity(intent);
+    public interface OnSongInAlbumItemClickListener {
+        void onItemClicked(View view, int position);
+    }
 
-            }
-        });
+    public void setOnSongInAlbumItemClickListener(OnSongInAlbumItemClickListener onSongInAlbumItemClickListener) {
+        this.onSongInAlbumItemClickListener = onSongInAlbumItemClickListener;
     }
 
     @Override

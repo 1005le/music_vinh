@@ -10,7 +10,6 @@ import com.example.music_vinh.injection.DaggerAppComponent;
 public class MusicApplication extends Application {
 
     private AppComponent component;
-
     public static MusicApplication get(Context context) {
         return (MusicApplication) context.getApplicationContext();
     }

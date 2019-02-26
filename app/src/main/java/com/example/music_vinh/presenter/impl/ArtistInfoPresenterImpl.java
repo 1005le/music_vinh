@@ -11,6 +11,8 @@ import com.example.music_vinh.view.ArtistInfoView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class ArtistInfoPresenterImpl implements ArtistInfoInteractor, ArtistInfoPresenter {
 
     private ArtistInfoInteractorImpl artistInfoInteractorImpl;
@@ -24,6 +26,10 @@ public class ArtistInfoPresenterImpl implements ArtistInfoInteractor, ArtistInfo
     public ArtistInfoPresenterImpl(ArtistInfoView artistInfoView) {
         this.artistInfoView = artistInfoView;
         artistInfoInteractorImpl = new ArtistInfoInteractorImpl(this);
+    }
+    @Inject
+    public ArtistInfoPresenterImpl() {
+
     }
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {

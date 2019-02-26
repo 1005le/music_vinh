@@ -6,7 +6,8 @@ import com.example.music_vinh.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface MainInteractor {
+import javax.inject.Inject;
 
+public interface MainInteractor {
     void onLoadSongSuccess(ArrayList<Song> songs);
 }

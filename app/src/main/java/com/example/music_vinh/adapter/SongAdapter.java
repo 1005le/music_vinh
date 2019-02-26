@@ -33,7 +33,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     List<Song> songList;
 
     private int type;
-    private AdapterView.OnItemClickListener itemClickListener;
+    public OnSongItemClickListener onSongItemClickListener;
 
     public SongAdapter(Context context, List<Song> songList) {
         this.context = context;
@@ -41,11 +41,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         this.type = Constants.VIEW_LIST;
     }
 
-    public int getViewType() {
+    public int getType() {
         return type;
     }
 
-    public void setViewType(int mViewType) {
+    public void setType(int mViewType) {
         this.type = mViewType;
         notifyDataSetChanged();
     }
@@ -53,10 +53,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-//        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-//        View view = layoutInflater.inflate(R.layout.item_song, viewGroup,false);
-//        return new SongViewHolder(view);
-        switch (getViewType()) {
+        switch (getType()) {
             case Constants.VIEW_GRID:
                 return new SongViewHolder(
                         LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_song_grid, viewGroup, false));
@@ -84,23 +81,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
 
-   /*     viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(context, PlayActivity.class);
-//                intent.putExtra("song", songList.get(i));
-//                intent.putExtra("arrSong",(ArrayList) songList);
-//                Log.d("song",songList.get(i).getName());
-//                context.startActivity(intent);
-                Intent intent = new Intent(context, PlayActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.KEY_SONGS,(ArrayList<? extends Parcelable>) songList);
-                bundle.putInt(Constants.KEY_POSITION, i);
-                intent.putExtra(Constants.KEY_BUNDLE, bundle);
-                context.startActivity(intent);
-            }
-        });  */
-
     }
 
     @Override
@@ -124,8 +104,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             ButterKnife.bind(this, itemView);
         }
     }
-    public interface OnItemClickListener{
-        void onItemClick(int position);
+    public interface OnSongItemClickListener {
+        void onSongItemClicked(View view, int position);
     }
 
+    public void setOnSongItemClickListener(OnSongItemClickListener onSongItemClickListener) {
+        onSongItemClickListener = onSongItemClickListener;
+    }
 }

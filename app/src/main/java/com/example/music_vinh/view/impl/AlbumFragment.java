@@ -3,6 +3,7 @@ package com.example.music_vinh.view.impl;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +32,9 @@ import com.example.music_vinh.presenter.AlbumPresenter;
 import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
 import com.example.music_vinh.view.AlbumView;
 import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.view.custom.CustomTouchListener;
+import com.example.music_vinh.view.custom.StorageUtil;
+import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
 
@@ -42,16 +47,18 @@ import butterknife.ButterKnife;
  * A simple {@link Fragment} subclass.
  */
 public class AlbumFragment extends Fragment implements AlbumView {
-
      View view;
-
     @BindView(R.id.recycleViewAlbum)
      RecyclerView albumRecyclerView;
-
       @Inject
       AlbumPresenter albumPresenter;
+       @Inject
+     AlbumAdapter albumAdapter;
+       @Inject
+    LinearLayoutManager linearLayoutManager;
+       @Inject
+    GridLayoutManager gridLayoutManager;
 
-     static AlbumAdapter albumAdapter;
     public static ArrayList<Album> albumList;
 
     private static final int MY_PERMISSION_REQUEST = 1;
@@ -74,7 +81,21 @@ public class AlbumFragment extends Fragment implements AlbumView {
         initPresenter();
         doStuff();
         setHasOptionsMenu(true);
+        eventClick();
+
     }
+
+    private void eventClick() {
+        albumRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+            @Override
+            public void onClick(View view, int index) {
+                Intent intent = new Intent(getContext(), AlbumInfoActivity.class);
+                intent.putExtra("album",albumList.get(index));
+                getContext().startActivity(intent);
+            }
+        }));
+    }
+
 
     private void initPresenter(){
        albumPresenter = new AlbumPresenterImpl(this);
@@ -82,7 +103,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     @Override
     public void showAlbum(ArrayList<Album> albums) {
         albumAdapter = new AlbumAdapter(getActivity(),albums);
-        albumAdapter.setViewType(Constants.VIEW_GRID);
+        albumAdapter.setType(Constants.VIEW_GRID);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
         albumRecyclerView.setLayoutManager(gridLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
@@ -134,9 +155,9 @@ public class AlbumFragment extends Fragment implements AlbumView {
         }
     }
     private void disPlayViewList() {
-        albumAdapter.setViewType(Constants.VIEW_LIST);
+        albumAdapter.setType(Constants.VIEW_LIST);
         albumAdapter = new AlbumAdapter(getActivity(),albumList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
        albumRecyclerView.setLayoutManager(linearLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
@@ -144,8 +165,8 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     private void disPlayViewGrid() {
         albumAdapter = new AlbumAdapter(getActivity(),albumList);
-        albumAdapter.setViewType(Constants.VIEW_GRID);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        albumAdapter.setType(Constants.VIEW_GRID);
+        gridLayoutManager = new GridLayoutManager(getActivity(),2);
        albumRecyclerView.setLayoutManager(gridLayoutManager);
        albumRecyclerView.setAdapter(albumAdapter);
     }

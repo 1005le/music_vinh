@@ -10,6 +10,8 @@ import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
 
     private AlbumInteractorImpl albumInteractorImpl;
@@ -18,6 +20,10 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
     public AlbumPresenterImpl(AlbumInteractorImpl albumInteractorImpl, AlbumView albumView) {
         this.albumInteractorImpl = albumInteractorImpl;
         this.albumView = albumView;
+    }
+    @Inject
+    public AlbumPresenterImpl() {
+
     }
 
     public AlbumPresenterImpl(AlbumView albumView) {

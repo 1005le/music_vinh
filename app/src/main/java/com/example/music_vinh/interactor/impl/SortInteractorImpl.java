@@ -12,25 +12,20 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 public class SortInteractorImpl implements SortInteractor {
-    private SortInteractor sortInteractor;
 
     @Inject
-    public SortInteractorImpl(){}
-
     public SortInteractorImpl(SortInteractor sortInteractor){
-        this.sortInteractor = sortInteractor;
     }
     private  ArrayList<Song> createArrayList() {
         ArrayList<Song> songs = SortActivity.songArrayList;
         return songs;
     }
-
     public void getSongCategories(final SortInteractor sortInteractor) {
         sortInteractor.onLoadSongSuccess(createArrayList());
     }
-
     @Override
     public void onLoadSongSuccess(ArrayList<Song> songs) {
 
     }
+
 }
