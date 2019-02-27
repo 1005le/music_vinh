@@ -30,20 +30,6 @@ import dagger.Provides;
 @Module
 public class ArtistInfoViewModule {
 
-//    private ArtistInfoView artistInfoView;
-//    public ArtistInfoViewModule(ArtistInfoView view) {
-//        this.artistInfoView = view;
-//    }
-//    @Provides
-//    public ArtistInfoView provideView() {
-//        return artistInfoView;
-//    }
-//
-//    @Provides
-//    public ArtistInfoPresenter providePresenter(ArtistInfoView artistInfoView, ArtistInfoInteractorImpl artistInfoInteractorImpl) {
-//        return new ArtistInfoPresenterImpl(artistInfoInteractorImpl, artistInfoView);
-//    }
-
     private Context mContext;
     public ArtistInfoViewModule(Context context) {
         mContext = context;

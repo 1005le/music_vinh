@@ -35,21 +35,6 @@ public class MainViewModule {
         return mContext;
     }
 
-//    private MainView mainView;
-//    public MainViewModule(MainView view) {
-//        this.mainView = view;
-//    }
-//
-//    @Provides
-//    public MainView provideView() {
-//        return mainView;
-//    }
-//
-//    @Provides
-//    public MainPresenter providePresenter(MainView mainView, MainInteractorImpl mainInteractorImpl) {
-//        return new MainPresenterImpl(mainInteractorImpl, mainView);
-//    }
-
        @Provides
        MainPresenter provideMainPresenter(MainPresenterImpl mainPresenter){
        return mainPresenter;

@@ -25,21 +25,6 @@ import dagger.Provides;
 @Module
 public class SortViewModule {
 
-//    private SortView sortView;
-//    public SortViewModule(SortView view) {
-//        this.sortView = view;
-//    }
-//
-//    @Provides
-//    public SortView provideView() {
-//        return sortView;
-//    }
-//
-//    @Provides
-//    public SortPresenter providePresenter(SortView sortView, SortInteractorImpl sortInteractorImpl) {
-//        return new SortPresenterImpl(sortInteractorImpl, sortView);
-//    }
-
     private Context mContext;
     public SortViewModule(Context context) {
         mContext = context;

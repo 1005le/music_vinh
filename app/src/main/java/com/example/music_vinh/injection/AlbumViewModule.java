@@ -35,21 +35,6 @@ public class AlbumViewModule {
         return mContext;
     }
 
-//    private AlbumView albumView;
-//    public AlbumViewModule(AlbumView view) {
-//        this.albumView = view;
-//    }
-//
-//    @Provides
-//    public AlbumView provideView() {
-//        return albumView;
-//    }
-//
-//    @Provides
-//    public AlbumPresenter providePresenter(AlbumView albumView, AlbumInteractorImpl albumInteractorImpl) {
-//        return new AlbumPresenterImpl(albumInteractorImpl, albumView);
-//    }
-
     @Provides
     AlbumPresenter provideAlbumPresenter(AlbumPresenterImpl albumPresenter){
         return albumPresenter;

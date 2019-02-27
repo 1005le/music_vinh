@@ -39,21 +39,6 @@ public class ArtistViewModule {
         return mContext;
     }
 
-//    private ArtistView artistView;
-//    public ArtistViewModule(ArtistView view) {
-//        this.artistView = view;
-//    }
-//
-//    @Provides
-//    public ArtistView provideView() {
-//        return artistView;
-//    }
-//
-//    @Provides
-//    public ArtistPresenter providePresenter(ArtistView artistView, ArtistInteractorImpl artistInteractorImpl) {
-//        return new ArtistPresenterImpl(artistInteractorImpl, artistView);
-//    }
-
     @Provides
     ArtistPresenter provideArtistPresenter(ArtistPresenterImpl artistPresenter){
         return artistPresenter;

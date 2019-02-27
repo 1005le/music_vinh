@@ -24,21 +24,6 @@ import dagger.Provides;
 @Module
 public class AlbumInfoViewModule {
 
-//    private AlbumInfoView albumInfoView;
-//    public AlbumInfoViewModule(AlbumInfoView view) {
-//        this.albumInfoView = view;
-//    }
-//
-//    @Provides
-//    public AlbumInfoView provideView() {
-//        return albumInfoView;
-//    }
-
-    //    @Provides
-//    public AlbumInfoPresenter providePresenter(AlbumInfoView albumInfoView, AlbumInfoInteractorImpl albumInfoInteractorImpl) {
-//        return new AlbumInfoPresenterImpl(albumInfoInteractorImpl, albumInfoView);
-//    }
-
     private Context mContext;
     public AlbumInfoViewModule(Context context) {
         mContext = context;
