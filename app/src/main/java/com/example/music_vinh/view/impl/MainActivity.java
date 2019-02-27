@@ -69,10 +69,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
-    @BindView(R.id.myTabLayout) TabLayout tabLayout;
-    @BindView(R.id.myViewPager) ViewPager viewPager;
-    @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
-    @BindView(R.id.toolBarMainActivity) Toolbar toolbarMainActivity;
+    @BindView(R.id.myTabLayout)
+    TabLayout tabLayout;
+    @BindView(R.id.myViewPager)
+    ViewPager viewPager;
+    @BindView(R.id.toolBarMainActivity)
+    Toolbar toolbarMainActivity;
 
     @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
 
@@ -112,7 +114,6 @@ public class MainActivity extends BaseActivity {
         register_currentTimeAudio();
         eventClick();
     }
-
     @Override
     protected void onResume() {
         super.onResume();

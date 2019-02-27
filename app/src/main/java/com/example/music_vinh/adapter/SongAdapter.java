@@ -109,6 +109,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     }
 
     public void setOnSongItemClickListener(OnSongItemClickListener onSongItemClickListener) {
-        onSongItemClickListener = onSongItemClickListener;
+        this.onSongItemClickListener = onSongItemClickListener;
     }
 }

@@ -130,12 +130,9 @@ public class MusicService extends Service implements BaseMediaPlayer
     @Override
     public void playSong() {
         Song song = mSongs.get(mCurrentPossition);
-//        Log.d(TAG, song.getName());
-//        Log.d(TAG, song.getPath());
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
-            Log.d("path", song.getPath());
             mMediaPlayer.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();
