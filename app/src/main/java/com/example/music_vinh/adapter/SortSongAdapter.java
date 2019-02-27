@@ -30,7 +30,7 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
 
     static Context context;
     static List<Song> songList;
-    private OnSongInSortItemClickListener onSongInArtistItemClickListener;
+    private OnSongInSortItemClickListener onSongInSortItemClickListener;
 
     public SortSongAdapter(Context context, List<Song> songList) {
         this.context = context;
@@ -52,6 +52,12 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
         Song song = songList.get(position);
         holder.tvNameSort.setText(song.getName());
         holder.tvNameArtistSort.setText(song.getNameArtist());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSongInSortItemClickListener.onItemClicked(v,position);
+            }
+        });
     }
 
     @Override
@@ -63,8 +69,8 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
         void onItemClicked(View view, int position);
     }
 
-    public void setOnSongInArtistItemClickListener(OnSongInSortItemClickListener onSongInArtistItemClickListener) {
-        this.onSongInArtistItemClickListener = onSongInArtistItemClickListener;
+    public void setOnSongInSortItemClickListener(OnSongInSortItemClickListener onSongInSortItemClickListener) {
+        this.onSongInSortItemClickListener = onSongInSortItemClickListener;
     }
 
     public class SortSongViewHolder extends RecyclerView.ViewHolder {

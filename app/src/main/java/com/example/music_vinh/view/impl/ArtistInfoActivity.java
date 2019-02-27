@@ -110,14 +110,13 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         getDataIntent();
         seekBar = findViewById(R.id.seekBarBottom);
         ButterKnife.bind(this);
-        act();
+        initActionBar();
        // getData();
         initPresenter();
         doStuff();
 
         bindServiceMedia();
         loadAudioInfo();
-
         register_DataSongFragment();
         register_durationAudio();
         register_currentTimeAudio();
@@ -164,18 +163,17 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             }
         });
 
-        songInArtistRecycleView.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
+        songInArtistAdapter.setOnSongInArtistItemClickListener(new SongInArtistAdapter.OnSongInArtistItemClickListener() {
             @Override
-            public void onClick(View view, int index) {
-
+            public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
                 StorageUtil storage = new StorageUtil(getApplicationContext());
                 storage.storeAudio(songArrayList);
-                storage.storeAudioIndex(index);
+                storage.storeAudioIndex(position);
                 intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
             }
-        }));
+        });
 
     }
     private void bindServiceMedia() {
@@ -319,7 +317,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         }
 
     }
-    private void act() {
+    private void initActionBar() {
         setSupportActionBar(toolbarArtist);
         //getSupportActionBar().setTitle(album.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

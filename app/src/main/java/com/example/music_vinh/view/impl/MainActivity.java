@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initTab();
-        act();
+        initActionBar();
         seekBar = findViewById(R.id.seekBarBottom);
 
         bindServiceMedia();
@@ -171,7 +171,7 @@ public class MainActivity extends BaseActivity {
                 .inject(this);
     }
 
-    private void act() {
+    private void initActionBar() {
         setSupportActionBar(toolbarMainActivity);
         getSupportActionBar().setTitle(getString(R.string.beauty));
     }
@@ -191,7 +191,6 @@ public class MainActivity extends BaseActivity {
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-
             StorageUtil storage = new StorageUtil(getApplicationContext());
             songList = storage.loadAudio();
             audioIndex = storage.loadAudioIndex();

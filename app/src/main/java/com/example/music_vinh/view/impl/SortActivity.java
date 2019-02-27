@@ -96,22 +96,26 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         bindServiceMedia();
         ButterKnife.bind(this);
         init();
-        atc();
+        initActionBar();
 
         register_DataSongFragment();
         register_durationAudio();
         register_currentTimeAudio();
         loadAudioInfo();
         eventClick();
-        sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
+//        sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
+//            @Override
+//            public void onClick(View view, int index) {
+//            }
+//        }));
+        sortSongAdapter.setOnSongInSortItemClickListener(new SortSongAdapter.OnSongInSortItemClickListener() {
             @Override
-            public void onClick(View view, int index) {
-
+            public void onItemClicked(View view, int position) {
                 mMusicService.setSongs(songArrayList);
-                mMusicService.setCurrentSong(index);
+                mMusicService.setCurrentSong(position);
                 mMusicService.playSong();
             }
-        }));
+        });
     }
 
     private void bindServiceMedia() {
@@ -222,7 +226,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
                 .inject(this);
     }
 
-    private void atc() {
+    private void initActionBar() {
         setSupportActionBar(toolbarSort);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.playQueue);

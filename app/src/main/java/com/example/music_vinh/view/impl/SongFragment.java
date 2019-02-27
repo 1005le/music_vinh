@@ -104,19 +104,18 @@ public class SongFragment extends Fragment implements MainView {
         evenClick();
     }
     private void evenClick() {
-        songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+        songAdapter.setOnSongItemClickListener(new SongAdapter.OnSongItemClickListener() {
             @Override
-            public void onClick(View view, int index) {
+            public void onSongItemClicked(View view, int position) {
                 StorageUtil storage = new StorageUtil(getContext());
                 storage.storeAudio(songList);
-                storage.storeAudioIndex(index);
-                Log.d("idSong",songList.get(index).getId()+""+"index"+index);
-                Intent intent = new Intent(getActivity(), PlayActivity.class);
-                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
-                startActivity(intent);
-
+                storage.storeAudioIndex(position);
+                Toast.makeText(getContext(), "hello", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(getActivity(), PlayActivity.class);
+//                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
+//                startActivity(intent);
             }
-        }));
+        });
     }
 
    private void initPresenter(){

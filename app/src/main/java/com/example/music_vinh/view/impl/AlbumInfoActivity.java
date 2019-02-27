@@ -118,12 +118,11 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         getDataIntent();
 
         getData();
-        act();
+        initActionBar();
         seekBar = findViewById(R.id.seekBarBottom);
         //lay bai hat
         initPresenter();
         doStuff();
-
         bindServiceMedia();
         loadAudioInfo();
         register_DataSongFragment();
@@ -139,18 +138,18 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     }
 
     public void evenClick() {
-        listSongrecyclerView.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
-            @Override
-            public void onClick(View view, int index) {
 
+        songInAlbumAdapter.setOnSongInAlbumItemClickListener(new SongInAlbumAdapter.OnSongInAlbumItemClickListener() {
+            @Override
+            public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
                 StorageUtil storage = new StorageUtil(getApplicationContext());
                 storage.storeAudio(songArrayListAlbum);
-                storage.storeAudioIndex(index);
+                storage.storeAudioIndex(position);
                 intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
             }
-        }));
+        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -338,7 +337,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         tvamountSongA.setText(album.getAmountSong() + R.string.songs);
     }
 
-    private void act() {
+    private void initActionBar() {
         setSupportActionBar(toolbar);
         //getSupportActionBar().setTitle(album.getName());
         toolbar.setTitleTextColor(Color.WHITE);

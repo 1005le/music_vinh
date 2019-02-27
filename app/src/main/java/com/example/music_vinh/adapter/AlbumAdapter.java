@@ -24,7 +24,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
     Context context;
     List<Album> albumList;
     private int type;
-    private OnItemClickListener mOnItemClickLister;
+    private OnAlbumItemClickListener onAlbumItemClickListener;
 
     public AlbumAdapter(Context context, List<Album> albumList) {
         this.context = context;
@@ -72,17 +72,23 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
 
         Drawable img = Drawable.createFromPath(album.getImages());
         viewHolder.imgAlbum.setImageDrawable(img);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               onAlbumItemClickListener.onItemClicked(v,i);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return albumList.size();
     }
-    public interface OnItemClickListener {
+    public interface OnAlbumItemClickListener {
         void onItemClicked(View view, int position);
     }
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        mOnItemClickLister = listener;
+    public void setOnAlbumItemClickListener(OnAlbumItemClickListener listener) {
+        onAlbumItemClickListener = listener;
     }
 
     public class AlbumViewHolder extends RecyclerView.ViewHolder {

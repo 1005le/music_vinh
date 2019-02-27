@@ -47,6 +47,12 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
        holder.tvNameSongInArtist.setText(song.getName());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
        holder.tvDuration.setText(simpleDateFormat.format(song.getDuration()));
+       holder.itemView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               onSongInArtistItemClickListener.onItemClicked(v,position);
+           }
+       });
     }
     public interface OnSongInArtistItemClickListener {
         void onItemClicked(View view, int position);

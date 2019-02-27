@@ -6,5 +6,5 @@ import com.example.music_vinh.model.Song;
 import java.util.ArrayList;
 
 public interface ArtistInteractor {
-    void onLoadArtistSuccess(ArrayList<Artist> songs);
+   // void onLoadArtistSuccess(ArrayList<Artist> songs);
 }

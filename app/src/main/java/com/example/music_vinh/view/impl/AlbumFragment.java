@@ -86,14 +86,14 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
 
     private void eventClick() {
-        albumRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+        albumAdapter.setOnAlbumItemClickListener(new AlbumAdapter.OnAlbumItemClickListener() {
             @Override
-            public void onClick(View view, int index) {
+            public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(getContext(), AlbumInfoActivity.class);
-                intent.putExtra("album",albumList.get(index));
+                intent.putExtra("album",albumList.get(position));
                 getContext().startActivity(intent);
             }
-        }));
+        });
     }
 
 

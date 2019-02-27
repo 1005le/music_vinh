@@ -39,6 +39,7 @@ public class MainViewModule {
        MainPresenter provideMainPresenter(MainPresenterImpl mainPresenter){
        return mainPresenter;
       }
+
     @Provides
     MainInteractor provideMainInteractor(MainInteractor interactor) {
         return interactor;

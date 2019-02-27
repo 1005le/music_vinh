@@ -21,16 +21,15 @@ public class ArtistInteractorImpl implements ArtistInteractor{
     public ArtistInteractorImpl(ArtistInteractor artistInteractor){
     }
 
-    private  ArrayList<Artist> createArrayList() {
-        ArrayList<Artist> artists = ArtistFragment.artistList;
-        return artists;
-    }
-
-    public void getArtistCategories(ArtistInteractor artistInteractor) {
-                artistInteractor.onLoadArtistSuccess(createArrayList());
-    }
-    @Override
-    public void onLoadArtistSuccess(ArrayList<Artist> songs) {
-
-    }
+//    private  ArrayList<Artist> createArrayList() {
+//        ArrayList<Artist> artists = ArtistFragment.artistList;
+//        return artists;
+//    }
+//    public void getArtistCategories(ArtistInteractor artistInteractor) {
+//                artistInteractor.onLoadArtistSuccess(createArrayList());
+//    }
+//    @Override
+//    public void onLoadArtistSuccess(ArrayList<Artist> songs) {
+//
+//    }
 }

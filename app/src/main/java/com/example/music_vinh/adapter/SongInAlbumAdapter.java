@@ -53,17 +53,12 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
          holder.tvNameAlbumInSong.setText(song.getNameAlbum());
          holder.imgSongA.setImageResource(R.drawable.ic_song);
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Intent intent = new Intent(context, PlayActivity.class);
-//                 StorageUtil storage = new StorageUtil(context);
-//                 storage.storeAudio((ArrayList)songArrayList);
-//                 storage.storeAudioIndex(position);
-//                 context.startActivity(intent);
-//            }
-//        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSongInAlbumItemClickListener.onItemClicked(view,position);
+            }
+        });
     }
 
     public interface OnSongInAlbumItemClickListener {

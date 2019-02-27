@@ -30,7 +30,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
     Context context;
     List<Artist> artistList;
     private int type;
-    private  OnItemClickListener mOnItemClickLister;
+    private  OnArtistItemClickListener onArtistItemClickListener;
 
     public ArtistAdapter(Context context, List<Artist> artistList) {
         this.context = context;
@@ -77,18 +77,24 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
 
         Drawable img = Drawable.createFromPath(artist.getImages());
         viewHolder.imgArtist.setImageDrawable(img);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onArtistItemClickListener.onItemClicked(v,i);
+            }
+        });
     }
     @Override
     public int getItemCount() {
         return artistList.size();
     }
 
-    public interface OnItemClickListener {
+    public interface OnArtistItemClickListener {
         void onItemClicked(View view, int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        mOnItemClickLister = listener;
+    public void setOnArtistItemClickListener(OnArtistItemClickListener listener) {
+       onArtistItemClickListener = listener;
     }
 
     public class ArtistViewHolder extends RecyclerView.ViewHolder {

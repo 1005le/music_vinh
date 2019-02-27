@@ -36,6 +36,7 @@ import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.ArtistView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -80,20 +81,20 @@ public class ArtistFragment extends Fragment implements ArtistView {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
         initPresenter();
-        doStuff();
+        onLoadArtistList();
         setHasOptionsMenu(true);
         evenClick();
     }
 
     private void evenClick() {
-        artistRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
+        artistAdapter.setOnArtistItemClickListener(new ArtistAdapter.OnArtistItemClickListener() {
             @Override
-            public void onClick(View view, int index) {
+            public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(getContext(), ArtistInfoActivity.class);
-                intent.putExtra("artist",artistList.get(index));
+                intent.putExtra("artist",artistList.get(position));
                 getContext().startActivity(intent);
             }
-        }));
+        });
     }
 
     private void initPresenter(){
@@ -101,48 +102,21 @@ public class ArtistFragment extends Fragment implements ArtistView {
 
     }
     @Override
-    public void showArtist(ArrayList<Artist> artists) {
+    public void showArtist(List<Artist> artists) {
         artistAdapter = new ArtistAdapter(getActivity(),artists);
         artistAdapter.setType(Constants.VIEW_GRID);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-      //  gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         artistRecyclerView.setLayoutManager(gridLayoutManager);
         artistRecyclerView.setAdapter(artistAdapter);
     }
 
-    private void doStuff() {
-       artistList = new ArrayList<>();
-        artistList = getMusicArtist();
-        artistPresenter.loadArtist();
+    private void onLoadArtistList() {
+//        artistList = new ArrayList<>();
+//        artistList = getMusicArtist();
+        artistPresenter.loadArtist(getContext());
     }
 
-    public ArrayList<Artist> getMusicArtist() {
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri songUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
-        Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
-
-        if (songCursor != null && songCursor.moveToFirst()) {
-
-            int idArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists._ID);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST);
-            int amountAlbum = songCursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS);
-            int amountSong = songCursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS);
-           // int imgArtist = songCursor.getColumnIndex(MediaStore.Audio.Artists.ALBUM_ART);
-            do {
-                String currentId = songCursor.getString(idArtist);
-                String currentArtist = songCursor.getString(songArtist);
-                String currentAmountAlbum = songCursor.getString(amountAlbum);
-                String currentAmountSong = songCursor.getString(amountSong);
-
-               //  String currentImgArtist = songCursor.getString(imgArtist);
-                artistList.add(new Artist(Long.parseLong(currentId),currentArtist, Integer.parseInt(currentAmountAlbum),
-                       Integer.parseInt(currentAmountSong),""));
-
-            } while (songCursor.moveToNext());
-        }
-        return artistList;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -43,10 +43,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void setSongs(List<Song> songs) {
         songList = songs;
     }
-    public void addItems(List<Song> songs) {
-        songList.addAll(songs);
-        notifyDataSetChanged();
-    }
 
     public int getType() {
         return type;
@@ -87,6 +83,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSongItemClickListener.onSongItemClicked(v,i);
+            }
+        });
+
 
     }
 

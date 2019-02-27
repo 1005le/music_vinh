@@ -121,7 +121,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         mDateFormat = new SimpleDateFormat(getString(R.string.date_time));
         connectService();
         loadPlaylist();
-        act();
+        initActionBar();
         registerListener();
         register_DataSongFragment();
         register_currentTimeAudio();
@@ -132,14 +132,14 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
 
     private void evenClick() {
 
-        playSongRecycleview.addOnItemTouchListener(new CustomTouchListener(getApplicationContext(), new onItemClickListener() {
+        songAdapter.setOnSongItemClickListener(new SongAdapter.OnSongItemClickListener() {
             @Override
-            public void onClick(View view, int index) {
+            public void onSongItemClicked(View view, int position) {
                 mMusicService.setSongs(arrSong);
-                mMusicService.setCurrentSong(index);
+                mMusicService.setCurrentSong(position);
                 mMusicService.playSong();
             }
-        }));
+        });
     }
 
     @Override
@@ -213,7 +213,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
 
-    private void act() {
+    private void initActionBar() {
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {
@@ -222,10 +222,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
                 finish();
             }
         });
-    }
-
-    private void init() {
-        act();
     }
 
     private void initPresenter() {
