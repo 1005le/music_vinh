@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/tvName"
         android:textSize="18sp"
-        android:textColor="#186CAF"
+        android:textColor="@color/colorBlue"
         android:layout_marginTop="40dp"
         android:layout_marginLeft="40dp"
         android:text="Hello"

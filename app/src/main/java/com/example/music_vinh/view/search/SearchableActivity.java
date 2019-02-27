@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
+import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
 import com.example.music_vinh.view.impl.ArtistFragment;
@@ -30,6 +31,7 @@ public class SearchableActivity extends AppCompatActivity {
     private static final String TAG = "SearchableActivity";
     private MyHandler mHandler;
     private TextView txt;
+    List<Song> songList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +58,16 @@ public class SearchableActivity extends AppCompatActivity {
             case "SONG":
                 Log.d(TAG, "playIntent");
                 storeAudioIndex(data);
-               // Log.d("dataSong",data);
+                //Log.d("dataSong",data);
                 Intent playIntent = PlayActivity.getStartIntent(this);
-                playIntent.putExtra("PLAY_TYPE", "PLAY");
+                playIntent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(playIntent);
                 finish();
                 break;
             case "ALBUM":
                 Log.d(TAG, "startAlbumIntent");
                 Intent albumDetailIntent = AlbumInfoActivity.getStartIntent(this);
-                //albumDetailIntent.putExtra("album_ID", data);
                 albumDetailIntent.putExtra("album_ID", data);
-               // Log.d("dataAlbum",data);
                 startActivity(albumDetailIntent);
                 finish();
                 break;
@@ -75,7 +75,6 @@ public class SearchableActivity extends AppCompatActivity {
                 Log.d(TAG, "artistDetailIntent");
                 Intent artistDetailIntent = ArtistInfoActivity.getStartIntent(this);
                 artistDetailIntent.putExtra("artist_ID", data);
-               // Log.d("dataArtist",data);
                 startActivity(artistDetailIntent);
                 finish();
                 break;
@@ -84,10 +83,11 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void storeAudioIndex(String data) {
         StorageUtil storage = new StorageUtil(getApplicationContext());
-        List<Song> songList = storage.loadAudio();
-        for (Song song : songList) {
-            if (String.valueOf(song.getId()).equals(data)) {
-                storage.storeAudioIndex(songList.indexOf(song));
+        if( songList == storage.loadAudio() || songList == SongFragment.songList) {
+            for (Song song : songList) {
+                if (String.valueOf(song.getId()).equals(data)) {
+                    storage.storeAudioIndex(songList.indexOf(song));
+                }
             }
         }
     }

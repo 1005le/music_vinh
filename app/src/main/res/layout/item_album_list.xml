@@ -11,7 +11,7 @@
 
     <ImageView
         android:id="@+id/imgAlbum"
-        android:background="#00BCD4"
+        android:background="@color/colorBlueAL"
         android:scaleType="fitXY"
         android:layout_width="60dp"
         android:layout_height="70dp" />

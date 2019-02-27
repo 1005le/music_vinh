@@ -22,7 +22,7 @@
             android:layout_height="wrap_content">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolBarMainActivity"
-            android:background="#1743E6"
+            android:background="@color/colorBlueLight"
             app:title="Beauty Music"
             app:titleTextColor="#F5EFEF"
             android:layout_width="match_parent"
@@ -39,12 +39,12 @@
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/myTabLayout"
-                app:tabIndicatorColor="#e90b0b"
+                app:tabIndicatorColor="@color/colorRedLight"
                 app:tabMode="fixed"
-                app:tabTextColor="#EEEBEE"
+                app:tabTextColor="@color/colorWhiteA"
                 app:tabIndicatorHeight="2dp"
-                android:background="#0C72C4"
-                app:tabSelectedTextColor="#C715A3"
+                android:background="@color/colorBlueM"
+                app:tabSelectedTextColor="@color/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
             </android.support.design.widget.TabLayout>

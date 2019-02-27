@@ -78,12 +78,9 @@ public class SongFragment extends Fragment implements MainView {
 
     public static ArrayList<Song> songList;
     private MusicService mMusicService;
-    // boolean serviceBound = false;
     private ServiceConnection mSCon;
     private int mCurentSong;
     private boolean mIsBound;
-
-
 
 
     public SongFragment() {
@@ -115,10 +112,9 @@ public class SongFragment extends Fragment implements MainView {
                 StorageUtil storage = new StorageUtil(getContext());
                 storage.storeAudio(songList);
                 storage.storeAudioIndex(index);
-                Log.d("idSong",songList.get(index).getId()+"");
-
+                //Log.d("idSong",songList.get(index).getId()+"");
                 Intent intent = new Intent(getActivity(), PlayActivity.class);
-                intent.putExtra("PLAY_TYPE", "PLAY");
+                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
 
             }
@@ -128,7 +124,6 @@ public class SongFragment extends Fragment implements MainView {
 
     private void initPresenter(){
         mainPresenter = new MainPresenterImpl(this);
-       // mainPresenter = new MainPresenterImpl();
      }
 
     @Override

@@ -252,8 +252,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     public void getDataIntent() {
         Intent intent = getIntent();
         StorageUtil storage = new StorageUtil(getApplicationContext());
-        arrSong = storage.loadAudio();
-        mCurentSong = storage.loadAudioIndex();
+        if (storage.loadAudio() != null) {
+            arrSong = storage.loadAudio();
+            mCurentSong = storage.loadAudioIndex();
+        }
     }
 
     private void loadAudioInfo() {
@@ -269,9 +271,10 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
             StorageUtil storage = new StorageUtil(getApplicationContext());
             arrSong = storage.loadAudio();
             mCurentSong = storage.loadAudioIndex();
-
-            getSupportActionBar().setTitle(arrSong.get(mCurentSong).getName());
-            tvNameArtistPlay.setText(arrSong.get(mCurentSong).getNameArtist());
+            if (arrSong != null && mCurentSong > -1) {
+                getSupportActionBar().setTitle(arrSong.get(mCurentSong).getName());
+                tvNameArtistPlay.setText(arrSong.get(mCurentSong).getNameArtist());
+            }
         }
     };
 

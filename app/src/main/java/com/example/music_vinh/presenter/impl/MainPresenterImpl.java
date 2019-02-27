@@ -12,11 +12,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-/**
-  * - Presenter: xử lý logic từ dữ liệu nhận được.
-  * - Nhận dữ liệu từ lớp Model
-  * - Đẩy dữ liệu lên lớp V.
- */
 public class MainPresenterImpl implements MainInteractor, MainPresenter {
     private MainInteractorImpl mainInteractorImpl;
     private MainView mainView;
@@ -33,7 +28,6 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     public void onLoadSongSuccess(ArrayList<Song> songs) {
         mainView.showSong(songs);
     }
-
 
     @Override
     public void loadData() {

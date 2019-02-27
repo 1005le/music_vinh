@@ -8,7 +8,7 @@
     tools:context=".view.impl.PlayActivity">
     <RelativeLayout
         android:id="@+id/relay1"
-        android:background="#830808"
+        android:background="@color/colorRed"
         android:layout_width="match_parent"
         android:layout_height="350dp">
         <android.support.v7.widget.Toolbar
@@ -26,7 +26,7 @@
         </android.support.v7.widget.Toolbar>
         <TextView
             android:textSize="18sp"
-            android:textColor="#F8F1F1"
+            android:textColor="@color/colorWhiteA"
             android:text="Name Artist"
             android:gravity="center"
             android:layout_below="@id/toolbarPlaySong"
@@ -64,7 +64,7 @@
                     android:id="@+id/tvTime"
                     android:layout_marginTop="50dp"
                     android:layout_marginLeft="70dp"
-                    android:textColor="#F1EBEB"
+                    android:textColor="@color/colorWhiteA"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <RelativeLayout
@@ -114,7 +114,6 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <ImageButton
             android:layout_alignParentRight="true"
             android:layout_marginTop="330dp"
