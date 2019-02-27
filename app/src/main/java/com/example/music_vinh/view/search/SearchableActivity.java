@@ -31,7 +31,6 @@ public class SearchableActivity extends AppCompatActivity {
     private static final String TAG = "SearchableActivity";
     private MyHandler mHandler;
     private TextView txt;
-    List<Song> songList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +82,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void storeAudioIndex(String data) {
         StorageUtil storage = new StorageUtil(getApplicationContext());
+        List<Song> songList = null;
         if( songList == storage.loadAudio() || songList == SongFragment.songList) {
             for (Song song : songList) {
                 if (String.valueOf(song.getId()).equals(data)) {
