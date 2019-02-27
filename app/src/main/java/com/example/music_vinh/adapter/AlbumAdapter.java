@@ -1,11 +1,9 @@
 package com.example.music_vinh.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +12,8 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
-import com.example.music_vinh.model.Song;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.impl.AlbumInfoActivity;
+import com.example.music_vinh.utils.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;

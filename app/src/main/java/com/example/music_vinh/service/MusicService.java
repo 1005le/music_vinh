@@ -23,8 +23,8 @@ import android.widget.RemoteViews;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.StorageUtil;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.StorageUtil;
 import com.example.music_vinh.view.impl.MainActivity;
 import com.example.music_vinh.view.impl.PlayActivity;
 
@@ -35,9 +35,9 @@ import java.util.Random;
 
 import butterknife.internal.Utils;
 
-import static com.example.music_vinh.view.custom.Constants.ACTION_NEXT;
-import static com.example.music_vinh.view.custom.Constants.ACTION_PLAY;
-import static com.example.music_vinh.view.custom.Constants.ACTION_PREVIOUS;
+import static com.example.music_vinh.utils.Constants.ACTION_NEXT;
+import static com.example.music_vinh.utils.Constants.ACTION_PLAY;
+import static com.example.music_vinh.utils.Constants.ACTION_PREVIOUS;
 
 public class MusicService extends Service implements BaseMediaPlayer
         , MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener
@@ -130,6 +130,7 @@ public class MusicService extends Service implements BaseMediaPlayer
     @Override
     public void playSong() {
         Song song = mSongs.get(mCurrentPossition);
+        Log.d("SongSearch",song.getId()+"-"+"SongName"+song.getName());
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(song.getPath());
@@ -357,18 +358,18 @@ public class MusicService extends Service implements BaseMediaPlayer
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseStartIntent = new Intent(this, MusicService.class);
-        pauseStartIntent.setAction(Constants.ACTION_PLAY);
+        pauseStartIntent.setAction(ACTION_PLAY);
 
         PendingIntent pplayIntent = PendingIntent.getService(getApplicationContext(),
                 0, pauseStartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent nextIntent = new Intent(this, MusicService.class);
-        nextIntent.setAction(Constants.ACTION_NEXT);
+        nextIntent.setAction(ACTION_NEXT);
         PendingIntent pnextIntent = PendingIntent.getService(getApplicationContext(),
                 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent previousIntent = new Intent(this, MusicService.class);
-        previousIntent.setAction(Constants.ACTION_PREVIOUS);
+        previousIntent.setAction(ACTION_PREVIOUS);
         PendingIntent ppreviousIntent = PendingIntent.getService(getApplicationContext(),
                 0, previousIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

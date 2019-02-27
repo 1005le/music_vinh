@@ -40,14 +40,15 @@ import com.example.music_vinh.presenter.MainPresenter;
 import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.CustomTouchListener;
+import com.example.music_vinh.utils.StorageUtil;
+import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.MainView;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.CustomTouchListener;
-import com.example.music_vinh.view.custom.StorageUtil;
-import com.example.music_vinh.view.custom.onItemClickListener;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -97,14 +98,13 @@ public class SongFragment extends Fragment implements MainView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         ButterKnife.bind(this,view);
+
         initPresenter();
         doStuff();
         setHasOptionsMenu(true);
         evenClick();
     }
-
     private void evenClick() {
         songRecyclerView.addOnItemTouchListener(new CustomTouchListener(getContext(), new onItemClickListener() {
             @Override
@@ -112,22 +112,21 @@ public class SongFragment extends Fragment implements MainView {
                 StorageUtil storage = new StorageUtil(getContext());
                 storage.storeAudio(songList);
                 storage.storeAudioIndex(index);
-                //Log.d("idSong",songList.get(index).getId()+"");
+                Log.d("idSong",songList.get(index).getId()+""+"index"+index);
                 Intent intent = new Intent(getActivity(), PlayActivity.class);
                 intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
 
             }
         }));
-
     }
 
-    private void initPresenter(){
+   private void initPresenter(){
         mainPresenter = new MainPresenterImpl(this);
      }
 
     @Override
-    public void showSong(ArrayList<Song>songs) {
+    public void showSong(List<Song> songs) {
         songAdapter = new SongAdapter(getActivity(),songs);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -135,35 +134,7 @@ public class SongFragment extends Fragment implements MainView {
         songRecyclerView.setAdapter(songAdapter);
     }
     private void doStuff() {
-        songList = new ArrayList<>();
-        songList = getMusicSongArr();
-        mainPresenter.loadData();
-    }
-
-    public ArrayList<Song> getMusicSongArr() {
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
-        if (songCursor != null && songCursor.moveToFirst()) {
-            int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-            do {
-                String currentId = songCursor.getString(songId);
-                String currentTitle = songCursor.getString(songTitle);
-                String currentArtist = songCursor.getString(songArtist);
-                String currentAlbum = songCursor.getString(songAlbum);
-                String currentPath = songCursor.getString(songPath);
-                String currentDuration = songCursor.getString(songDuration);
-
-                songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath, Long.parseLong(currentDuration)));
-
-            } while (songCursor.moveToNext());
-        }
-        return songList;
+        mainPresenter.loadData(getContext());
     }
 
     @Override
@@ -183,15 +154,15 @@ public class SongFragment extends Fragment implements MainView {
     }
     private void disPlayViewList() {
         songAdapter.setType(Constants.VIEW_LIST);
-        songAdapter = new SongAdapter(getActivity(),songList);
-       linearLayoutManager = new LinearLayoutManager(getActivity());
+        //songAdapter = new SongAdapter(getActivity(),songList);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         songRecyclerView.setLayoutManager(linearLayoutManager);
         songRecyclerView.setAdapter(songAdapter);
     }
 
     private void disPlayViewGrid() {
-        songAdapter = new SongAdapter(getActivity(),songList);
+        //songAdapter = new SongAdapter(getActivity(),songList);
         songAdapter.setType(Constants.VIEW_GRID);
         gridLayoutManager = new GridLayoutManager(getActivity(),2);
         songRecyclerView.setLayoutManager(gridLayoutManager);

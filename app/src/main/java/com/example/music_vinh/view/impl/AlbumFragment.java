@@ -30,11 +30,10 @@ import com.example.music_vinh.adapter.SongAdapter;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.presenter.AlbumPresenter;
 import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.CustomTouchListener;
+import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.AlbumView;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.CustomTouchListener;
-import com.example.music_vinh.view.custom.StorageUtil;
-import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
 
@@ -115,6 +114,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
         albumList = getAlbum();
         albumPresenter.loadAlbums();
     }
+
     public ArrayList<Album> getAlbum() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;

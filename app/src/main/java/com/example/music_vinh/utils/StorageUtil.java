@@ -1,4 +1,4 @@
-package com.example.music_vinh.view.custom;
+package com.example.music_vinh.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

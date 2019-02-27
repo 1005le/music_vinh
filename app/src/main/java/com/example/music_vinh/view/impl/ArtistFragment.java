@@ -30,10 +30,10 @@ import com.example.music_vinh.adapter.ArtistAdapter;
 import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.presenter.ArtistPresenter;
 import com.example.music_vinh.presenter.impl.ArtistPresenterImpl;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.CustomTouchListener;
+import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.ArtistView;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.CustomTouchListener;
-import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
 
@@ -115,6 +115,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         artistList = getMusicArtist();
         artistPresenter.loadArtist();
     }
+
     public ArrayList<Artist> getMusicArtist() {
         ContentResolver contentResolver = getActivity().getContentResolver();
         Uri songUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;

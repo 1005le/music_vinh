@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.view.custom.Constants;
+import com.example.music_vinh.utils.Constants;
 import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.util.ArrayList;
@@ -39,6 +39,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         this.context = context;
         this.songList = songList;
         this.type = Constants.VIEW_LIST;
+    }
+    public void setSongs(List<Song> songs) {
+        songList = songs;
+    }
+    public void addItems(List<Song> songs) {
+        songList.addAll(songs);
+        notifyDataSetChanged();
     }
 
     public int getType() {

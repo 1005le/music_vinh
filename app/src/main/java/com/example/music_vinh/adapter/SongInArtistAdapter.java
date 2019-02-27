@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.view.custom.Constants;
 import com.example.music_vinh.view.impl.PlayActivity;
 
 import java.text.SimpleDateFormat;

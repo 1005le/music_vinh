@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.StorageUtil;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
 import com.example.music_vinh.view.impl.MainActivity;
 import com.example.music_vinh.view.impl.PlayActivity;

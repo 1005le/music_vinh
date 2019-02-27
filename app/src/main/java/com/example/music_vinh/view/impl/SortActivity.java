@@ -33,11 +33,11 @@ import com.example.music_vinh.presenter.SortPresenter;
 import com.example.music_vinh.presenter.impl.SortPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.CustomTouchListener;
+import com.example.music_vinh.utils.StorageUtil;
+import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.SortView;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.CustomTouchListener;
-import com.example.music_vinh.view.custom.StorageUtil;
-import com.example.music_vinh.view.custom.onItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Collections;

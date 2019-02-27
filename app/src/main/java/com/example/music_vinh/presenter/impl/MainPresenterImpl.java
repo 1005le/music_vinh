@@ -1,5 +1,7 @@
 package com.example.music_vinh.presenter.impl;
 
+import android.content.Context;
+
 import com.example.music_vinh.interactor.MainInteractor;
 import com.example.music_vinh.interactor.impl.MainInteractorImpl;
 import com.example.music_vinh.model.Album;
@@ -23,15 +25,17 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
 
     @Inject
     public MainPresenterImpl() {
+
     }
     @Override
-    public void onLoadSongSuccess(ArrayList<Song> songs) {
+    public void onLoadSongSuccess(List<Song> songs) {
         mainView.showSong(songs);
     }
 
     @Override
-    public void loadData() {
-        mainInteractorImpl.getSongCategories(this);
+    public void loadData(Context context) {
+        mainInteractorImpl.getSongCategories(this, context);
     }
+
 
 }

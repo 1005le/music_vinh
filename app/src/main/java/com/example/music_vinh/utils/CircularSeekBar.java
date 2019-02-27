@@ -25,7 +25,7 @@
  * reference material, and as a result, were extremely helpful.
  */
 
-package com.example.music_vinh.view.custom;
+package com.example.music_vinh.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;

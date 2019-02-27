@@ -42,12 +42,12 @@ import com.example.music_vinh.presenter.PlaySongPresenter;
 import com.example.music_vinh.presenter.impl.PlaySongPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
+import com.example.music_vinh.utils.CircularSeekBar;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.CustomTouchListener;
+import com.example.music_vinh.utils.StorageUtil;
+import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.PlaySongView;
-import com.example.music_vinh.view.custom.CircularSeekBar;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.CustomTouchListener;
-import com.example.music_vinh.view.custom.StorageUtil;
-import com.example.music_vinh.view.custom.onItemClickListener;
 import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.io.IOException;
@@ -267,13 +267,16 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-            Log.d(TAG, "Load info");
-            StorageUtil storage = new StorageUtil(getApplicationContext());
-            arrSong = storage.loadAudio();
-            mCurentSong = storage.loadAudioIndex();
+           // Log.d(TAG, "Load info");
+          StorageUtil storage = new StorageUtil(getApplicationContext());
+//            arrSong = storage.loadAudio();
+          //  mCurentSong = storage.loadAudioIndex();
             if (arrSong != null && mCurentSong > -1) {
-                getSupportActionBar().setTitle(arrSong.get(mCurentSong).getName());
-                tvNameArtistPlay.setText(arrSong.get(mCurentSong).getNameArtist());
+                getSupportActionBar().setTitle(storage.loadAudio().get(storage.loadAudioIndex()).getName());
+                tvNameArtistPlay.setText(storage.loadAudio().get(storage.loadAudioIndex()).getNameArtist());
+
+//                getSupportActionBar().setTitle(arrSong.get(storage.loadAudioIndex()).getName());
+//                tvNameArtistPlay.setText(arrSong.get(storage.loadAudioIndex()).getNameArtist());
             }
         }
     };

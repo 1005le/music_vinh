@@ -14,16 +14,13 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Song;
-import com.example.music_vinh.view.custom.Constants;
-import com.example.music_vinh.view.custom.StorageUtil;
+import com.example.music_vinh.utils.Constants;
+import com.example.music_vinh.utils.StorageUtil;
 import com.example.music_vinh.view.impl.AlbumInfoActivity;
-import com.example.music_vinh.view.impl.ArtistFragment;
 import com.example.music_vinh.view.impl.ArtistInfoActivity;
 import com.example.music_vinh.view.impl.PlayActivity;
-import com.example.music_vinh.view.impl.SongFragment;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchableActivity extends AppCompatActivity {
@@ -82,14 +79,12 @@ public class SearchableActivity extends AppCompatActivity {
 
     private void storeAudioIndex(String data) {
         StorageUtil storage = new StorageUtil(getApplicationContext());
-        List<Song> songList = null;
-        if( songList == storage.loadAudio() || songList == SongFragment.songList) {
+        List<Song> songList = storage.loadAudio();
             for (Song song : songList) {
                 if (String.valueOf(song.getId()).equals(data)) {
                     storage.storeAudioIndex(songList.indexOf(song));
                 }
             }
-        }
     }
     public void updateText(String text) {
         txt.setText(text);
