@@ -83,7 +83,6 @@ public class SongFragment extends Fragment implements MainView {
     private int mCurentSong;
     private boolean mIsBound;
 
-
     public SongFragment() {
         // Required empty public constructor
     }
@@ -99,9 +98,8 @@ public class SongFragment extends Fragment implements MainView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
-
         initPresenter();
-        doStuff();
+        onLoadSongList();
         setHasOptionsMenu(true);
         evenClick();
     }
@@ -133,14 +131,13 @@ public class SongFragment extends Fragment implements MainView {
         songRecyclerView.setLayoutManager(linearLayoutManager);
         songRecyclerView.setAdapter(songAdapter);
     }
-    private void doStuff() {
+    private void onLoadSongList() {
         mainPresenter.loadData(getContext());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.list_view:
                 disPlayViewList();
                 return true;
@@ -154,7 +151,6 @@ public class SongFragment extends Fragment implements MainView {
     }
     private void disPlayViewList() {
         songAdapter.setType(Constants.VIEW_LIST);
-        //songAdapter = new SongAdapter(getActivity(),songList);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         songRecyclerView.setLayoutManager(linearLayoutManager);
@@ -162,7 +158,6 @@ public class SongFragment extends Fragment implements MainView {
     }
 
     private void disPlayViewGrid() {
-        //songAdapter = new SongAdapter(getActivity(),songList);
         songAdapter.setType(Constants.VIEW_GRID);
         gridLayoutManager = new GridLayoutManager(getActivity(),2);
         songRecyclerView.setLayoutManager(gridLayoutManager);

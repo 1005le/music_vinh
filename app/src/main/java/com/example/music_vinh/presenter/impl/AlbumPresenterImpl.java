@@ -1,5 +1,7 @@
 package com.example.music_vinh.presenter.impl;
 
+import android.content.Context;
+
 import com.example.music_vinh.interactor.AlbumInteractor;
 import com.example.music_vinh.interactor.impl.AlbumInteractorImpl;
 import com.example.music_vinh.interactor.impl.MainInteractorImpl;
@@ -9,6 +11,7 @@ import com.example.music_vinh.view.AlbumView;
 import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,14 +35,14 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
     }
 
     @Override
-    public void onLoadAlbumSuccess(ArrayList<Album> albums) {
+    public void onLoadAlbumSuccess(List<Album> albums) {
 
         albumView.showAlbum(albums);
     }
     @Override
-    public void loadAlbums() {
+    public void loadAlbums(Context context) {
 
-        albumInteractorImpl.getAlbumCategories(this);
+        albumInteractorImpl.getAlbumCategories(this,context);
     }
 
 }

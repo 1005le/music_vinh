@@ -13,6 +13,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setupComponent((AppComponent) MusicApplication.get(this).component());
     }
-
     protected abstract void setupComponent(AppComponent appComponent);
 }
