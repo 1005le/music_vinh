@@ -31,8 +31,6 @@ import com.example.music_vinh.model.Album;
 import com.example.music_vinh.presenter.AlbumPresenter;
 import com.example.music_vinh.presenter.impl.AlbumPresenterImpl;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.AlbumView;
 
 import java.util.ArrayList;
@@ -61,7 +59,6 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     public static ArrayList<Album> albumList;
 
-    private static final int MY_PERMISSION_REQUEST = 1;
     public AlbumFragment() {
         // Required empty public constructor
     }
@@ -78,6 +75,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
+        initRecycleView();
         initPresenter();
         onLoadAlbumList();
         setHasOptionsMenu(true);
@@ -85,12 +83,23 @@ public class AlbumFragment extends Fragment implements AlbumView {
 
     }
 
+    private void initRecycleView() {
+        albumList = new ArrayList<>();
+        albumAdapter = new AlbumAdapter(getActivity(),albumList);
+        albumAdapter.setType(Constants.VIEW_GRID);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        albumRecyclerView.setLayoutManager(gridLayoutManager);
+        albumRecyclerView.setAdapter(albumAdapter);
+    }
+
     private void eventClick() {
         albumAdapter.setOnAlbumItemClickListener(new AlbumAdapter.OnAlbumItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(getContext(), AlbumInfoActivity.class);
+                //intent.putExtra("album",albumList.get(position).getId());
                 intent.putExtra("album",albumList.get(position));
+                Log.d("albumFrag",albumList.get(position).getName());
                 getContext().startActivity(intent);
             }
         });
@@ -102,22 +111,13 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
     @Override
     public void showAlbum(List<Album> albums) {
-        albumAdapter = new AlbumAdapter(getActivity(),albums);
-        albumAdapter.setType(Constants.VIEW_GRID);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-        albumRecyclerView.setLayoutManager(gridLayoutManager);
-        albumRecyclerView.setAdapter(albumAdapter);
-
+        albumAdapter.addData(albums);
+        albumList.addAll(albums);
     }
 
     private void onLoadAlbumList() {
-//        albumList = new ArrayList<>();
-//        albumList = getAlbum();
         albumPresenter.loadAlbums(getContext());
     }
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -133,18 +133,16 @@ public class AlbumFragment extends Fragment implements AlbumView {
     }
     private void disPlayViewList() {
         albumAdapter.setType(Constants.VIEW_LIST);
-       // albumAdapter = new AlbumAdapter(getActivity(),albumList);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-       albumRecyclerView.setLayoutManager(linearLayoutManager);
+        albumRecyclerView.setLayoutManager(linearLayoutManager);
         albumRecyclerView.setAdapter(albumAdapter);
     }
 
     private void disPlayViewGrid() {
-        //albumAdapter = new AlbumAdapter(getActivity(),albumList);
         albumAdapter.setType(Constants.VIEW_GRID);
         gridLayoutManager = new GridLayoutManager(getActivity(),2);
-       albumRecyclerView.setLayoutManager(gridLayoutManager);
-       albumRecyclerView.setAdapter(albumAdapter);
+        albumRecyclerView.setLayoutManager(gridLayoutManager);
+        albumRecyclerView.setAdapter(albumAdapter);
     }
 }

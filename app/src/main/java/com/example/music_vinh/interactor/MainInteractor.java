@@ -9,5 +9,4 @@ import java.util.List;
 import javax.inject.Inject;
 
 public interface MainInteractor {
-   // void onLoadSongSuccess(List<Song> songs);
 }

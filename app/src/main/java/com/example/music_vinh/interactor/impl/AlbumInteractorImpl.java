@@ -19,19 +19,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class AlbumInteractorImpl implements AlbumInteractor{
-    private AlbumInteractor albumInteractor;
     Context context;
     @Inject
     public AlbumInteractorImpl() {
     }
-    public AlbumInteractorImpl(AlbumInteractor albumInteractor){
-        this.albumInteractor = albumInteractor;
-    }
-
-//    public void getAlbumCategories(final AlbumInteractor albumInteractor, Context context) {
-//                albumInteractor.onLoadAlbumSuccess(getAlbum(context));
-//    }
-//    @Override
-//    public void onLoadAlbumSuccess(List<Album> albums) {
-//    }
 }

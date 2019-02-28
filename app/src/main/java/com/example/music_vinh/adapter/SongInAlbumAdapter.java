@@ -29,13 +29,13 @@ import butterknife.ButterKnife;
 
 public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.SongInAlbumViewHolder> {
     Context context;
-    List<Song> songArrayList;
+    List<Song> songList;
     Album album;
     private OnSongInAlbumItemClickListener onSongInAlbumItemClickListener;
 
     public SongInAlbumAdapter(Context context, List<Song> songArrayList) {
         this.context = context;
-        this.songArrayList = songArrayList;
+        this.songList = songArrayList;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
     @Override
     public void onBindViewHolder(SongInAlbumViewHolder holder, final int position) {
 
-         Song song = songArrayList.get(position);
+         Song song = songList.get(position);
          holder.tvNameSong.setText(song.getName());
          holder.tvNameAlbumInSong.setText(song.getNameAlbum());
          holder.imgSongA.setImageResource(R.drawable.ic_song);
@@ -59,6 +59,12 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
                 onSongInAlbumItemClickListener.onItemClicked(view,position);
             }
         });
+    }
+    public void addData(List<Song> songs){
+        if(songs.size() >0){
+            songList.addAll(songs);
+            notifyDataSetChanged();
+        }
     }
 
     public interface OnSongInAlbumItemClickListener {
@@ -71,7 +77,7 @@ public class SongInAlbumAdapter extends RecyclerView.Adapter<SongInAlbumAdapter.
 
     @Override
     public int getItemCount() {
-        return songArrayList.size();
+        return songList.size();
     }
 
     public class SongInAlbumViewHolder extends RecyclerView.ViewHolder {

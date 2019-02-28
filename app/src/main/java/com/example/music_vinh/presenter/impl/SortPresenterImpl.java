@@ -11,36 +11,25 @@ import com.example.music_vinh.view.PlaySongView;
 import com.example.music_vinh.view.SortView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 public class SortPresenterImpl implements SortPresenter, SortInteractor {
 
-    private SortInteractorImpl sortInteractorImpl;
     private SortView sortView;
 
     @Inject
     public SortPresenterImpl() {
 
     }
-    public SortPresenterImpl(SortInteractorImpl sortInteractorImpl, SortView sortView) {
-        this.sortInteractorImpl = sortInteractorImpl;
-        this.sortView = sortView;
-    }
 
     public SortPresenterImpl(SortView sortView) {
         this.sortView = sortView;
-        sortInteractorImpl = new SortInteractorImpl(this);
     }
 
     @Override
-    public void onLoadSongSuccess(ArrayList<Song> songs) {
-       sortView.showSong(songs);
-    }
-
-
-    @Override
-    public void loadData() {
-        sortInteractorImpl.getSongCategories(this);
+    public void loadSongFromPlay(List<Song> songs) {
+        sortView.showSong(songs);
     }
 }

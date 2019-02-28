@@ -60,6 +60,10 @@ public class SortSongAdapter extends RecyclerView.Adapter<SortSongAdapter.SortSo
         });
     }
 
+    public void addData(List<Song> songs){
+        songList.addAll(songs);
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return songList.size();

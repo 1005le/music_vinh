@@ -54,10 +54,9 @@ import com.example.music_vinh.presenter.impl.ArtistInfoPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
 import com.example.music_vinh.utils.StorageUtil;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.ArtistInfoView;
+import com.example.music_vinh.view.base.BaseActivity;
 import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     @BindView(R.id.toolbarArtistInfo) Toolbar toolbarArtist;
     @BindView(R.id.SongInArtistrecyclerView) RecyclerView songInArtistRecycleView;
     Artist artist;
-   public static ArrayList<Song> songArrayList;
+   public static List<Song> songArrayList;
     @BindView(R.id.imgViewArtist) ImageView imgViewArtist;
 
     @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
@@ -107,13 +106,14 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_info);
-        getDataIntent();
+
         seekBar = findViewById(R.id.seekBarBottom);
         ButterKnife.bind(this);
         initActionBar();
        // getData();
+        initRecycleView();
         initPresenter();
-        doStuff();
+        getDataIntent();
 
         bindServiceMedia();
         loadAudioInfo();
@@ -121,6 +121,14 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         register_durationAudio();
         register_currentTimeAudio();
         eventClick();
+    }
+
+    private void initRecycleView() {
+        songArrayList = new ArrayList<>();
+        linearLayoutManager = new LinearLayoutManager(ArtistInfoActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        songInArtistRecycleView.setLayoutManager(linearLayoutManager);
+        songInArtistRecycleView.setAdapter(songInArtistAdapter);
     }
 
     public void eventClick(){
@@ -168,7 +176,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
             public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
                 StorageUtil storage = new StorageUtil(getApplicationContext());
-                storage.storeAudio(songArrayList);
+                storage.storeAudio((ArrayList)songArrayList);
                 storage.storeAudioIndex(position);
                 intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
@@ -179,7 +187,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     private void bindServiceMedia() {
         Intent intent = new Intent(this, MusicService.class);
         intent.setAction(Constants.ACTION_BIND_SERVICE);
-        // startService(intent);
         bindService(intent, mSCon, BIND_AUTO_CREATE);
     }
 
@@ -187,7 +194,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-           // mMusicService.setListener(ArtistInfoActivity.this);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -304,16 +310,15 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         Intent intent = getIntent();
         if (intent.hasExtra("artist")) {
             artist= intent.getParcelableExtra("artist");
-            idArtist = artist.getId();
+            artistInfoPresenter.getSongFromArtist(getApplicationContext(),artist.getId());
         }
         /*nhân tu search
          * */
-
         if (intent.hasExtra("artist_ID")) {
-            artistListInfo = ArtistFragment.artistList;
+           // artistListInfo = ArtistFragment.artistList;
             indexArtist = intent.getStringExtra("artist_ID");
             idArtist= Long.parseLong(indexArtist);
-          //  artist = artistListInfo.get(Integer.parseInt(indexArtist));
+            artistInfoPresenter.getSongFromArtist(getApplicationContext(),idArtist);
         }
 
     }
@@ -336,62 +341,12 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         artistInfoPresenter = new ArtistInfoPresenterImpl(this);
     }
     @Override
-    public void showSong(ArrayList<Song> songs) {
-        songInArtistAdapter = new SongInArtistAdapter(ArtistInfoActivity.this, songs);
+    public void showSong(List<Song> songs) {
+        songInArtistAdapter.addData(songs);
+        songArrayList.addAll(songs);
 
-        linearLayoutManager = new LinearLayoutManager(ArtistInfoActivity.this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        songInArtistRecycleView.setLayoutManager(linearLayoutManager);
-        songInArtistRecycleView.setAdapter(songInArtistAdapter);
     }
 
-    private void doStuff() {
-        songArrayList= new ArrayList<>();
-         songArrayList = getSongArtist();
-        artistInfoPresenter.loadData();
-    }
-
-    public ArrayList<Song> getSongArtist() {
-        ContentResolver contentResolver = getContentResolver();
-        Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor mediaCursor = contentResolver.query(mediaUri, null, null, null, null);
-
-        // if the cursor is null.
-        if(mediaCursor != null && mediaCursor.moveToFirst())
-        {
-            //get Columns
-            int titleColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int idColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int artistColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int artistId = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID);
-            int albumName = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int artistSong = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            int durationColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-            // Store the title, id and artist name in Song Array list.
-            do
-            {
-                long thisId = mediaCursor.getLong(idColumn);
-                long thisArtistId = mediaCursor.getLong(artistId);
-                String thisTitle = mediaCursor.getString(titleColumn);
-                String thisArtist = mediaCursor.getString(artistColumn);
-                String thisAlbumName = mediaCursor.getString(albumName);
-                String thisPath = mediaCursor.getString(artistSong);
-                String thisDuration = mediaCursor.getString(durationColumn);
-
-                // Add the info to our array.
-               // if(artist.getId() == thisArtistId)
-                if(idArtist == thisArtistId)
-                {
-                    songArrayList.add(new Song(thisId, thisTitle, thisArtist,thisAlbumName,thisPath,Long.parseLong(thisDuration)));
-                    collapsingToolbarLayoutArtist.setTitle(thisArtist);
-                }
-            }
-            while (mediaCursor.moveToNext());
-            // For best practices, close the cursor after use.
-            mediaCursor.close();
-        }
-        return songArrayList;
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_view, menu);

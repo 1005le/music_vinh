@@ -1,6 +1,10 @@
 package com.example.music_vinh.presenter.impl;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.example.music_vinh.interactor.AlbumInfoInteractor;
 import com.example.music_vinh.interactor.MainInteractor;
@@ -15,6 +19,7 @@ import com.example.music_vinh.view.AlbumView;
 import com.example.music_vinh.view.MainView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -23,13 +28,8 @@ public class AlbumInfoPresenterImpl implements AlbumInfoInteractor, AlbumInfoPre
     private AlbumInfoInteractorImpl albumInfoInteractorImpl;
     private AlbumInfoView albumInfoView;
 
-    public AlbumInfoPresenterImpl(AlbumInfoInteractorImpl albumInfoInteractorImpl, AlbumInfoView albumInfoView) {
-        this.albumInfoInteractorImpl = albumInfoInteractorImpl;
-        this.albumInfoView = albumInfoView;
-    }
     public AlbumInfoPresenterImpl(AlbumInfoView albumInfoView) {
         this.albumInfoView = albumInfoView;
-        albumInfoInteractorImpl = new AlbumInfoInteractorImpl(this);
     }
 
     @Inject
@@ -37,12 +37,40 @@ public class AlbumInfoPresenterImpl implements AlbumInfoInteractor, AlbumInfoPre
     }
 
     @Override
-    public void onLoadSongSuccess(ArrayList<Song> songs) {
-        albumInfoView.showSong(songs);
-    }
-    @Override
-    public void loadData() {
-       albumInfoInteractorImpl.getSongCategories(this);
+    public void getSongFromAlbum(Context context, Long idAlbum) {
+
+        List<Song> songArrayListAlbum = new ArrayList<>();
+        Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor mediaCursor = context.getContentResolver().query(mediaUri, null, null, null, null);
+
+        if (mediaCursor != null && mediaCursor.moveToFirst()) {
+            //get Columns
+            int titleColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int idColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            int artistColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int albumId = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            int albumName = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+            int songPath = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+            int durationColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            // Store the title, id and artist name in Song Array list.
+            do {
+                long thisId = mediaCursor.getLong(idColumn);
+                long thisalbumId = mediaCursor.getLong(albumId);
+                String thisTitle = mediaCursor.getString(titleColumn);
+                String thisArtist = mediaCursor.getString(artistColumn);
+                String thisAlbumName = mediaCursor.getString(albumName);
+                String thisPath = mediaCursor.getString(songPath);
+                String thisDuration = mediaCursor.getString(durationColumn);
+
+                // if (album.getId() == thisalbumId)
+                if( (idAlbum) == thisalbumId) {
+                    songArrayListAlbum.add(new Song(thisId, thisTitle, thisArtist, thisAlbumName, thisPath, Long.parseLong(thisDuration)));
+                }
+            }
+            while (mediaCursor.moveToNext());
+            mediaCursor.close();
+            albumInfoView.showSong(songArrayListAlbum);
+        }
     }
 
 }

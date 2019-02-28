@@ -16,17 +16,4 @@ public class ArtistInfoInteractorImpl implements ArtistInfoInteractor {
     public ArtistInfoInteractorImpl(ArtistInfoInteractor artistInfoInteractor){
     }
 
-    private  ArrayList<Song> createArrayList() {
-        ArrayList<Song> songs = ArtistInfoActivity.songArrayList;
-        return songs;
-    }
-
-    public void getSongCategories(final ArtistInfoInteractor artistInfoInteractor) {
-        artistInfoInteractor.onLoadSongSuccess(createArrayList());
-    }
-
-    @Override
-    public void onLoadSongSuccess(ArrayList<Song> songs) {
-
-    }
 }

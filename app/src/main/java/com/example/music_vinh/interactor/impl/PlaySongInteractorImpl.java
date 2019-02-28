@@ -16,16 +16,4 @@ public class PlaySongInteractorImpl implements PlaySongInteractor{
     @Inject
     public PlaySongInteractorImpl(PlaySongInteractor playSongInteractor){
     }
-    private  ArrayList<Song> createArrayList() {
-        ArrayList<Song> songs = PlayActivity.arrSong;
-        return songs;
-    }
-    public void getSongCategories(final PlaySongInteractor playSongInteractor) {
-        playSongInteractor.onLoadSongSuccess(createArrayList());
-    }
-
-    @Override
-    public void onLoadSongSuccess(ArrayList<Song> songs) {
-
-    }
 }

@@ -41,9 +41,7 @@ import com.example.music_vinh.presenter.impl.MainPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
 import com.example.music_vinh.utils.StorageUtil;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.MainView;
 
 
@@ -77,14 +75,13 @@ public class SongFragment extends Fragment implements MainView {
     @Inject
     GridLayoutManager gridLayoutManager;
 
-    public static ArrayList<Song> songList;
+    public List<Song> songList;
     private MusicService mMusicService;
     private ServiceConnection mSCon;
     private int mCurentSong;
     private boolean mIsBound;
 
     public SongFragment() {
-        // Required empty public constructor
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,22 +95,33 @@ public class SongFragment extends Fragment implements MainView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
+        initRecycleView();
         initPresenter();
         onLoadSongList();
         setHasOptionsMenu(true);
         evenClick();
     }
+
+    private void initRecycleView() {
+        songList= new ArrayList<>();
+        songAdapter = new SongAdapter(getActivity(),songList);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        songRecyclerView.setLayoutManager(linearLayoutManager);
+        songRecyclerView.setAdapter(songAdapter);
+    }
+
     private void evenClick() {
         songAdapter.setOnSongItemClickListener(new SongAdapter.OnSongItemClickListener() {
             @Override
             public void onSongItemClicked(View view, int position) {
                 StorageUtil storage = new StorageUtil(getContext());
-                storage.storeAudio(songList);
+                storage.storeAudio((ArrayList)songList);
                 storage.storeAudioIndex(position);
-                Toast.makeText(getContext(), "hello", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(getActivity(), PlayActivity.class);
-//                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
-//                startActivity(intent);
+
+                Intent intent = new Intent(getActivity(), PlayActivity.class);
+                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
+                startActivity(intent);
             }
         });
     }
@@ -121,14 +129,12 @@ public class SongFragment extends Fragment implements MainView {
    private void initPresenter(){
         mainPresenter = new MainPresenterImpl(this);
      }
-
     @Override
     public void showSong(List<Song> songs) {
-        songAdapter = new SongAdapter(getActivity(),songs);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        songRecyclerView.setLayoutManager(linearLayoutManager);
-        songRecyclerView.setAdapter(songAdapter);
+        songAdapter.addData(songs);
+        songList.addAll(songs);
+        StorageUtil storage = new StorageUtil(getContext());
+        storage.storeAudio((ArrayList)songs);
     }
     private void onLoadSongList() {
         mainPresenter.loadData(getContext());
@@ -145,7 +151,6 @@ public class SongFragment extends Fragment implements MainView {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
     private void disPlayViewList() {

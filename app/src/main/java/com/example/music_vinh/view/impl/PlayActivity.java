@@ -44,10 +44,10 @@ import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.utils.CircularSeekBar;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
+
 import com.example.music_vinh.utils.StorageUtil;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.PlaySongView;
+import com.example.music_vinh.view.base.BaseActivity;
 import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.io.IOException;
@@ -76,14 +76,15 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     @BindView(R.id.imgRepeat) ImageView imgRepeat;
     @BindView(R.id.imgRepeatOne) ImageView imgRepeatOne;
     @BindView(R.id.imgPlay) ImageView imgPlay;
-    @BindView(R.id.recycleViewPlaySong) RecyclerView playSongRecycleview;
+
+    RecyclerView playSongRecycleview;
 
     @BindView(R.id.tvNameArtistPlay) TextView tvNameArtistPlay;
     private int mProgess;
 
     //  public int audioIndex =-1;
     public int audioIndex;
-    public static ArrayList<Song> arrSong;
+    public static List<Song> arrSong;
     public static Song song;
     MediaPlayer mediaPlayer;
 
@@ -112,30 +113,36 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_play);
+        initRecycleView();
         initPresenter();
-        // getDataIntent();
-        // getDataSong();
         ButterKnife.bind(this);
         circularSeekBar = (CircularSeekBar) findViewById(R.id.circularSeekBar1);
         mIsBound = false;
         mDateFormat = new SimpleDateFormat(getString(R.string.date_time));
         connectService();
-        loadPlaylist();
+       // loadPlaylist();
         initActionBar();
         registerListener();
         register_DataSongFragment();
         register_currentTimeAudio();
         register_durationAudio();
         evenClick();
+    }
 
+    private void initRecycleView() {
+        arrSong = new ArrayList<>();
+        playSongRecycleview =findViewById(R.id.recycleViewPlaySong);
+        linearLayoutManager = new LinearLayoutManager(PlayActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        playSongRecycleview.setLayoutManager(linearLayoutManager);
+        playSongRecycleview.setAdapter(songAdapter);
     }
 
     private void evenClick() {
-
         songAdapter.setOnSongItemClickListener(new SongAdapter.OnSongItemClickListener() {
             @Override
             public void onSongItemClicked(View view, int position) {
-                mMusicService.setSongs(arrSong);
+                mMusicService.setSongs((ArrayList)arrSong);
                 mMusicService.setCurrentSong(position);
                 mMusicService.playSong();
             }
@@ -188,7 +195,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
                 mIsBound = true;
 
                 getDataIntent();
-                mMusicService.setSongs(arrSong);
+                mMusicService.setSongs((ArrayList)arrSong);
                 mMusicService.setCurrentSong(mCurentSong);
 
                 if (getIntent() != null) {
@@ -229,9 +236,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     }
 
     private void loadPlaylist() {
-        arrSong = new ArrayList<>();
-        getDataIntent();
-        playSongPresenter.loadData();
+        playSongPresenter.onLoadSongPlay(arrSong);
     }
 
     @Override
@@ -251,7 +256,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         if (storage.loadAudio() != null) {
             arrSong = storage.loadAudio();
             mCurentSong = storage.loadAudioIndex();
+           loadPlaylist();
         }
+
     }
 
     private void loadAudioInfo() {
@@ -263,16 +270,11 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     private BroadcastReceiver dataSongFragment = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-           // Log.d(TAG, "Load info");
           StorageUtil storage = new StorageUtil(getApplicationContext());
-//            arrSong = storage.loadAudio();
-          //  mCurentSong = storage.loadAudioIndex();
+
             if (arrSong != null && mCurentSong > -1) {
                 getSupportActionBar().setTitle(storage.loadAudio().get(storage.loadAudioIndex()).getName());
                 tvNameArtistPlay.setText(storage.loadAudio().get(storage.loadAudioIndex()).getNameArtist());
-
-//                getSupportActionBar().setTitle(arrSong.get(storage.loadAudioIndex()).getName());
-//                tvNameArtistPlay.setText(arrSong.get(storage.loadAudioIndex()).getNameArtist());
             }
         }
     };
@@ -393,32 +395,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         }
     }
 
-    public ArrayList<Song> getMusicSong() {
-        ContentResolver contentResolver = getContentResolver();
-        Uri songUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Log.d("uri", songUri + "");
-        Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
-        if (songCursor != null && songCursor.moveToFirst()) {
-            int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int songPath = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-            do {
-                String currentId = songCursor.getString(songId);
-                String currentTitle = songCursor.getString(songTitle);
-                String currentArtist = songCursor.getString(songArtist);
-                String currentAlbum = songCursor.getString(songAlbum);
-                String currentPath = songCursor.getString(songPath);
-                String currentDuration = songCursor.getString(songDuration);
-
-                arrSong.add(new Song(Long.parseLong(currentId), currentTitle, currentArtist, currentAlbum, currentPath, Long.parseLong(currentDuration)));
-            } while (songCursor.moveToNext());
-        }
-        return arrSong;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -452,13 +428,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     }
 
     @Override
-    public void showSong(ArrayList<Song> songs) {
-
-        songAdapter = new SongAdapter(PlayActivity.this, songs);
-        linearLayoutManager = new LinearLayoutManager(PlayActivity.this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        playSongRecycleview.setLayoutManager(linearLayoutManager);
-        playSongRecycleview.setAdapter(songAdapter);
+    public void showSong(List<Song> songs) {
+        songAdapter.addData(songs);
+        arrSong.addAll(songs);
     }
 
     @Override

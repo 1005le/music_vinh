@@ -56,6 +56,7 @@ import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.utils.Constants;
 import com.example.music_vinh.utils.StorageUtil;
 import com.example.music_vinh.view.MainView;
+import com.example.music_vinh.view.base.BaseActivity;
 import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.text.SimpleDateFormat;

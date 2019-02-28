@@ -56,10 +56,9 @@ import com.example.music_vinh.presenter.impl.AlbumInfoPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
 import com.example.music_vinh.utils.StorageUtil;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.AlbumInfoView;
+import com.example.music_vinh.view.base.BaseActivity;
 import com.example.music_vinh.view.search.SearchableActivity;
 
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     @BindView(R.id.toolbarDanhSach) Toolbar toolbar;
     @BindView(R.id.recyclerViewListSong) RecyclerView listSongrecyclerView;
     Album album;
-    public static ArrayList<Song> songArrayListAlbum;
+    public static List<Song> songArrayListAlbum;
 
     @Inject
     SongInAlbumAdapter songInAlbumAdapter;
@@ -115,20 +114,26 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_infor);
         ButterKnife.bind(this);
+        initRecycleView();
+        initPresenter();
         getDataIntent();
-
         getData();
         initActionBar();
         seekBar = findViewById(R.id.seekBarBottom);
-        //lay bai hat
-        initPresenter();
-        doStuff();
         bindServiceMedia();
         loadAudioInfo();
         register_DataSongFragment();
         register_durationAudio();
         register_currentTimeAudio();
         evenClick();
+    }
+
+    private void initRecycleView() {
+        songArrayListAlbum = new ArrayList<>();
+        linearLayoutManager = new LinearLayoutManager(AlbumInfoActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        listSongrecyclerView.setLayoutManager(linearLayoutManager);
+        listSongrecyclerView.setAdapter(songInAlbumAdapter);
     }
 
     @Override
@@ -144,7 +149,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
             public void onItemClicked(View view, int position) {
                 Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
                 StorageUtil storage = new StorageUtil(getApplicationContext());
-                storage.storeAudio(songArrayListAlbum);
+                storage.storeAudio((ArrayList)songArrayListAlbum);
                 storage.storeAudioIndex(position);
                 intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
                 startActivity(intent);
@@ -314,15 +319,17 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         Intent intent = getIntent();
         if (intent.hasExtra("album")) {
             album = intent.getParcelableExtra("album");
-            idAlbum = album.getId();
+            Log.d("albumActivity",album.getId()+"--"+ album.getName());
+           onLoadSong();
         }
         /*nhân tu search
          * */
         if (intent.hasExtra("album_ID")) {
-            albumList = AlbumFragment.albumList;
+             albumList = AlbumFragment.albumList;
             indexAlbum = intent.getStringExtra("album_ID");
             album = albumList.get(Integer.parseInt(indexAlbum) -1);
             idAlbum = Long.parseLong(indexAlbum);
+            onLoadSong();
         }
     }
 
@@ -339,7 +346,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
 
     private void initActionBar() {
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle(album.getName());
         toolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -358,60 +364,12 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     }
 
     @Override
-    public void showSong(ArrayList<Song> songs) {
-        songInAlbumAdapter = new SongInAlbumAdapter(AlbumInfoActivity.this, songs);
-
-        linearLayoutManager = new LinearLayoutManager(AlbumInfoActivity.this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        listSongrecyclerView.setLayoutManager(linearLayoutManager);
-        listSongrecyclerView.setAdapter(songInAlbumAdapter);
-
+    public void showSong(List<Song> songs) {
+        songInAlbumAdapter.addData(songs);
+        songArrayListAlbum.addAll(songs);
     }
-
-    private void doStuff() {
-        songArrayListAlbum = new ArrayList<>();
-        songArrayListAlbum = getSongAlbum();
-        //  albumInfoPresenter.onLoadSongSuccess(songArrayList);
-        albumInfoPresenter.loadData();
-    }
-
-    public ArrayList<Song> getSongAlbum() {
-        ContentResolver contentResolver = getContentResolver();
-        Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor mediaCursor = contentResolver.query(mediaUri, null, null, null, null);
-
-        // if the cursor is null.
-        if (mediaCursor != null && mediaCursor.moveToFirst()) {
-            //get Columns
-            int titleColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-            int idColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-            int artistColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-            int albumId = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
-            int albumName = mediaCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-            int songPath = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-            int durationColumn = mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-            // Store the title, id and artist name in Song Array list.
-            do {
-                long thisId = mediaCursor.getLong(idColumn);
-                long thisalbumId = mediaCursor.getLong(albumId);
-                String thisTitle = mediaCursor.getString(titleColumn);
-                String thisArtist = mediaCursor.getString(artistColumn);
-                String thisAlbumName = mediaCursor.getString(albumName);
-                String thisPath = mediaCursor.getString(songPath);
-                String thisDuration = mediaCursor.getString(durationColumn);
-
-                // Add the info to our array.
-               // if (album.getId() == thisalbumId)
-                if( (idAlbum) == thisalbumId) {
-                    songArrayListAlbum.add(new Song(thisId, thisTitle, thisArtist, thisAlbumName, thisPath, Long.parseLong(thisDuration)));
-                }
-
-            }
-            while (mediaCursor.moveToNext());
-            // For best practices, close the cursor after use.
-            mediaCursor.close();
-        }
-        return songArrayListAlbum;
+    public void onLoadSong(){
+        albumInfoPresenter.getSongFromAlbum(getApplicationContext(),album.getId());
     }
 
     @Override

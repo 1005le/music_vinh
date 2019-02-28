@@ -61,7 +61,10 @@ public class SongInArtistAdapter extends RecyclerView.Adapter<SongInArtistAdapte
     public void setOnSongInArtistItemClickListener(OnSongInArtistItemClickListener onSongInArtistItemClickListener) {
         this.onSongInArtistItemClickListener = onSongInArtistItemClickListener;
     }
-
+    public void addData(List<Song> songs){
+        songArrayList.addAll(songs);
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return songArrayList.size();

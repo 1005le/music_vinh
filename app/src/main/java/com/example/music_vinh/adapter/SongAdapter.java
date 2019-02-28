@@ -44,6 +44,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         songList = songs;
     }
 
+    public void addData(List<Song> songs) {
+        if (songs.size() > 0) {
+            songList.addAll(songs);
+            notifyDataSetChanged();
+        }
+    }
+
     public int getType() {
         return type;
     }
@@ -80,7 +87,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
     public void onBindViewHolder(@NonNull SongViewHolder viewHolder,final int i) {
 
         Song song = songList.get(i);
-        //  Log.d("hello3",songList.size()+"\n"+songList.get(3).getName()+"\n"+song.getNameArtist());
         viewHolder.tvNameSong.setText(song.getName());
         viewHolder.tvNameArtist.setText(song.getNameArtist());
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -89,8 +95,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                 onSongItemClickListener.onSongItemClicked(v,i);
             }
         });
-
-
     }
 
     @Override
@@ -100,15 +104,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     public class SongViewHolder extends RecyclerView.ViewHolder{
 
-        @BindView(R.id.tvName)
-        TextView tvNameSong;
+        @BindView(R.id.tvName) TextView tvNameSong;
 
-        @BindView(R.id.tvNameArtist)
-        TextView tvNameArtist;
+        @BindView(R.id.tvNameArtist) TextView tvNameArtist;
 
-        @BindView(R.id.imgSong)
-        ImageView imgSong;
-       // ImageButton imgPlay, imgPause;
+        @BindView(R.id.imgSong) ImageView imgSong;
+
         public SongViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

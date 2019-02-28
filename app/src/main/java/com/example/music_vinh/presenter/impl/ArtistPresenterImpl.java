@@ -21,25 +21,14 @@ import javax.inject.Inject;
 
 public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
 
-    private ArtistInteractorImpl artistInteractorImpl;
     private ArtistView artistView;
-
-//    public ArtistPresenterImpl(ArtistInteractorImpl artistInteractorImpl, ArtistView artistView) {
-//        this.artistInteractorImpl = artistInteractorImpl;
-//        this.artistView = artistView;
-//    }
     @Inject
     public ArtistPresenterImpl() {
 
     }
     public ArtistPresenterImpl(ArtistView artistView) {
         this.artistView = artistView;
-       // artistInteractorImpl = new ArtistInteractorImpl(this);
     }
-//    @Override
-//    public void onLoadArtistSuccess(ArrayList<Artist> artists) {
-//        artistView.showArtist(artists);
-//    }
 
     @Override
     public void loadArtist(Context context) {

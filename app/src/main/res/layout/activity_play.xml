@@ -54,7 +54,7 @@
                 android:layout_toRightOf="@+id/imgPrev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-            <com.example.music_vinh.view.custom.CircularSeekBar
+            <com.example.music_vinh.utils.CircularSeekBar
                 android:id="@+id/circularSeekBar1"
                 android:layout_width="200dp"
                 android:layout_height="200dp" />

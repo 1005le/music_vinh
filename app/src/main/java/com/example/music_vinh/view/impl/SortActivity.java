@@ -34,13 +34,13 @@ import com.example.music_vinh.presenter.impl.SortPresenterImpl;
 import com.example.music_vinh.service.MusicService;
 import com.example.music_vinh.service.ServiceCallback;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
 import com.example.music_vinh.utils.StorageUtil;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.SortView;
+import com.example.music_vinh.view.base.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -69,7 +69,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     @BindView(R.id.imgButtonPlay)
     ImageButton imgBottomPlay;
 
-    public static ArrayList<Song> songArrayList;
+    public List<Song> songArrayList;
     public Song song;
     public int audioIndex;
     private MusicService mMusicService;
@@ -85,7 +85,6 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     LinearLayoutManager linearLayoutManager;
 
     MediaPlayer mediaPlayer;
-    // private MediaPlayerService player;
     boolean serviceBound = false;
 
     @Override
@@ -95,6 +94,7 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         seekBar = findViewById(R.id.seekBarBottom);
         bindServiceMedia();
         ButterKnife.bind(this);
+        initRecycleView();
         init();
         initActionBar();
 
@@ -103,19 +103,23 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         register_currentTimeAudio();
         loadAudioInfo();
         eventClick();
-//        sortSongRecycleview.addOnItemTouchListener(new CustomTouchListener(this, new onItemClickListener() {
-//            @Override
-//            public void onClick(View view, int index) {
-//            }
-//        }));
         sortSongAdapter.setOnSongInSortItemClickListener(new SortSongAdapter.OnSongInSortItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                mMusicService.setSongs(songArrayList);
+                mMusicService.setSongs((ArrayList)songArrayList);
                 mMusicService.setCurrentSong(position);
                 mMusicService.playSong();
             }
         });
+    }
+
+    private void initRecycleView() {
+        songArrayList = new ArrayList<>();
+        //sortSongAdapter = new SortSongAdapter(SortActivity.this, songs);
+        linearLayoutManager = new LinearLayoutManager(SortActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        sortSongRecycleview.setLayoutManager(linearLayoutManager);
+        sortSongRecycleview.setAdapter(sortSongAdapter);
     }
 
     private void bindServiceMedia() {
@@ -128,9 +132,8 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
             mMusicService = ((MusicService.MyBinder) iBinder).getMusicService();
-            // mMusicService.setListener(SortActivity.this);
-        }
 
+        }
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mSCon = null;
@@ -234,7 +237,6 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SortActivity.this, PlayActivity.class);
-                //intent.putExtra("dragSong",(ArrayList)songArrayList);
                 intent.putExtra("PLAY_TYPE", "RESUME");
                 startActivity(intent);
                 finish();
@@ -260,7 +262,6 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
         imgPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Log.d("click","click");
                 if (mMusicService.isPlay()) {
                     mMusicService.pauseSong();
                 } else {
@@ -287,12 +288,9 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
 
     private void init() {
         Intent intent = getIntent();
-        //songArrayList = intent.getParcelableArrayListExtra("listSong");
         songArrayList = new StorageUtil(getApplicationContext()).loadAudio();
-        // arrSong.add(song);
-        // songArrayList = new StorageUtil(getApplicationContext()).loadAudio();
         initPresenter();
-        sortPresenter.loadData();
+        onLoadSong();
 
         RecyclerView.ItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         sortSongRecycleview.addItemDecoration(divider);
@@ -303,14 +301,11 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
                 int position_dragged = dragged.getAdapterPosition();
                 int position_target = target.getAdapterPosition();
 
-              //  Log.d(TAG, songArrayList.get(position_target).getName());
                 Collections.swap(songArrayList, position_dragged, position_target);
                 sortSongAdapter.notifyItemMoved(position_dragged, position_target);
 
-              //  Log.d(TAG, songArrayList.get(position_target).getName());
-
                 StorageUtil storage = new StorageUtil(getApplicationContext());
-                storage.storeAudio(songArrayList);
+                storage.storeAudio((ArrayList)songArrayList);
                 storage.storeAudioIndex(position_target);
 
                 return false;
@@ -327,15 +322,14 @@ public class SortActivity extends BaseActivity implements SortView, View.OnClick
     private void initPresenter() {
         sortPresenter = new SortPresenterImpl(this);
     }
+    public void onLoadSong(){
+        sortPresenter.loadSongFromPlay(songArrayList);
+    }
 
     @Override
-    public void showSong(ArrayList<Song> songs) {
-
-        sortSongAdapter = new SortSongAdapter(SortActivity.this, songs);
-        linearLayoutManager = new LinearLayoutManager(SortActivity.this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        sortSongRecycleview.setLayoutManager(linearLayoutManager);
-        sortSongRecycleview.setAdapter(sortSongAdapter);
+    public void showSong(List<Song> songs) {
+         sortSongAdapter.addData(songs);
+         songArrayList.addAll(songs);
     }
 
     @Override

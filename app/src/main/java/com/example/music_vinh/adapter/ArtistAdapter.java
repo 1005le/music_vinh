@@ -44,7 +44,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
         this.type = mViewType;
         notifyDataSetChanged();
     }
-
+    public void addData(List<Artist> artists){
+        if( artists.size() >0){
+            artistList.addAll(artists);
+            notifyDataSetChanged();
+        }
+    }
     @NonNull
     @Override
     public ArtistViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

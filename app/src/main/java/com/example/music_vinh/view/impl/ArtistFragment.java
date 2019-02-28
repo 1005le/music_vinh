@@ -31,8 +31,6 @@ import com.example.music_vinh.model.Artist;
 import com.example.music_vinh.presenter.ArtistPresenter;
 import com.example.music_vinh.presenter.impl.ArtistPresenterImpl;
 import com.example.music_vinh.utils.Constants;
-import com.example.music_vinh.utils.CustomTouchListener;
-import com.example.music_vinh.utils.onItemClickListener;
 import com.example.music_vinh.view.ArtistView;
 
 import java.util.ArrayList;
@@ -61,9 +59,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
       @Inject
      ArtistAdapter artistAdapter;
 
-  public static ArrayList<Artist> artistList;
-
-    private static final int MY_PERMISSION_REQUEST = 1;
+  public ArrayList<Artist> artistList;
 
     public ArtistFragment() {
         // Required empty public constructor
@@ -80,10 +76,20 @@ public class ArtistFragment extends Fragment implements ArtistView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this,view);
+        initRecycleViewArtist();
         initPresenter();
         onLoadArtistList();
         setHasOptionsMenu(true);
         evenClick();
+    }
+
+    private void initRecycleViewArtist() {
+        artistList = new ArrayList<>();
+        artistAdapter = new ArtistAdapter(getActivity(),artistList);
+        artistAdapter.setType(Constants.VIEW_GRID);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        artistRecyclerView.setLayoutManager(gridLayoutManager);
+        artistRecyclerView.setAdapter(artistAdapter);
     }
 
     private void evenClick() {
@@ -103,20 +109,13 @@ public class ArtistFragment extends Fragment implements ArtistView {
     }
     @Override
     public void showArtist(List<Artist> artists) {
-        artistAdapter = new ArtistAdapter(getActivity(),artists);
-        artistAdapter.setType(Constants.VIEW_GRID);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
-        artistRecyclerView.setLayoutManager(gridLayoutManager);
-        artistRecyclerView.setAdapter(artistAdapter);
+        artistAdapter.addData(artists);
+        artistList.addAll(artists);
     }
 
     private void onLoadArtistList() {
-//        artistList = new ArrayList<>();
-//        artistList = getMusicArtist();
         artistPresenter.loadArtist(getContext());
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

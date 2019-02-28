@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.music_vinh.R;
 import com.example.music_vinh.model.Album;
+import com.example.music_vinh.model.Song;
 import com.example.music_vinh.utils.Constants;
 
 import java.util.List;
@@ -39,7 +40,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
         this.type = mType;
         notifyDataSetChanged();
     }
-
+    public void addData(List<Album> albums) {
+        if (albums.size() > 0) {
+            albumList.addAll(albums);
+            notifyDataSetChanged();
+        }
+    }
     @NonNull
     @Override
     public AlbumViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

@@ -26,10 +26,4 @@ public class MainInteractorImpl implements MainInteractor{
     public MainInteractorImpl(MainInteractor mainInteractor){
 
     }
-//    public void getSongCategories(MainInteractor mainInteractor, Context context) {
-//                mainInteractor.onLoadSongSuccess(getMusicSongArr(context));
-//    }
-//    @Override
-//    public void onLoadSongSuccess(List<Song> songs) {
-//    }
 }

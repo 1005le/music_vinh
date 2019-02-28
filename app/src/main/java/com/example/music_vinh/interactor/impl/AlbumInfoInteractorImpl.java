@@ -18,15 +18,4 @@ public class AlbumInfoInteractorImpl implements AlbumInfoInteractor{
      @Inject
     public AlbumInfoInteractorImpl(AlbumInfoInteractor albumInfoInteractor){
     }
-    private  ArrayList<Song> createArrayList() {
-        ArrayList<Song> songs = AlbumInfoActivity.songArrayListAlbum;
-        return songs;
-    }
-    public void getSongCategories(final AlbumInfoInteractor albumInfoInteractor) {
-        albumInfoInteractor.onLoadSongSuccess(createArrayList());
-    }
-    @Override
-    public void onLoadSongSuccess(ArrayList<Song> songs) {
-
-    }
 }
