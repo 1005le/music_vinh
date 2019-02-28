@@ -87,7 +87,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         artistList = new ArrayList<>();
         artistAdapter = new ArtistAdapter(getActivity(),artistList);
         artistAdapter.setType(Constants.VIEW_GRID);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+        gridLayoutManager = new GridLayoutManager(getActivity(),2);
         artistRecyclerView.setLayoutManager(gridLayoutManager);
         artistRecyclerView.setAdapter(artistAdapter);
     }

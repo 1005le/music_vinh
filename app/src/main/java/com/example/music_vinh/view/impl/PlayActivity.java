@@ -116,11 +116,9 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         initRecycleView();
         initPresenter();
         ButterKnife.bind(this);
-        circularSeekBar = (CircularSeekBar) findViewById(R.id.circularSeekBar1);
         mIsBound = false;
         mDateFormat = new SimpleDateFormat(getString(R.string.date_time));
         connectService();
-       // loadPlaylist();
         initActionBar();
         registerListener();
         register_DataSongFragment();
@@ -128,6 +126,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         register_durationAudio();
         evenClick();
     }
+
 
     private void initRecycleView() {
         arrSong = new ArrayList<>();
@@ -221,6 +220,7 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
     }
 
     private void initActionBar() {
+        circularSeekBar = (CircularSeekBar) findViewById(R.id.circularSeekBar1);
         setSupportActionBar(toolbarPlaySong);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarPlaySong.setNavigationOnClickListener(new View.OnClickListener() {

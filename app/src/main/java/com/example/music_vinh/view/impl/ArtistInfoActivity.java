@@ -89,7 +89,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     private int totalTime, currentTime,currentPosition;
      ArrayList<Artist> artistListInfo;
      Artist artist;
-    public static List<Song> songArrayList;
+    public List<Song> songArrayList;
    //  List<Artist> artistListInfo;
     String indexArtist;
     long idArtist;

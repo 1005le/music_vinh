@@ -57,7 +57,7 @@ public class AlbumFragment extends Fragment implements AlbumView {
        @Inject
     GridLayoutManager gridLayoutManager;
 
-    public static ArrayList<Album> albumList;
+    public ArrayList<Album> albumList;
 
     public AlbumFragment() {
         // Required empty public constructor

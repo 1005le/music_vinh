@@ -75,9 +75,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     @BindView(R.id.collapsingToolbar) CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.toolbarDanhSach) Toolbar toolbar;
     @BindView(R.id.recyclerViewListSong) RecyclerView listSongrecyclerView;
-    Album album;
-    public static List<Song> songArrayListAlbum;
-
     @Inject
     SongInAlbumAdapter songInAlbumAdapter;
     @Inject
@@ -101,6 +98,8 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
     private MusicService mMusicService;
     private int mProgess;
     SeekBar seekBar;
+    Album album;
+    public List<Song> songArrayListAlbum;
     public Song song;
     private int totalTime, currentTime, currentPosition;
     // int indexAlbum;
