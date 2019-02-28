@@ -439,7 +439,6 @@ public class PlayActivity extends BaseActivity implements PlaySongView, ServiceC
         switch (item.getItemId()) {
             case R.id.menu_setting_sort:
                 Intent intent = new Intent(PlayActivity.this, SortActivity.class);
-              //  intent.putExtra("listSong", arrSong);
                 startActivity(intent);
                 return true;
             default:

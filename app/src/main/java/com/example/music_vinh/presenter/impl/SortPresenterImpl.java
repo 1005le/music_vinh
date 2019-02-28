@@ -18,12 +18,9 @@ import javax.inject.Inject;
 public class SortPresenterImpl implements SortPresenter, SortInteractor {
 
     private SortView sortView;
-
     @Inject
     public SortPresenterImpl() {
-
     }
-
     public SortPresenterImpl(SortView sortView) {
         this.sortView = sortView;
     }

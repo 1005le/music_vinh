@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AlbumView {
     void showAlbum(List<Album> albums);
+    void intentAlbumForDetail(List<Album> albums, int position);
 }

@@ -20,9 +20,8 @@ import javax.inject.Inject;
 
 public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
 
-    private AlbumInteractorImpl albumInteractorImpl;
     private AlbumView albumView;
-
+    List<Album> albumList;
     @Inject
     public AlbumPresenterImpl() {
 
@@ -32,12 +31,12 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
     }
 
     @Override
-    public void loadAlbums(Context context) {
-      albumView.showAlbum(getAlbum(context));
+    public void onCallDataIntent(int position) {
+        albumView.intentAlbumForDetail(albumList,position);
     }
-
-    public List<Album> getAlbum(Context context) {
-        List<Album> albumList = new ArrayList<>();
+    @Override
+    public void getAlbum(Context context) {
+         albumList = new ArrayList<>();
 
         Uri songUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
 
@@ -59,7 +58,8 @@ public class AlbumPresenterImpl implements AlbumInteractor, AlbumPresenter {
                         currentImages,Integer.parseInt(currentamountSong)));
 
             } while (songCursor.moveToNext());
+            albumView.showAlbum(albumList);
         }
-        return albumList;
+
     }
 }

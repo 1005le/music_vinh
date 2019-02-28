@@ -117,7 +117,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         initRecycleView();
         initPresenter();
         getDataIntent();
-        getData();
+
         initActionBar();
         seekBar = findViewById(R.id.seekBarBottom);
         bindServiceMedia();
@@ -147,12 +147,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         songInAlbumAdapter.setOnSongInAlbumItemClickListener(new SongInAlbumAdapter.OnSongInAlbumItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
-                StorageUtil storage = new StorageUtil(getApplicationContext());
-                storage.storeAudio((ArrayList)songArrayListAlbum);
-                storage.storeAudioIndex(position);
-                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
-                startActivity(intent);
+                 albumInfoPresenter.onCallIntent(position);
             }
         });
 
@@ -272,7 +267,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         @Override
         public void onReceive(Context context, Intent intent) {
             int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
-            //Log.d("curent", current+"");
             seekBar.setProgress(current);
             statusAudio();
         }
@@ -305,7 +299,6 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         });
     }
 
-
     @Override
     protected void setupComponent(AppComponent appComponent) {
         DaggerAlbumInfoViewComponent.builder()
@@ -319,31 +312,18 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         Intent intent = getIntent();
         if (intent.hasExtra("album")) {
             album = intent.getParcelableExtra("album");
-            Log.d("albumActivity",album.getId()+"--"+ album.getName());
-           onLoadSong();
+            albumInfoPresenter.getAlbumForDetail(getApplicationContext(),album.getId());
         }
         /*nhân tu search
          * */
         if (intent.hasExtra("album_ID")) {
-             albumList = AlbumFragment.albumList;
+            // albumList = AlbumFragment.albumList;
             indexAlbum = intent.getStringExtra("album_ID");
-            album = albumList.get(Integer.parseInt(indexAlbum) -1);
+            //album = albumList.get(Integer.parseInt(indexAlbum) -1);
             idAlbum = Long.parseLong(indexAlbum);
-            onLoadSong();
+            albumInfoPresenter.getAlbumForDetail(getApplicationContext(),idAlbum);
         }
     }
-
-    private void getData() {
-        Drawable img = Drawable.createFromPath(album.getImages());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            collapsingToolbarLayout.setBackground(img);
-        }
-        imgAlbumInfo.setImageDrawable(img);
-        imgIconAlbum.setImageDrawable(img);
-        tvNameAlbumInfo.setText(album.getName());
-        tvamountSongA.setText(album.getAmountSong() + R.string.songs);
-    }
-
     private void initActionBar() {
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
@@ -354,7 +334,7 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
                 finish();
             }
         });
-        collapsingToolbarLayout.setTitle(album.getName());
+       // collapsingToolbarLayout.setTitle(album.getName());
         collapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
     }
@@ -368,8 +348,36 @@ public class AlbumInfoActivity extends BaseActivity implements AlbumInfoView {
         songInAlbumAdapter.addData(songs);
         songArrayListAlbum.addAll(songs);
     }
-    public void onLoadSong(){
-        albumInfoPresenter.getSongFromAlbum(getApplicationContext(),album.getId());
+
+    @Override
+    public void setNameAlbum(String name) {
+        collapsingToolbarLayout.setTitle(name);
+        tvNameAlbumInfo.setText(name);
+    }
+
+    @Override
+    public void setArtAlbum(String artPath) {
+        Drawable img = Drawable.createFromPath(artPath);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            collapsingToolbarLayout.setBackground(img);
+        }
+        imgAlbumInfo.setImageDrawable(img);
+        imgIconAlbum.setImageDrawable(img);
+    }
+
+    @Override
+    public void setAmountSong(int amount) {
+        tvamountSongA.setText(amount + R.string.songs);
+    }
+
+    @Override
+    public void intentSongForPlay(List<Song> songs, int position) {
+        Intent intent = new Intent(AlbumInfoActivity.this, PlayActivity.class);
+        StorageUtil storage = new StorageUtil(getApplicationContext());
+        storage.storeAudio((ArrayList)songs);
+        storage.storeAudioIndex(position);
+        intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
+        startActivity(intent);
     }
 
     @Override

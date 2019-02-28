@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ArtistView {
     void showArtist(List<Artist> artists);
+    void intentArtistForDetail(List<Artist>artists ,int position);
 
 }

@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface MainView {
     void showSong( List<Song> songs);
+    void intentSongForPlay(List<Song> song, int position);
 }

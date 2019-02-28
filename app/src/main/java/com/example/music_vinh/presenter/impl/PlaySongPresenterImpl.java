@@ -21,10 +21,6 @@ public class PlaySongPresenterImpl implements PlaySongPresenter, PlaySongInterac
     public PlaySongPresenterImpl() {
 
     }
-//    public PlaySongPresenterImpl(PlaySongInteractorImpl playSongInteractorImpl, PlaySongView playSongView) {
-//        this.playSongInteractorImpl = playSongInteractorImpl;
-//        this.playSongView = playSongView;
-//    }
 
     public PlaySongPresenterImpl(PlaySongView playSongView) {
         this.playSongView = playSongView;

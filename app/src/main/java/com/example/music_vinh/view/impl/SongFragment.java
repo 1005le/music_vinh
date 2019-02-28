@@ -115,13 +115,7 @@ public class SongFragment extends Fragment implements MainView {
         songAdapter.setOnSongItemClickListener(new SongAdapter.OnSongItemClickListener() {
             @Override
             public void onSongItemClicked(View view, int position) {
-                StorageUtil storage = new StorageUtil(getContext());
-                storage.storeAudio((ArrayList)songList);
-                storage.storeAudioIndex(position);
-
-                Intent intent = new Intent(getActivity(), PlayActivity.class);
-                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
-                startActivity(intent);
+                mainPresenter.onIntent(position);
             }
         });
     }
@@ -136,8 +130,20 @@ public class SongFragment extends Fragment implements MainView {
         StorageUtil storage = new StorageUtil(getContext());
         storage.storeAudio((ArrayList)songs);
     }
+
+    @Override
+    public void intentSongForPlay(List<Song> song, int position) {
+        StorageUtil storage = new StorageUtil(getContext());
+        storage.storeAudio((ArrayList)songList);
+        storage.storeAudioIndex(position);
+
+        Intent intent = new Intent(getActivity(), PlayActivity.class);
+        intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
+        startActivity(intent);
+    }
+
     private void onLoadSongList() {
-        mainPresenter.loadData(getContext());
+        mainPresenter.getMusicSongArr(getContext());
     }
 
     @Override

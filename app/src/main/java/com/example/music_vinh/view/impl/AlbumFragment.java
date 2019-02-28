@@ -96,16 +96,10 @@ public class AlbumFragment extends Fragment implements AlbumView {
         albumAdapter.setOnAlbumItemClickListener(new AlbumAdapter.OnAlbumItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                Intent intent = new Intent(getContext(), AlbumInfoActivity.class);
-                //intent.putExtra("album",albumList.get(position).getId());
-                intent.putExtra("album",albumList.get(position));
-                Log.d("albumFrag",albumList.get(position).getName());
-                getContext().startActivity(intent);
+                albumPresenter.onCallDataIntent(position);
             }
         });
     }
-
-
     private void initPresenter(){
        albumPresenter = new AlbumPresenterImpl(this);
     }
@@ -115,8 +109,15 @@ public class AlbumFragment extends Fragment implements AlbumView {
         albumList.addAll(albums);
     }
 
+    @Override
+    public void intentAlbumForDetail(List<Album> albums, int position) {
+        Intent intent = new Intent(getContext(), AlbumInfoActivity.class);
+        intent.putExtra("album",albumList.get(position));
+        getContext().startActivity(intent);
+    }
+
     private void onLoadAlbumList() {
-        albumPresenter.loadAlbums(getContext());
+        albumPresenter.getAlbum(getContext());
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

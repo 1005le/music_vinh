@@ -11,6 +11,7 @@ import com.example.music_vinh.interactor.MainInteractor;
 import com.example.music_vinh.interactor.impl.AlbumInfoInteractorImpl;
 import com.example.music_vinh.interactor.impl.AlbumInteractorImpl;
 import com.example.music_vinh.interactor.impl.MainInteractorImpl;
+import com.example.music_vinh.model.Album;
 import com.example.music_vinh.model.Song;
 import com.example.music_vinh.presenter.AlbumInfoPresenter;
 import com.example.music_vinh.presenter.MainPresenter;
@@ -25,21 +26,22 @@ import javax.inject.Inject;
 
 public class AlbumInfoPresenterImpl implements AlbumInfoInteractor, AlbumInfoPresenter {
 
-    private AlbumInfoInteractorImpl albumInfoInteractorImpl;
     private AlbumInfoView albumInfoView;
-
+    List<Song> songArrayListAlbum;
     public AlbumInfoPresenterImpl(AlbumInfoView albumInfoView) {
         this.albumInfoView = albumInfoView;
+        songArrayListAlbum = new ArrayList<>();
     }
 
     @Inject
     public AlbumInfoPresenterImpl() {
+
     }
 
     @Override
     public void getSongFromAlbum(Context context, Long idAlbum) {
 
-        List<Song> songArrayListAlbum = new ArrayList<>();
+        songArrayListAlbum = new ArrayList<>();
         Uri mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor mediaCursor = context.getContentResolver().query(mediaUri, null, null, null, null);
 
@@ -73,4 +75,38 @@ public class AlbumInfoPresenterImpl implements AlbumInfoInteractor, AlbumInfoPre
         }
     }
 
+    @Override
+    public void getAlbumForDetail(Context context, Long idAlbum) {
+        Uri songUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+
+        Cursor songCursor =  context.getContentResolver().query(songUri, null, null, null, null);
+        if (songCursor != null && songCursor.moveToFirst()) {
+            int id_Album = songCursor.getColumnIndex(MediaStore.Audio.Albums._ID);
+            int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
+            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
+            int imgAlbum = songCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
+            int amountSong = songCursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS);
+            do {
+                long currentId = songCursor.getLong(id_Album);
+                String currentAlbum = songCursor.getString(songAlbum);
+                String currentArtist = songCursor.getString(songArtist);
+                String currentImages = songCursor.getString(imgAlbum);
+                String currentamountSong = songCursor.getString(amountSong);
+                  if(idAlbum == currentId) {
+
+                     albumInfoView.setNameAlbum(currentAlbum);
+                     albumInfoView.setArtAlbum(currentImages);
+                     albumInfoView.setAmountSong(Integer.parseInt(currentamountSong));
+                     getSongFromAlbum(context,currentId);
+
+                  }
+            } while (songCursor.moveToNext());
+        }
+
+    }
+
+    @Override
+    public void onCallIntent(int position) {
+        albumInfoView.intentSongForPlay(songArrayListAlbum,position);
+    }
 }

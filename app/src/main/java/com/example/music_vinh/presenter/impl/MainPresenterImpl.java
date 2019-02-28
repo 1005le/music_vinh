@@ -18,31 +18,23 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class MainPresenterImpl implements MainInteractor, MainPresenter {
-    private MainInteractorImpl mainInteractorImpl;
     private MainView mainView;
-
+    List<Song> songList;
     public MainPresenterImpl(MainView mainView) {
         this.mainView = mainView;
-        //mainInteractorImpl = new MainInteractorImpl(this);
     }
     @Inject
     public MainPresenterImpl() {
+
     }
-//    @Override
-//    public void onLoadSongSuccess(List<Song> songs) {
-//        mainView.showSong(songs);
-//    }
-//    @Override
-//    public void loadData(Context context) {
-//        mainInteractorImpl.getSongCategories(this, context);
-//    }
     @Override
-    public void loadData(Context context) {
-       mainView.showSong(getMusicSongArr(context));
+    public void onIntent(int position) {
+        mainView.intentSongForPlay(songList,position);
     }
 
-    public List<Song> getMusicSongArr(Context context) {
-        List<Song> songList = new ArrayList<>();
+    @Override
+    public void getMusicSongArr(Context context) {
+         songList = new ArrayList<>();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor songCursor = context.getContentResolver().query(songUri, null,
                 null, null, null);
@@ -65,7 +57,8 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
                 songList.add(new Song(Long.parseLong(currentId),currentTitle, currentArtist,currentAlbum,currentPath, Long.parseLong(currentDuration)));
 
             } while (songCursor.moveToNext());
+            mainView.showSong(songList);
         }
-        return songList;
+
     }
 }

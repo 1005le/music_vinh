@@ -22,6 +22,7 @@ import javax.inject.Inject;
 public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
 
     private ArtistView artistView;
+    List<Artist> artistList;
     @Inject
     public ArtistPresenterImpl() {
 
@@ -30,13 +31,14 @@ public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
         this.artistView = artistView;
     }
 
-    @Override
-    public void loadArtist(Context context) {
-       artistView.showArtist(getMusicArtist(context));
-    }
 
-    public List<Artist> getMusicArtist(Context context) {
-       List<Artist> artistList = new ArrayList<>();
+    @Override
+    public void onCallIntent(int positon) {
+        artistView.intentArtistForDetail(artistList,positon);
+    }
+    @Override
+    public void getMusicArtist(Context context) {
+        artistList = new ArrayList<>();
         Uri songUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
         Cursor songCursor =context.getContentResolver().query(songUri, null, null, null, null);
 
@@ -58,7 +60,7 @@ public class ArtistPresenterImpl implements ArtistInteractor, ArtistPresenter {
                         Integer.parseInt(currentAmountSong),""));
 
             } while (songCursor.moveToNext());
+            artistView.showArtist(artistList);
         }
-        return artistList;
     }
 }

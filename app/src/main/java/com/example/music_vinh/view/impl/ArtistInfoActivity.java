@@ -73,8 +73,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     @BindView(R.id.collapsingToolbarArtist) CollapsingToolbarLayout collapsingToolbarLayoutArtist;
     @BindView(R.id.toolbarArtistInfo) Toolbar toolbarArtist;
     @BindView(R.id.SongInArtistrecyclerView) RecyclerView songInArtistRecycleView;
-    Artist artist;
-   public static List<Song> songArrayList;
     @BindView(R.id.imgViewArtist) ImageView imgViewArtist;
 
     @BindView(R.id.linearBottom) RelativeLayout linearLayoutBottom;
@@ -90,6 +88,8 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     public Song song;
     private int totalTime, currentTime,currentPosition;
      ArrayList<Artist> artistListInfo;
+     Artist artist;
+    public static List<Song> songArrayList;
    //  List<Artist> artistListInfo;
     String indexArtist;
     long idArtist;
@@ -110,7 +110,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         seekBar = findViewById(R.id.seekBarBottom);
         ButterKnife.bind(this);
         initActionBar();
-       // getData();
         initRecycleView();
         initPresenter();
         getDataIntent();
@@ -147,7 +146,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         imgPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Log.d("click","click");
                 if (mMusicService.isPlay()) {
                     mMusicService.pauseSong();
                 } else {
@@ -155,7 +153,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 }
                 imgPause.setVisibility(View.INVISIBLE);
                 imgBottomPlay.setVisibility(View.VISIBLE);
-                //  imgPause.setImageResource(R.drawable.ic_stop);
+
             }
         });
         imgBottomPlay.setOnClickListener(new View.OnClickListener() {
@@ -174,12 +172,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         songInArtistAdapter.setOnSongInArtistItemClickListener(new SongInArtistAdapter.OnSongInArtistItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
-                StorageUtil storage = new StorageUtil(getApplicationContext());
-                storage.storeAudio((ArrayList)songArrayList);
-                storage.storeAudioIndex(position);
-                intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
-                startActivity(intent);
+               artistInfoPresenter.onCallIntent(position);
             }
         });
 
@@ -253,7 +246,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         @Override
         public void onReceive(Context context, Intent intent) {
             int current = intent.getIntExtra(Constants.CURRENT_TIME, 0);
-            //Log.d("curent", current+"");
             seekBar.setProgress(current);
             statusAudio();
         }
@@ -310,12 +302,11 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         Intent intent = getIntent();
         if (intent.hasExtra("artist")) {
             artist= intent.getParcelableExtra("artist");
-            artistInfoPresenter.getSongFromArtist(getApplicationContext(),artist.getId());
+            artistInfoPresenter.getArtistInfoDetail(getApplicationContext(),artist.getId());
         }
         /*nhân tu search
          * */
         if (intent.hasExtra("artist_ID")) {
-           // artistListInfo = ArtistFragment.artistList;
             indexArtist = intent.getStringExtra("artist_ID");
             idArtist= Long.parseLong(indexArtist);
             artistInfoPresenter.getSongFromArtist(getApplicationContext(),idArtist);
@@ -324,7 +315,6 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
     }
     private void initActionBar() {
         setSupportActionBar(toolbarArtist);
-        //getSupportActionBar().setTitle(album.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarArtist.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,7 +322,7 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
                 finish();
             }
         });
-        //collapsingToolbarLayoutArtist.setTitle(artist.getName());
+
         collapsingToolbarLayoutArtist.setExpandedTitleColor(Color.WHITE);
         collapsingToolbarLayoutArtist.setCollapsedTitleTextColor(Color.WHITE);
     }
@@ -345,6 +335,21 @@ public class ArtistInfoActivity extends BaseActivity implements ArtistInfoView {
         songInArtistAdapter.addData(songs);
         songArrayList.addAll(songs);
 
+    }
+
+    @Override
+    public void setArtistInfo(String name) {
+        collapsingToolbarLayoutArtist.setTitle(name);
+    }
+
+    @Override
+    public void intentSongForPlay(List<Song> songs, int position) {
+        Intent intent = new Intent(ArtistInfoActivity.this, PlayActivity.class);
+        StorageUtil storage = new StorageUtil(getApplicationContext());
+        storage.storeAudio((ArrayList)songs);
+        storage.storeAudioIndex(position);
+        intent.putExtra(Constants.PLAY_TYPE, Constants.PLAY);
+        startActivity(intent);
     }
 
     @Override

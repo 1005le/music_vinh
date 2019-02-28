@@ -96,9 +96,7 @@ public class ArtistFragment extends Fragment implements ArtistView {
         artistAdapter.setOnArtistItemClickListener(new ArtistAdapter.OnArtistItemClickListener() {
             @Override
             public void onItemClicked(View view, int position) {
-                Intent intent = new Intent(getContext(), ArtistInfoActivity.class);
-                intent.putExtra("artist",artistList.get(position));
-                getContext().startActivity(intent);
+               artistPresenter.onCallIntent(position);
             }
         });
     }
@@ -113,8 +111,16 @@ public class ArtistFragment extends Fragment implements ArtistView {
         artistList.addAll(artists);
     }
 
+    @Override
+    public void intentArtistForDetail(List<Artist> artists, int position) {
+        Intent intent = new Intent(getContext(), ArtistInfoActivity.class);
+        intent.putExtra("artist",artistList.get(position));
+        getContext().startActivity(intent);
+    }
+
+
     private void onLoadArtistList() {
-        artistPresenter.loadArtist(getContext());
+        artistPresenter.getMusicArtist(getContext());
     }
 
     @Override
