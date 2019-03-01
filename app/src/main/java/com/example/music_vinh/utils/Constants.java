@@ -4,8 +4,8 @@ public class Constants {
 
 
 
-    public static final int VIEW_LIST = 1;
-    public static final int VIEW_GRID = 2;
+    public static final int VIEW_LIST = 0;
+    public static final int VIEW_GRID = 1;
 
     public static final String ACTION_PLAY = "ACTION_PLAY";
     public static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";

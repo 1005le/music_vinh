@@ -121,7 +121,8 @@ public class SongFragment extends Fragment implements MainView {
     }
 
    private void initPresenter(){
-        mainPresenter = new MainPresenterImpl(this);
+       mainPresenter = new MainPresenterImpl(this);
+       // mainPresenter.onAttach(this);
      }
     @Override
     public void showSong(List<Song> songs) {

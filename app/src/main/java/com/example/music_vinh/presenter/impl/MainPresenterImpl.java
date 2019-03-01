@@ -20,9 +20,11 @@ import javax.inject.Inject;
 public class MainPresenterImpl implements MainInteractor, MainPresenter {
     private MainView mainView;
     List<Song> songList;
+
     public MainPresenterImpl(MainView mainView) {
         this.mainView = mainView;
     }
+
     @Inject
     public MainPresenterImpl() {
 
@@ -30,6 +32,11 @@ public class MainPresenterImpl implements MainInteractor, MainPresenter {
     @Override
     public void onIntent(int position) {
         mainView.intentSongForPlay(songList,position);
+    }
+
+    @Override
+    public void onAttach(MainView mainView1) {
+        mainView = mainView1;
     }
 
     @Override
